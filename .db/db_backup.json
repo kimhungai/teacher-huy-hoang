@@ -1,0 +1,994 @@
+{
+  "db_profile": {
+    "id": "p1",
+    "fullName": "Nguyễn Trọng Huy Hoàng",
+    "fullNameEn": "Nguyen Trong Huy Hoang",
+    "titleEn": "English Teacher | Primary Education",
+    "titleVi": "Giáo viên Tiếng Anh | Giáo dục Tiểu học",
+    "schoolEn": "Duong Minh Chau Primary School",
+    "schoolVi": "Trường Tiểu học Dương Minh Châu",
+    "locationEn": "District 10, Ho Chi Minh City, Vietnam",
+    "locationVi": "Quận 10, Thành phố Hồ Chí Minh, Việt Nam",
+    "adminEmail": "huynhkimhungabmthaydangtu@gmail.com",
+    "brandMessageEn": "Making English fun, meaningful and memorable for students.",
+    "brandMessageVi": "Biến việc học tiếng Anh thành một hành trình vui vẻ, ý nghĩa và đáng nhớ cho học sinh.",
+    "avatarUrl": "https://ik.imagekit.io/hkh/OK_2.jpg?updatedAt=1787823395938",
+    "bioEn": "With over 25 years of teaching primary students in Ho Chi Minh City, I specialise in Project-Based Learning, gamified vocabulary acquisition, and integrating modern educational technology into public school classrooms. My mission is to build students confidence and intrinsic love for communication.",
+    "bioVi": "Với hơn 25 năm kinh nghiệm giảng dạy tiếng Anh tiểu học tại TP.HCM, tôi chuyên sâu về phương pháp Học theo dự án (PBL), học qua trò chơi và ứng dụng công nghệ giáo dục EdTech trong nhà trường. Sứ mệnh của tôi là mang lại sự tự tin và niềm say mê ngôn ngữ tự nhiên cho học sinh.",
+    "skills": [
+      "English Teaching",
+      "Lesson Planning",
+      "Classroom Management",
+      "Communication",
+      "Presentation",
+      "Educational Technology",
+      "Project-Based Learning",
+      "Creative Learning"
+    ],
+    "experienceYears": 25,
+    "completedProjectsCount": 15,
+    "teachingResourcesCount": 50,
+    "happyStudentsCount": 4500,
+    "educationHistory": [
+      {
+        "id": "edu1",
+        "titleVi": "Trường TH Dương Minh Châu — Quận 10",
+        "titleEn": "Duong Minh Chau Primary School",
+        "detailVi": "Giáo viên Tiếng Anh Chính thức (2020 - Nay)",
+        "detailEn": "Full-time English Educator (2020 - Present)"
+      },
+      {
+        "id": "edu2",
+        "titleVi": "Cử nhân Sư phạm Tiếng Anh",
+        "titleEn": "Bachelor of English Education",
+        "detailVi": "Trường Đại học Sư phạm TP.HCM",
+        "detailEn": "HCMC University of Education"
+      }
+    ],
+    "philosophyTextVi": "Học Qua Thực Hành: Học sinh áp dụng ngữ liệu vào hội thoại, đóng vai và nhiệm vụ thực tế.\nHọc Qua Trò Chơi: Trò chơi rèn luyện ngữ pháp & từ vựng giúp tiếp thu tự nhiên.\nHọc Qua Khám Phá: Khơi gợi trí tò mò qua sách truyện, khám phá tự nhiên và văn hóa.\nHọc Qua Sáng Tạo: Thiết kế áp phích, tranh vẽ và bài thuyết trình số bằng tiếng Anh.\nHọc Cùng Đồng Đội: Xây dựng tinh thần đồng đội, lắng nghe và hợp tác trong nhóm nhỏ.",
+    "philosophyTextEn": "Learn by Doing: Students apply language in role-play, dialogues, and real-life tasks.\nLearn by Playing: Gamified drills and challenges make vocabulary acquisition effortless.\nLearn by Exploring: Encouraging curiosity through storybooks, culture, and nature topics.\nLearn by Creating: Designing posters, drawings, and digital presentations in English.\nLearn Together: Building empathy, teamwork, and active listening skills in small groups."
+  },
+  "db_hero": {
+    "headlineEn": "Making English Fun, Meaningful & Memorable for Students.",
+    "headlineVi": "Biến Tiếng Anh Thành Hành Trình Vui Vẻ, Ý Nghĩa & Đáng Nhớ cho Học sinh.",
+    "subtitleEn": "Welcome to the digital corner of Teacher Huy Hoang — Primary English Educator & EdTech Innovator at Duong Minh Chau Primary School.",
+    "subtitleVi": "Chào mừng đến với không gian số của Thầy Nguyễn Trọng Huy Hoàng — Giáo viên Tiếng Anh Tiểu học & Sáng tạo EdTech tại Trường TH Dương Minh Châu.",
+    "avatarUrl": "https://ik.imagekit.io/hkh/OK_0.jpg?updatedAt=1787823395930",
+    "backgroundUrl": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&q=80&w=1600"
+  },
+  "db_settings": {
+    "siteTitleEn": "Nguyen Trong Huy Hoang - Digital Teacher Portfolio",
+    "siteTitleVi": "Nguyễn Trọng Huy Hoàng - Digital Teacher Portfolio",
+    "logoText": "Huy Hoang English",
+    "primaryColor": "#0284C7",
+    "secondaryColor": "#0F172A",
+    "contactEmail": "huynhkimhungabmthaydangtu@gmail.com",
+    "contactPhone": "0987654321",
+    "defaultLanguage": "vi",
+    "facebookUrl": "https://facebook.com",
+    "youtubeUrl": "https://youtube.com",
+    "linkedinUrl": "",
+    "footerTextEn": "© 2026 Teacher Nguyen Trong Huy Hoang. Duong Minh Chau Primary School.",
+    "footerTextVi": "© 2026 Thầy giáo Nguyễn Trọng Huy Hoàng. Trường TH Dương Minh Châu.",
+    "showBlogMenu": true,
+    "showGalleryMenu": true,
+    "footerTaglineVi": "Được tạo với ❤️ cho Giáo Dục",
+    "footerTaglineEn": "Crafted with ❤️ for Education",
+    "adminPassword": "Admin@123",
+    "xUrl": "https://x.com",
+    "zaloUrl": "https://zalo.me/0929053750",
+    "tiktokUrl": "https://tiktok.com",
+    "instagramUrl": "https://instagram.com",
+    "showProjectsMenu": true,
+    "showAchievementsMenu": true,
+    "defaultTheme": "dark",
+    "superAdminPassword": "Admin@2020",
+    "emailProvider": "emailjs",
+    "emailjsServiceId": "service_zs3o9xk",
+    "emailjsPublicKey": "WO1ouvFyJLF6lTfz8",
+    "emailjsTemplateIdAdmin": "template_x0sq81m",
+    "emailjsTemplateIdCustomer": "template_x0sq81m",
+    "websiteUrl": "https://teacherhuyhoang.com",
+    "notificationEmail": "huynhkimhungabmthaydangtu@gmail.com",
+    "clientAdminAccounts": [
+      {
+        "id": "ca_default",
+        "email": "huynhkimhung2023@gmail.com",
+        "password": "Admin@123",
+        "name": "Tài khoản bàn giao Khách hàng",
+        "role": "client_admin",
+        "createdAt": "2026-01-01"
+      }
+    ]
+  },
+  "db_teaching": [
+    {
+      "id": "ta1",
+      "titleEn": "Communicative English",
+      "titleVi": "Giao tiếp Ngôn ngữ Tự nhiên",
+      "descriptionEn": "Focusing on real-life speaking situations, role-playing, and interactive dialogues to build natural fluency and confidence.",
+      "descriptionVi": "Tập trung vào các tình huống thực tế, đóng vai và hội thoại tương tác để xây dựng sự tự tin và phản xạ tự nhiên.",
+      "icon": "MessageSquare",
+      "imageUrl": "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=600",
+      "orderIndex": 1
+    },
+    {
+      "id": "ta2",
+      "titleEn": "Learning Through Games",
+      "titleVi": "Học Qua Trò Chơi (Gamification)",
+      "descriptionEn": "Transforming grammar and vocabulary drills into exciting games, physical challenges, and digital quizzes.",
+      "descriptionVi": "Chuyển hóa bài tập từ vựng và ngữ pháp thành các trò chơi vận động, thử thách đồng đội và quiz tương tác.",
+      "icon": "Gamepad2",
+      "imageUrl": "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=600",
+      "orderIndex": 2
+    },
+    {
+      "id": "ta3",
+      "titleEn": "Project-Based Learning (PBL)",
+      "titleVi": "Học Theo Dự Án (PBL)",
+      "descriptionEn": "Encouraging young learners to research, design posters, and present creative projects in small collaborative teams.",
+      "descriptionVi": "Khuyến khích học sinh tìm hiểu, thiết kế áp phích và thuyết trình dự án sáng tạo theo nhóm nhỏ.",
+      "icon": "FolderKanban",
+      "imageUrl": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=600",
+      "orderIndex": 3
+    },
+    {
+      "id": "ta4",
+      "titleEn": "Interactive Storytelling",
+      "titleVi": "Kể Chuyện Tương Tác",
+      "descriptionEn": "Using rich picture storybooks, drama puppets, and audio tales to kindle imagination and listening comprehension.",
+      "descriptionVi": "Sử dụng truyện tranh thiếu nhi, rối tay nghệ thuật và sách nói giúp học sinh phát triển tư duy và kỹ năng nghe.",
+      "icon": "BookOpen",
+      "imageUrl": "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&q=80&w=600",
+      "orderIndex": 4
+    },
+    {
+      "id": "ta5",
+      "titleEn": "Interactive Activities & Stations",
+      "titleVi": "Góc Học Tập Tương Tác",
+      "descriptionEn": "Organizing classroom rotation stations for reading, listening, phonics practice, and peer review.",
+      "descriptionVi": "Tổ chức các trạm xoay vòng bài học để luyện tập kỹ năng đọc, nghe, phát âm chuẩn phonics và nhận xét nhóm.",
+      "icon": "Layers",
+      "imageUrl": "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=600",
+      "orderIndex": 5
+    },
+    {
+      "id": "ta6",
+      "titleEn": "Student-Centered Learning",
+      "titleVi": "Lấy Học Sinh Làm Trung Tâm",
+      "descriptionEn": "Adapting tasks according to mixed-ability learning styles and giving children autonomy over their choices.",
+      "descriptionVi": "Điều chỉnh bài học phù hợp với từng năng lực của học sinh và trao cho các em quyền lựa chọn hình thức thể hiện.",
+      "icon": "HeartHandshake",
+      "imageUrl": "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&q=80&w=600",
+      "orderIndex": 6
+    },
+    {
+      "id": "ta7",
+      "titleEn": "Technology-Enhanced Learning",
+      "titleVi": "Tích Hợp Công Nghệ Giáo Dục",
+      "descriptionEn": "Integrating interactive whiteboards, Wordwall games, Kahoot, and Canva for immersive visual English lessons.",
+      "descriptionVi": "Ứng dụng bảng tương tác, game Wordwall, Kahoot và Canva tạo nên trải nghiệm học tiếng Anh sinh động.",
+      "icon": "Laptop",
+      "imageUrl": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=600",
+      "orderIndex": 8
+    },
+    {
+      "id": "ta8",
+      "titleEn": "Creative Learning & Arts",
+      "titleVi": "Sáng Tạo & Nghệ Thuật",
+      "descriptionEn": "Combining English with singing, drawing, crafting, and mini-skits to make language retention effortless.",
+      "descriptionVi": "Kết hợp học tiếng Anh với ca hát, vẽ tranh, làm thủ công và kịch ngắn giúp ghi nhớ ngữ liệu nhẹ nhàng.",
+      "icon": "Palette",
+      "imageUrl": "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&q=80&w=600",
+      "orderIndex": 9
+    }
+  ],
+  "db_projects": [
+    {
+      "id": "proj1",
+      "slug": "my-green-planet-project",
+      "titleEn": "Project: \"My Green Planet & Environmental Heroes\"",
+      "titleVi": "Dự án: \"Hành Tinh Xanh & Hiệp Sĩ Môi Trường\"",
+      "categoryName": "Dự án học tập",
+      "grade": "Lớp 4 & 5",
+      "year": "2025-2026",
+      "descriptionEn": "A 4-week integrated PBL project where students learned vocabulary about nature, recycled materials, and presented solutions in English.",
+      "descriptionVi": "Dự án PBL kéo dài 4 tuần giúp học sinh tiếp thu từ vựng về môi trường, vật liệu tái chế và thuyết trình giải pháp bằng tiếng Anh.",
+      "objectivesEn": [
+        "Master 30+ vocabulary terms related to environment and recycling.",
+        "Practice present continuous and modal verbs (should/shouldnt).",
+        "Boost team collaboration and public speaking skills."
+      ],
+      "objectivesVi": [
+        "Làm chủ 30+ từ vựng về môi trường và phân loại rác thải.",
+        "Thực hành thì hiện tại tiếp diễn và động từ khuyết thiếu (should/shouldnt).",
+        "Nâng cao kỹ năng làm việc nhóm và thuyết trình trước lớp."
+      ],
+      "activitiesEn": [
+        "Week 1: Environmental vocabulary discovery with flashcards and songs.",
+        "Week 2: Poster creation using recycled paper and colored markers.",
+        "Week 3: Group presentation rehearsal with peer evaluation rubric.",
+        "Week 4: Exhibition day for parents and school teachers."
+      ],
+      "activitiesVi": [
+        "Tuần 1: Khám phá từ vựng môi trường qua tranh ảnh và bài hát.",
+        "Tuần 2: Thiết kế áp phích từ giấy tái chế và màu vẽ.",
+        "Tuần 3: Luyện tập thuyết trình nhóm và đánh giá chéo.",
+        "Tuần 4: Ngày hội triển lãm dành cho phụ huynh và thầy cô."
+      ],
+      "methodsEn": [
+        "Project-Based Learning",
+        "Collaborative Group Work",
+        "Visual Art Integration"
+      ],
+      "methodsVi": [
+        "Học theo dự án",
+        "Thảo luận nhóm",
+        "Tích hợp nghệ thuật trực quan"
+      ],
+      "outcomesEn": [
+        "120 student posters created",
+        "95% student confidence increase in public speaking"
+      ],
+      "outcomesVi": [
+        "120 áp phích được học sinh hoàn thiện",
+        "95% học sinh tự tin hơn khi phát biểu tiếng Anh"
+      ],
+      "thumbnailUrl": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800",
+      "galleryUrls": [
+        "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800",
+        "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=800"
+      ],
+      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "tags": [
+        "PBL",
+        "Environment",
+        "Speaking",
+        "Poster"
+      ],
+      "isFeatured": true,
+      "isPublished": true,
+      "createdAt": "2026-02-15",
+      "categoryEn": "Learning Projects",
+      "gradeEn": "Grade 4 & 5"
+    },
+    {
+      "id": "proj2",
+      "slug": "english-phonics-fair",
+      "titleEn": "Interactive Phonics Fair & Word Games",
+      "titleVi": "Ngày Hội Phonics & Trò Chơi Từ Vựng Sinh Động",
+      "categoryName": "Hoạt động lớp học",
+      "grade": "Lớp 1 & 2",
+      "year": "2025",
+      "descriptionEn": "A joyful day filled with phonics games, sound matching stations, and mini-certificates for young beginners.",
+      "descriptionVi": "Ngày hội vui học ngữ âm với các trạm ghép âm, phát âm chuẩn và trao chứng chỉ nhí cho học sinh lớp 1 và 2.",
+      "objectivesEn": [
+        "Improve letter-sound recognition",
+        "Enhance pronunciation accuracy"
+      ],
+      "objectivesVi": [
+        "Củng cố khả năng nhận biết âm tiết và chữ cái",
+        "Phát âm chuẩn xác hơn"
+      ],
+      "activitiesEn": [
+        "Station 1: Phonics Bingo",
+        "Station 2: Jump on the Sound",
+        "Station 3: Sing along Phonics"
+      ],
+      "activitiesVi": [
+        "Trạm 1: Bingo Ngữ Âm",
+        "Trạm 2: Nhảy Theo Âm Tiết",
+        "Trạm 3: Ca Hát Phonics"
+      ],
+      "methodsEn": [
+        "Gamification",
+        "Kinesthetic Learning"
+      ],
+      "methodsVi": [
+        "Gamification",
+        "Học qua vận động"
+      ],
+      "outcomesEn": [
+        "200+ grade 1 & 2 students participated enthusiastically"
+      ],
+      "outcomesVi": [
+        "Hơn 200 học sinh khối 1 & 2 tham gia hào hứng"
+      ],
+      "thumbnailUrl": "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800",
+      "galleryUrls": [
+        "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800"
+      ],
+      "tags": [
+        "Phonics",
+        "Grade 1",
+        "Games"
+      ],
+      "isFeatured": true,
+      "isPublished": true,
+      "createdAt": "2025-11-20",
+      "categoryEn": "Classroom Activities",
+      "gradeEn": "Grade 1 & 2"
+    },
+    {
+      "id": "proj3",
+      "slug": "digital-storytelling-with-canva",
+      "titleEn": "Digital Storytelling: \"My Dream Career\"",
+      "titleVi": "Kể Chuyện Số: \"Uớc Mơ Ngề Nghiệp Của Em\"",
+      "categoryName": "Công nghệ trong giáo dục",
+      "grade": "Lớp 5",
+      "year": "2025",
+      "descriptionEn": "Students created digital comic strips and short presentations introducing their future career aspirations using Canva.",
+      "descriptionVi": "Học sinh thiết kế truyện tranh số và bài thuyết trình giới thiệu ước mơ nghề nghiệp tương lai bằng phần mềm Canva.",
+      "objectivesEn": [
+        "Master job vocabulary",
+        "Learn basic digital design skills"
+      ],
+      "objectivesVi": [
+        "Thuộc từ vựng về nghề nghiệp",
+        "Học kỹ năng thiết kế đồ họa cơ bản"
+      ],
+      "activitiesEn": [
+        "Canva digital template tutorial",
+        "Voice recording in English"
+      ],
+      "activitiesVi": [
+        "Hướng dẫn mẫu thiết kế Canva",
+        "Thu âm giọng đọc tiếng Anh"
+      ],
+      "methodsEn": [
+        "EdTech Integration",
+        "Digital Literacy"
+      ],
+      "methodsVi": [
+        "Tích hợp công nghệ",
+        "Kỹ năng số"
+      ],
+      "outcomesEn": [
+        "60 digital stories compiled into an eBook"
+      ],
+      "outcomesVi": [
+        "60 câu chuyện số được tổng hợp thành sách điện tử"
+      ],
+      "thumbnailUrl": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800",
+      "galleryUrls": [
+        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800"
+      ],
+      "tags": [
+        "EdTech",
+        "Canva",
+        "Storytelling"
+      ],
+      "isFeatured": true,
+      "isPublished": true,
+      "createdAt": "2025-10-10",
+      "categoryEn": "Technology in Education",
+      "gradeEn": "Grade 5"
+    }
+  ],
+  "db_courses": [
+    {
+      "id": "c_1788330124313",
+      "slug": "khoa-anh-van-tre-em-sang-tao-copy-1788330124313",
+      "titleEn": "Creative English for Young Learners (Copy)",
+      "titleVi": "Khóa Anh Văn Trẻ Em Sáng Tạo & Tương Tác (Bản sao)",
+      "categoryName": "Anh văn trẻ em",
+      "categoryEn": "Young Learners English",
+      "priceType": "free",
+      "priceEn": "Free",
+      "priceVi": "Miễn phí",
+      "gradeLevel": "Grade 1 - 3 (6-9 tuổi)",
+      "gradeLevelEn": "Grade 1 - 3 (Ages 6-9)",
+      "durationEn": "8 Sessions (4 Weeks)",
+      "durationVi": "8 Buổi (4 Tuần)",
+      "scheduleEn": "Sat & Sun Morning (9:00 - 10:30 AM)",
+      "scheduleVi": "Sáng Thứ 7 & Chủ Nhật (9:00 - 10:30)",
+      "descriptionEn": "An engaging foundational English course combining singing, crafts, and interactive games for young beginners.",
+      "descriptionVi": "Khóa học tiếng Anh nền tảng sinh động kết hợp hát múa, làm thủ công và trò chơi vận động dành cho trẻ mầm non & tiểu học.",
+      "objectivesEn": [
+        "Master 50+ basic sight words and daily greetings.",
+        "Build confidence in simple English Q&A.",
+        "Develop natural pronunciation through Phonics songs."
+      ],
+      "objectivesVi": [
+        "Làm chủ 50+ từ vựng giao tiếp cơ bản và câu chào hỏi hàng ngày.",
+        "Tạo sự tự tin phản xạ các câu hỏi - đáp tiếng Anh đơn giản.",
+        "Phát triển ngữ âm chuẩn qua các bài hát Phonics sôi động."
+      ],
+      "curriculumEn": [
+        "Session 1: Hello Friends & Family Vocabulary",
+        "Session 2: Phonics Letters A-D Sound Practice",
+        "Session 3: Colors & Shapes Crafting Project",
+        "Session 4: Animals & Action Verbs Game",
+        "Session 5: My Body Parts & Song Rotation",
+        "Session 6: Food & Preferences Dialogue",
+        "Session 7: Show and Tell Rehearsal",
+        "Session 8: Graduation Showcase & Presentation"
+      ],
+      "curriculumVi": [
+        "Buổi 1: Chào hỏi & Từ vựng Gia đình thân thương",
+        "Buổi 2: Luyện phát âm Phonics Bảng chữ cái A-D",
+        "Buổi 3: Dự án làm thủ công Màu sắc & Hình khối",
+        "Buổi 4: Game tương tác Động vật & Động từ chỉ hành động",
+        "Buổi 5: Học từ vựng Các bộ phận cơ thể qua âm nhạc",
+        "Buổi 6: Hội thoại Món ăn yêu thích & Sở thích",
+        "Buổi 7: Luyện tập thuyết trình Show and Tell nhí",
+        "Buổi 8: Báo cáo tốt nghiệp & Trao chứng chỉ nhí"
+      ],
+      "thumbnailUrl": "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800",
+      "galleryUrls": [
+        "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800",
+        "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=800"
+      ],
+      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "isFeatured": true,
+      "isPublished": false,
+      "createdAt": "2026-02-01"
+    },
+    {
+      "id": "c1",
+      "slug": "khoa-anh-van-tre-em-sang-tao",
+      "titleEn": "Creative English for Young Learners",
+      "titleVi": "Khóa Anh Văn Trẻ Em Sáng Tạo & Tương Tác",
+      "categoryName": "Anh văn trẻ em",
+      "categoryEn": "Young Learners English",
+      "priceType": "free",
+      "priceEn": "Free",
+      "priceVi": "Miễn phí",
+      "gradeLevel": "Grade 1 - 3 (6-9 tuổi)",
+      "gradeLevelEn": "Grade 1 - 3 (Ages 6-9)",
+      "durationEn": "8 Sessions (4 Weeks)",
+      "durationVi": "8 Buổi (4 Tuần)",
+      "scheduleEn": "Sat & Sun Morning (9:00 - 10:30 AM)",
+      "scheduleVi": "Sáng Thứ 7 & Chủ Nhật (9:00 - 10:30)",
+      "descriptionEn": "An engaging foundational English course combining singing, crafts, and interactive games for young beginners.",
+      "descriptionVi": "Khóa học tiếng Anh nền tảng sinh động kết hợp hát múa, làm thủ công và trò chơi vận động dành cho trẻ mầm non & tiểu học.",
+      "objectivesEn": [
+        "Master 50+ basic sight words and daily greetings.",
+        "Build confidence in simple English Q&A.",
+        "Develop natural pronunciation through Phonics songs."
+      ],
+      "objectivesVi": [
+        "Làm chủ 50+ từ vựng giao tiếp cơ bản và câu chào hỏi hàng ngày.",
+        "Tạo sự tự tin phản xạ các câu hỏi - đáp tiếng Anh đơn giản.",
+        "Phát triển ngữ âm chuẩn qua các bài hát Phonics sôi động."
+      ],
+      "curriculumEn": [
+        "Session 1: Hello Friends & Family Vocabulary",
+        "Session 2: Phonics Letters A-D Sound Practice",
+        "Session 3: Colors & Shapes Crafting Project",
+        "Session 4: Animals & Action Verbs Game",
+        "Session 5: My Body Parts & Song Rotation",
+        "Session 6: Food & Preferences Dialogue",
+        "Session 7: Show and Tell Rehearsal",
+        "Session 8: Graduation Showcase & Presentation"
+      ],
+      "curriculumVi": [
+        "Buổi 1: Chào hỏi & Từ vựng Gia đình thân thương",
+        "Buổi 2: Luyện phát âm Phonics Bảng chữ cái A-D",
+        "Buổi 3: Dự án làm thủ công Màu sắc & Hình khối",
+        "Buổi 4: Game tương tác Động vật & Động từ chỉ hành động",
+        "Buổi 5: Học từ vựng Các bộ phận cơ thể qua âm nhạc",
+        "Buổi 6: Hội thoại Món ăn yêu thích & Sở thích",
+        "Buổi 7: Luyện tập thuyết trình Show and Tell nhí",
+        "Buổi 8: Báo cáo tốt nghiệp & Trao chứng chỉ nhí"
+      ],
+      "thumbnailUrl": "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800",
+      "galleryUrls": [
+        "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800",
+        "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=800"
+      ],
+      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "isFeatured": true,
+      "isPublished": true,
+      "createdAt": "2026-02-01"
+    },
+    {
+      "id": "c2",
+      "slug": "khoa-luyen-van-pham-sinh-dong",
+      "titleEn": "Dynamic Grammar & Sentence Building",
+      "titleVi": "Khóa Luyện Văn Phạm & Cấu Trúc Câu Sinh Động",
+      "categoryName": "Luyện văn phạm",
+      "categoryEn": "Grammar Mastery",
+      "priceType": "paid",
+      "priceEn": "450.000 VNĐ / Khóa",
+      "priceVi": "450.000 VNĐ / Khóa",
+      "discountPriceVi": "399.000 VNĐ / Khóa",
+      "discountPriceEn": "399.000 VNĐ / Khóa",
+      "gradeLevel": "Grade 3 - 5 (8-11 tuổi)",
+      "gradeLevelEn": "Grade 3 - 5 (Ages 8-11)",
+      "durationEn": "12 Sessions (6 Weeks)",
+      "durationVi": "12 Buổi (6 Tuần)",
+      "scheduleEn": "Mon & Wed Evening (6:00 - 7:30 PM)",
+      "scheduleVi": "Tối Thứ 2 & Thứ 4 (18:00 - 19:30)",
+      "descriptionEn": "Transform boring grammar rules into clear visual maps, sentence puzzles, and interactive quizzes.",
+      "descriptionVi": "Biến ngữ pháp khô khan thành sơ đồ tư duy trực quan, trò chơi ghép câu và quiz tương tác chuẩn thi tiểu học.",
+      "objectivesEn": [
+        "Master Present Simple, Present Continuous, and Past Tense.",
+        "Construct complete, grammatically accurate English sentences.",
+        "Score high in school semester English exams."
+      ],
+      "objectivesVi": [
+        "Nắm vững Thì Hiện tại đơn, Hiện tại tiếp diễn và Quá quá đơn.",
+        "Viết câu tiếng Anh đúng ngữ pháp và diễn đạt ý tưởng hoàn chỉnh.",
+        "Đạt điểm cao trong các bài kiểm tra tiếng Anh định kỳ tại trường."
+      ],
+      "curriculumEn": [
+        "Module 1: Nouns, Verbs & Adjectives Building Blocks",
+        "Module 2: Tenses Mastery (Present & Past)",
+        "Module 3: Prepositions & Question Words (Wh-questions)",
+        "Module 4: Writing Short English Essays & Peer Correction"
+      ],
+      "curriculumVi": [
+        "Chương 1: Phân loại Danh từ, Động từ & Tính từ trực quan",
+        "Chương 2: Làm chủ các thì ngữ pháp cốt lõi khối 3-4-5",
+        "Chương 3: Giới từ chỉ nơi chốn & Cấu trúc câu hỏi Wh-words",
+        "Chương 4: Thực hành viết đoạn văn ngắn & Nhận xét nhóm"
+      ],
+      "thumbnailUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=800",
+      "galleryUrls": [
+        "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=800"
+      ],
+      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "isFeatured": true,
+      "isPublished": true,
+      "createdAt": "2026-01-20"
+    },
+    {
+      "id": "c3",
+      "slug": "khoa-luyen-phan-xa-game-tuong-tac",
+      "titleEn": "Gamified English Fluency & Speed Quiz",
+      "titleVi": "Khóa Luyện Phản Xạ Tiếng Anh Qua Game Tương Tác",
+      "categoryName": "Luyện phản xạ game",
+      "categoryEn": "Gamified Fluency",
+      "priceType": "free",
+      "priceEn": "Free",
+      "priceVi": "Miễn phí",
+      "gradeLevel": "Grade 2 - 5",
+      "gradeLevelEn": "Grade 2 - 5",
+      "durationEn": "6 Sessions (3 Weeks)",
+      "durationVi": "6 Buổi (3 Tuần)",
+      "scheduleEn": "Sun Afternoon (2:00 - 4:00 PM)",
+      "scheduleVi": "Chiều Chủ Nhật (14:00 - 16:00)",
+      "descriptionEn": "Speed up listening comprehension and oral response using Wordwall, Kahoot, and live team games.",
+      "descriptionVi": "Tăng tốc độ phản xạ nghe - nói tiếng Anh thông qua đấu trí Wordwall, Kahoot và thử thách vận động đồng đội.",
+      "objectivesEn": [
+        "Accelerate English oral response time under 3 seconds.",
+        "Expand vocabulary retention through interactive game loops.",
+        "Enhance focus, listening speed, and stage presence."
+      ],
+      "objectivesVi": [
+        "Rút ngắn thời gian phản xạ trả lời tiếng Anh dưới 3 giây.",
+        "Mở rộng vốn từ vựng tự nhiên qua các vòng lặp trò chơi.",
+        "Nâng cao sự tập trung, tốc độ nghe và sự tự tin phát biểu."
+      ],
+      "curriculumEn": [
+        "Session 1: Fast Word Matching Challenge",
+        "Session 2: Listening & Action Relay Games",
+        "Session 3: Kahoot Vocabulary Showdown",
+        "Session 4: Roleplay Dialogue Speed Run",
+        "Session 5: Mystery Puzzle Team Battle",
+        "Session 6: Champion Tournament & Certificate"
+      ],
+      "curriculumVi": [
+        "Buổi 1: Thử thách Ghép từ nhanh theo chủ đề",
+        "Buổi 2: Trò chơi tiếp sức Nghe & Thực hiện hành động",
+        "Buổi 3: Đấu trí Kahoot từ vựng theo khối lớp",
+        "Buổi 4: Đóng vai thoại nhanh phản xạ tình huống",
+        "Buổi 5: Giải mã ô chữ bí ẩn đồng đội",
+        "Buổi 6: Giải đấu vô địch phản xạ & Trao quà"
+      ],
+      "thumbnailUrl": "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=800",
+      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "isFeatured": true,
+      "isPublished": true,
+      "createdAt": "2026-01-10"
+    },
+    {
+      "id": "c4",
+      "slug": "khoa-luyen-nghe-noi-giao-tiep",
+      "titleEn": "Confident Speaking & Everyday Listening",
+      "titleVi": "Khóa Luyện Nghe Nói & Giao Tiếp Tự Tin",
+      "categoryName": "Luyện nghe nói",
+      "categoryEn": "Listening & Speaking",
+      "priceType": "paid",
+      "priceEn": "600.000 VNĐ / Khóa",
+      "priceVi": "600.000 VNĐ / Khóa",
+      "discountPriceVi": "499.000 VNĐ / Khóa",
+      "discountPriceEn": "499.000 VNĐ / Khóa",
+      "gradeLevel": "Grade 3 - 5",
+      "gradeLevelEn": "Grade 3 - 5",
+      "durationEn": "10 Sessions (5 Weeks)",
+      "durationVi": "10 Buổi (5 Tuần)",
+      "scheduleEn": "Tue & Thu Evening (6:30 - 8:00 PM)",
+      "scheduleVi": "Tối Thứ 3 & Thứ 5 (18:30 - 20:00)",
+      "descriptionEn": "Intensive speaking course helping primary students overcome fear of speaking through real scenarios.",
+      "descriptionVi": "Khóa học chuyên sâu rèn kỹ năng phát âm, nối âm và xử lý tình huống giao tiếp tiếng Anh hàng ngày.",
+      "objectivesEn": [
+        "Speak with correct intonation and fluency",
+        "Improve listening for main ideas"
+      ],
+      "objectivesVi": [
+        "Phát âm chuẩn ngữ điệu và biểu cảm",
+        "Lắng nghe tốt ý chính bài hội thoại"
+      ],
+      "curriculumEn": [
+        "Week 1: Intonation & Linking Sounds",
+        "Week 2: Shopping & Order Food Roleplay"
+      ],
+      "curriculumVi": [
+        "Tuần 1: Ngữ điệu & Kỹ thuật nối âm chuẩn",
+        "Tuần 2: Đóng vai Mua sắm & Gọi món ăn"
+      ],
+      "thumbnailUrl": "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=800",
+      "galleryUrls": [
+        "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=800"
+      ],
+      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "isFeatured": false,
+      "isPublished": true,
+      "createdAt": "2025-12-15"
+    }
+  ],
+  "db_resources": [
+    {
+      "id": "res1",
+      "slug": "bo-sach-truyen-tranh-phonics-fun",
+      "titleEn": "Phonics Fun Storybook Collection (Volumes 1 - 3)",
+      "titleVi": "Bộ Sách Truyện Tranh Ngữ Âm Phonics Fun (Tập 1 - 3)",
+      "descriptionEn": "Illustrated storybooks built specifically for primary students to master letter sounds, blending, and vocabulary.",
+      "descriptionVi": "Bộ sách truyện tranh hình minh họa rực rỡ thiết kế chuẩn sư phạm tiểu học giúp trẻ làm chủ âm tiết, nối âm và từ vựng.",
+      "categoryName": "Sách & Giáo trình",
+      "resourceType": "book",
+      "priceType": "paid",
+      "priceEn": "180.000 VNĐ / Bộ",
+      "priceVi": "180.000 VNĐ / Bộ",
+      "grade": "Grade 1 - 3",
+      "fileType": "In bản cứng / Sách giấy",
+      "previewUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=800",
+      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "downloadCount": 185,
+      "specificationsEn": [
+        "Includes 3 storybooks",
+        "Full color 48 pages each",
+        "Audio QR codes included for audiobooks"
+      ],
+      "specificationsVi": [
+        "Bao gồm 3 cuốn sách truyện",
+        "In màu toàn bộ 48 trang/cuốn",
+        "Mã QR quét nghe audio giọng đọc chuẩn"
+      ],
+      "tags": [
+        "Phonics",
+        "Storybook",
+        "Books"
+      ],
+      "isFeatured": true,
+      "isPublished": true,
+      "createdAt": "2026-01-10",
+      "categoryEn": "Books & Curricula",
+      "gradeEn": "Grade 1 - 3",
+      "fileTypeEn": "Physical Print / Book"
+    },
+    {
+      "id": "res2",
+      "slug": "phan-mem-word-games-pro",
+      "titleEn": "Word Games Pro Interactive Desktop App",
+      "titleVi": "Phần Mềm Đấu Trí Từ Vựng Tiếng Anh Word Games Pro",
+      "descriptionEn": "Interactive educational software with over 500 English vocabulary games, quizzes, and speed relays for Windows & Mac.",
+      "descriptionVi": "Phần mềm học tập tương tác chứa hơn 500 mini-game từ vựng, quiz đấu trí và thử thách tốc độ dành cho máy tính.",
+      "categoryName": "Phần mềm & App",
+      "resourceType": "software",
+      "priceType": "paid",
+      "priceEn": "250.000 VNĐ / Bản quyền",
+      "priceVi": "250.000 VNĐ / Bản quyền",
+      "grade": "Grade 1 - 5",
+      "fileType": "Phần mềm Windows / macOS",
+      "fileUrl": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      "previewUrl": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800",
+      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "downloadCount": 420,
+      "specificationsEn": [
+        "Lifetime offline license",
+        "Compatible with Windows 10/11 & macOS",
+        "500+ interactive games"
+      ],
+      "specificationsVi": [
+        "Kích hoạt bản quyền vĩnh viễn offline",
+        "Tương thích Windows 10/11 và macOS",
+        "Hơn 500 trò chơi sinh động"
+      ],
+      "tags": [
+        "Software",
+        "EdTech",
+        "Gamification"
+      ],
+      "isFeatured": true,
+      "isPublished": true,
+      "createdAt": "2026-01-15",
+      "categoryEn": "Software & Apps",
+      "gradeEn": "Grade 1 - 5",
+      "fileTypeEn": "Windows / macOS App"
+    },
+    {
+      "id": "res3",
+      "slug": "bo-the-thuc-hanh-phonics-tu-vung-3",
+      "titleEn": "Grade 3 Phonics & Sight Words Practice Cards",
+      "titleVi": "Bộ Thẻ Thực Hành Phonics & Từ Vựng Lớp 3 (Printable Flashcards)",
+      "descriptionEn": "Printable flashcard set featuring 50 core sight words with colorful illustrations and phonics sound markers.",
+      "descriptionVi": "Bộ thẻ từ in ấn chứa 50 từ vựng cốt lõi đi kèm hình ảnh sinh động và ký hiệu phiên âm chuẩn cho giáo viên và phụ huynh.",
+      "categoryName": "File Học liệu Số",
+      "resourceType": "digital_file",
+      "priceType": "free",
+      "priceEn": "Free",
+      "priceVi": "Miễn phí",
+      "grade": "Grade 3",
+      "fileType": "File PDF In Ấn",
+      "fileUrl": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      "previewUrl": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=800",
+      "downloadCount": 612,
+      "specificationsEn": [
+        "High resolution PDF file",
+        "Ready for A4 double-sided printing",
+        "50 vocabulary cards"
+      ],
+      "specificationsVi": [
+        "File PDF độ phân giải cao",
+        "Sẵn sàng in ấn A4 2 mặt",
+        "50 thẻ từ vựng thiết kế đẹp mắt"
+      ],
+      "tags": [
+        "Phonics",
+        "Flashcards",
+        "Grade 3"
+      ],
+      "isFeatured": true,
+      "isPublished": true,
+      "createdAt": "2026-01-05",
+      "categoryEn": "Digital Files",
+      "gradeEn": "Grade 3",
+      "fileTypeEn": "File PDF In Ấn"
+    },
+    {
+      "id": "res4",
+      "slug": "bo-roi-tay-con-vat-ke-chuyen",
+      "titleEn": "English Storytelling Animal Hand Puppet Kit",
+      "titleVi": "Bộ Rối Tay & Mô Hình Con Vật Kể Chuyện Tiếng Anh",
+      "descriptionEn": "Hand puppet set crafted with soft fabric to make English roleplaying and storytelling interactive for young learners.",
+      "descriptionVi": "Bộ rối tay nhân vật động vật ngộ nghĩnh bằng vải nỉ cao cấp phục vụ đóng vai kịch ngắn và kể chuyện trong giờ học.",
+      "categoryName": "Dụng cụ & Giáo cụ",
+      "resourceType": "teaching_tool",
+      "priceType": "paid",
+      "priceEn": "320.000 VNĐ / Bộ 6 con",
+      "priceVi": "320.000 VNĐ / Bộ 6 con",
+      "grade": "Grade 1 - 3",
+      "fileType": "Giáo cụ vải & gỗ",
+      "previewUrl": "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=800",
+      "downloadCount": 94,
+      "specificationsEn": [
+        "Set of 6 animal puppets",
+        "Soft velvet fabric",
+        "Safe for young children"
+      ],
+      "specificationsVi": [
+        "Bộ gồm 6 con rối tay khác nhau",
+        "Chất liệu nung nhung mềm mại an toàn",
+        "Kèm kịch bản hội thoại mẫu"
+      ],
+      "tags": [
+        "Puppets",
+        "Storytelling",
+        "Teaching Tools"
+      ],
+      "isFeatured": false,
+      "isPublished": true,
+      "createdAt": "2025-12-20",
+      "categoryEn": "Teaching Tools",
+      "gradeEn": "Grade 1 - 3",
+      "fileTypeEn": "Giáo cụ vải & gỗ"
+    },
+    {
+      "id": "res5",
+      "slug": "loa-nghe-noi-tieng-anh-nhis-smart-audio-kit",
+      "titleEn": "Smart Audio Kit & Sound Card Speaker for Children",
+      "titleVi": "Bộ Loa Nghe Nói Tiếng Anh Nhí Kèm Thẻ Âm Thanh Smart Audio Kit",
+      "descriptionEn": "Compact speaker device playing correct English phonics audio files when matching cards are inserted.",
+      "descriptionVi": "Thiết bị loa rèn phản xạ nghe - phát âm nhí, tự động đọc từ vựng và câu khi cắm thẻ bài tương ứng.",
+      "categoryName": "Thiết bị Nghe nhìn",
+      "resourceType": "audio_visual",
+      "priceType": "paid",
+      "priceEn": "490.000 VNĐ / Bộ",
+      "priceVi": "490.000 VNĐ / Bộ",
+      "grade": "Grade 1 - 4",
+      "fileType": "Thiết bị điện tử",
+      "previewUrl": "https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&q=80&w=800",
+      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "downloadCount": 156,
+      "specificationsEn": [
+        "Rechargeable battery via Type-C",
+        "Includes 112 double-sided cards (224 words)",
+        "Native accent speaker"
+      ],
+      "specificationsVi": [
+        "Pin sạc cổng Type-C tiện lợi",
+        "Kèm 112 thẻ 2 mặt (224 từ vựng)",
+        "Giọng phát âm chuẩn bản ngữ"
+      ],
+      "tags": [
+        "Audio",
+        "Devices",
+        "Phonics"
+      ],
+      "isFeatured": true,
+      "isPublished": true,
+      "createdAt": "2025-12-05",
+      "categoryEn": "Audio-Visual Equipment",
+      "gradeEn": "Grade 1 - 4",
+      "fileTypeEn": "Thiết bị điện tử"
+    }
+  ],
+  "db_blog": [
+    {
+      "id": "blog_1788150038365",
+      "slug": "5-effective-gamification-strategies-primary-english-copy-1788150038365",
+      "titleEn": "10 Proven Gamification Strategies to Boost Primary English Engagement (Copy)",
+      "titleVi": "10 Chiến Lược Học Qua Trò Chơi Giúp Học Sinh Tiểu Học Hào Hứng Học Tiếng Anh (Bản sao)",
+      "excerptEn": "Discover practical, low-prep games that instantly transform passive classrooms into active language learning environments.",
+      "excerptVi": "Khám phá các trò chơi lớp học dễ chuẩn bị giúp biến giờ học thụ động thành môi trường tương tác sôi nổi.",
+      "contentEn": "Gamification is about creating meaningful motivation in language learning.\nGamification is about creating meaningful motivation in language learning.",
+      "contentVi": "Gamification giúp tạo động lực học tập tự nhiên và hào hứng cho học sinh.\nGamification giúp tạo động lực học tập tự nhiên và hào hứng cho học sinh.",
+      "featuredImage": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=600",
+      "categoryName": "Teaching Tips",
+      "tags": [
+        "Gamification",
+        "Classroom Management"
+      ],
+      "author": "Nguyễn Trọng Huy Hoàng",
+      "readingTimeEn": "5 min read",
+      "readingTimeVi": "5 phút đọc",
+      "status": "published",
+      "isFeatured": true,
+      "publishedAt": "2026-08-31",
+      "createdAt": "2026-02-01",
+      "galleryUrls": [
+        "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=600",
+        "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=800"
+      ],
+      "scheduledDate": "2026-09-02",
+      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+    },
+    {
+      "id": "blog1",
+      "slug": "5-effective-gamification-strategies-primary-english",
+      "titleEn": "5 Proven Gamification Strategies to Boost Primary English Engagement",
+      "titleVi": "5 Chiến Lược Học Qua Trò Chơi Giúp Học Sinh Tiểu Học Hào Hứng Học Tiếng Anh",
+      "excerptEn": "Discover practical, low-prep games that instantly transform passive classrooms into active language learning environments.",
+      "excerptVi": "Khám phá các trò chơi lớp học dễ chuẩn bị giúp biến giờ học thụ động thành môi trường tương tác sôi nổi.",
+      "contentEn": "Gamification is about creating meaningful motivation in language learning.",
+      "contentVi": "Gamification giúp tạo động lực học tập tự nhiên và hào hứng cho học sinh.",
+      "featuredImage": "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=800",
+      "categoryName": "English Learning Tips",
+      "tags": [
+        "Gamification",
+        "Classroom Management"
+      ],
+      "author": "Nguyễn Trọng Huy Hoàng",
+      "readingTimeEn": "5 min read",
+      "readingTimeVi": "5 phút đọc",
+      "status": "published",
+      "isFeatured": true,
+      "publishedAt": "2026-02-01",
+      "createdAt": "2026-02-01",
+      "galleryUrls": [
+        "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=800"
+      ]
+    }
+  ],
+  "db_achievements": [
+    {
+      "id": "ach1",
+      "titleEn": "Excellent Teacher Award (District Level)",
+      "titleVi": "Danh Hiệu Giáo Viên Dạy Giỏi Cấp Quận 10",
+      "organizationEn": "People’s Committee & Department of Education, District 10, HCMC",
+      "organizationVi": "Ủy ban Nhân dân & Phòng Giáo dục và Đào tạo Quận 10, TP.HCM",
+      "date": "04/2025",
+      "category": "Awards",
+      "certificateUrl": "https://images.unsplash.com/photo-1589330694653-aded6fac0244?auto=format&fit=crop&q=80&w=600",
+      "descriptionEn": "Awarded for outstanding innovation in primary English teaching methods and EdTech application.",
+      "descriptionVi": "Khen thưởng cho thành tích xuất sắc trong đổi mới phương pháp dạy tiếng Anh tiểu học và ứng dụng CNTT.",
+      "orderIndex": 1,
+      "categoryEn": "Awards",
+      "galleryUrls": [
+        "https://images.unsplash.com/photo-1589330694653-aded6fac0244?auto=format&fit=crop&q=80&w=600",
+        "https://ik.imagekit.io/hkh/Giay khen_mau 1.jpg",
+        "https://ik.imagekit.io/hkh/Giay khen_mau 2.png"
+      ]
+    },
+    {
+      "id": "ach_1788157722025",
+      "titleEn": "Excellent Teacher Award (District Level) (Copy)",
+      "titleVi": "Danh Hiệu Giáo Viên Dạy Giỏi Cấp Quận 10 (Bản sao)",
+      "organizationEn": "People’s Committee & Department of Education, District 10, HCMC",
+      "organizationVi": "Ủy ban Nhân dân & Phòng Giáo dục và Đào tạo Quận 10, TP.HCM",
+      "date": "2025",
+      "category": "EdTech",
+      "certificateUrl": "",
+      "descriptionEn": "Awarded for outstanding innovation in primary English teaching methods and EdTech application.",
+      "descriptionVi": "Khen thưởng cho thành tích xuất sắc trong đổi mới phương pháp dạy tiếng Anh tiểu học và ứng dụng CNTT.",
+      "orderIndex": 2,
+      "categoryEn": "EdTech Presentations"
+    },
+    {
+      "id": "ach_1788200821128",
+      "titleEn": "Excellent Teacher Award (District Level) (Copy)",
+      "titleVi": "Danh Hiệu Giáo Viên Dạy Giỏi Cấp Quận 10 (Bản sao)",
+      "organizationEn": "People’s Committee & Department of Education, District 10, HCMC",
+      "organizationVi": "Ủy ban Nhân dân & Phòng Giáo dục và Đào tạo Quận 10, TP.HCM",
+      "date": "04/2025",
+      "category": "Awards",
+      "certificateUrl": "https://ik.imagekit.io/hkh/Giay khen_mau 1.jpg",
+      "descriptionEn": "Awarded for outstanding innovation in primary English teaching methods and EdTech application.",
+      "descriptionVi": "Khen thưởng cho thành tích xuất sắc trong đổi mới phương pháp dạy tiếng Anh tiểu học và ứng dụng CNTT.",
+      "orderIndex": 3,
+      "categoryEn": "Awards",
+      "galleryUrls": [
+        "https://ik.imagekit.io/hkh/Giay khen_mau 1.jpg",
+        "https://ik.imagekit.io/hkh/Giay khen_mau 2.png"
+      ]
+    }
+  ],
+  "db_gallery": [
+    {
+      "id": "gal1",
+      "titleEn": "Interactive English Speaking Station in Class 4B",
+      "titleVi": "Góc Luyện Nói Tiếng Anh Tương Tác Lớp 4B",
+      "category": "Lớp Học",
+      "mediaType": "image",
+      "mediaUrl": "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=800",
+      "thumbnailUrl": "",
+      "descriptionEn": "Students enthusiastically recording voice roleplay at classroom stations.",
+      "descriptionVi": "Học sinh hào hứng thu âm bài hội thoại đóng vai tại trạm học tập.",
+      "isPublished": true,
+      "createdAt": "2026-01-15",
+      "orderIndex": 1,
+      "categoryEn": "Classroom"
+    },
+    {
+      "id": "gal_1788174201215",
+      "titleEn": "Excellent Teacher Award (District Level)",
+      "titleVi": "Danh Hiệu Giáo Viên Dạy Giỏi Cấp Quận 10",
+      "category": "Hoạt Động Giảng Dạy",
+      "mediaType": "image",
+      "mediaUrl": "https://ik.imagekit.io/hkh/Giay%20khen_mau%201.jpg",
+      "thumbnailUrl": "https://ik.imagekit.io/hkh/Giay%20khen_mau%201.jpg",
+      "descriptionEn": "Students enthusiastically recording voice roleplay at classroom stations.",
+      "descriptionVi": "Học sinh hào hứng thu âm bài hội thoại đóng vai tại trạm học tập.",
+      "isPublished": true,
+      "createdAt": "2026-08-31",
+      "orderIndex": 2,
+      "categoryEn": "Teaching Activities",
+      "galleryUrls": [
+        "https://ik.imagekit.io/hkh/Giay%20khen_mau%201.jpg",
+        "https://ik.imagekit.io/hkh/Giay%20khen_mau%202.png"
+      ]
+    },
+    {
+      "id": "gal_1788174204390",
+      "titleEn": "English conversation with singer Rick Astley",
+      "titleVi": "Giao lưu tiếng Anh với ca sỹ Rick Astley",
+      "category": "Lớp Học",
+      "mediaType": "youtube",
+      "mediaUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "thumbnailUrl": "https://ik.imagekit.io/hkh/Rick Astley.jpg ",
+      "descriptionEn": "Students enthusiastically recording voice roleplay at classroom stations.",
+      "descriptionVi": "Học sinh hào hứng thu âm bài hội thoại đóng vai tại trạm học tập.",
+      "isPublished": true,
+      "createdAt": "2026-08-31",
+      "orderIndex": 4,
+      "categoryEn": "Classroom",
+      "galleryUrls": [
+        "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "https://www.youtube.com/watch?v=zVRaZlwLyJw"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+  <url>
+    <loc>https://teacherhuyhoang.com/</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://teacherhuyhoang.com/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://teacherhuyhoang.com/" />
+  </url>
+  <url>
+    <loc>https://teacherhuyhoang.com/about</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://teacherhuyhoang.com/about" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://teacherhuyhoang.com/about" />
+  </url>
+  <url>
+    <loc>https://teacherhuyhoang.com/teaching-methodology</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://teacherhuyhoang.com/teaching-methodology" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://teacherhuyhoang.com/teaching-methodology" />
+  </url>
+  <url>
+    <loc>https://teacherhuyhoang.com/courses</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://teacherhuyhoang.com/courses" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://teacherhuyhoang.com/courses" />
+  </url>
+  <url>
+    <loc>https://teacherhuyhoang.com/resources</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://teacherhuyhoang.com/resources" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://teacherhuyhoang.com/resources" />
+  </url>
+  <url>
+    <loc>https://teacherhuyhoang.com/projects</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://teacherhuyhoang.com/projects" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://teacherhuyhoang.com/projects" />
+  </url>
+  <url>
+    <loc>https://teacherhuyhoang.com/blog</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://teacherhuyhoang.com/blog" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://teacherhuyhoang.com/blog" />
+  </url>
+  <url>
+    <loc>https://teacherhuyhoang.com/gallery</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://teacherhuyhoang.com/gallery" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://teacherhuyhoang.com/gallery" />
+  </url>
+  <url>
+    <loc>https://teacherhuyhoang.com/achievements</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://teacherhuyhoang.com/achievements" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://teacherhuyhoang.com/achievements" />
+  </url>
+  <url>
+    <loc>https://teacherhuyhoang.com/student-works</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://teacherhuyhoang.com/student-works" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://teacherhuyhoang.com/student-works" />
+  </url>
+  <url>
+    <loc>https://teacherhuyhoang.com/contact</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://teacherhuyhoang.com/contact" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://teacherhuyhoang.com/contact" />
+  </url>
+</urlset>
