@@ -34,6 +34,7 @@ export const ContactPage: React.FC = () => {
   const bankAccountNo = settings?.bankAccountNo || '268330518';
   const bankAccountHolder = settings?.bankAccountHolder || 'HUỲNH KIM HƯNG';
   const bankCode = settings?.bankCode || 'VPB';
+  const bankBadgeName = bankCode === 'VPB' ? 'VPBank' : bankCode;
 
   const vietQrUrl = `https://img.vietqr.io/image/${bankCode}-${bankAccountNo}-compact2.png?accountName=${encodeURIComponent(bankAccountHolder)}`;
 
@@ -99,7 +100,7 @@ export const ContactPage: React.FC = () => {
     }
   };
 
-  const phoneNum = profile?.phone || settings?.contactPhone || '0987654321';
+  const phoneNum = settings?.contactPhone || profile?.phone || '0987654321';
   const zaloLink = settings?.zaloUrl || `https://zalo.me/${phoneNum.replace(/[^0-9]/g, '')}`;
 
   return (
@@ -358,7 +359,7 @@ export const ContactPage: React.FC = () => {
               <div className="flex items-center gap-3">
                 <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span>{language === 'vi' ? `Tài Khoản Đã Xác Thực ${bankCode}` : `Verified ${bankCode} Account`}</span>
+                  <span>{language === 'vi' ? `Tài Khoản Đã Xác Thực ${bankBadgeName}` : `Verified ${bankBadgeName} Account`}</span>
                 </div>
                 <button
                   type="button"
