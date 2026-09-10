@@ -24,9 +24,17 @@ import { ThemeToggle } from '../common/ThemeToggle';
 import { LangToggle } from '../common/LangToggle';
 
 export const AdminLayout: React.FC = () => {
-  const { user, isAdmin, logout } = useAuth();
+  const { user, isAdmin, logout, loading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 bg-slate-950 text-white">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div>
+      </div>
+    );
+  }
 
   if (!isAdmin) {
     return (

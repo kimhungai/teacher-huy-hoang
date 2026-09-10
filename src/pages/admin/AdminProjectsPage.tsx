@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { DB } from '../../services/db';
 import type { Project } from '../../types';
-import { Plus, Edit2, Trash2, Copy, Eye, EyeOff, Star } from 'lucide-react';
+import { Plus, Edit2, Trash2, Copy, Star } from 'lucide-react';
 import { Modal } from '../../components/common/Modal';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import { Toast } from '../../components/common/Toast';
 import { Badge } from '../../components/common/Badge';
+import { useLanguage } from '../../context/LanguageContext';
 
 export const AdminProjectsPage: React.FC = () => {
+  const { language } = useLanguage();
   const [projects, setProjects] = useState<Project[]>([]);
   const [editing, setEditing] = useState<Project | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -29,8 +31,10 @@ export const AdminProjectsPage: React.FC = () => {
       slug: '',
       titleEn: '',
       titleVi: '',
-      categoryName: 'English Projects',
-      grade: 'Grade 4 & 5',
+      categoryName: 'Dự án Học tập',
+      categoryEn: 'Learning Projects',
+      grade: 'Khối 4 & 5',
+      gradeEn: 'Grade 4 & 5',
       year: '2025-2026',
       descriptionEn: '',
       descriptionVi: '',
@@ -72,32 +76,42 @@ export const AdminProjectsPage: React.FC = () => {
     const updated = await DB.saveProject(cleaned);
     setProjects(updated);
     setModalOpen(false);
-    setToast({ msg: 'Đã lưu dự án thành công!', type: 'success' });
+    setToast({ msg: language === 'vi' ? 'Đã lưu dự án thành công!' : 'Project saved successfully!', type: 'success' });
   };
 
   const handleDuplicate = async (id: string) => {
     const updated = await DB.duplicateProject(id);
     setProjects(updated);
-    setToast({ msg: 'Đã nhân bản dự án thành công!', type: 'success' });
+    setToast({ msg: language === 'vi' ? 'Đã nhân bản dự án thành công!' : 'Project duplicated successfully!', type: 'success' });
   };
 
   const handleTogglePublish = async (proj: Project) => {
     const updated = await DB.saveProject({ ...proj, isPublished: !proj.isPublished });
     setProjects(updated);
-    setToast({ msg: proj.isPublished ? 'Đã ẩn dự án' : 'Đã xuất bản dự án', type: 'success' });
+    setToast({
+      msg: proj.isPublished
+        ? (language === 'vi' ? 'Đã ẩn dự án (Lưu thành Nháp)' : 'Project unpublished (Saved as Draft)')
+        : (language === 'vi' ? 'Đã xuất bản dự án' : 'Project published'),
+      type: 'success'
+    });
   };
 
   const handleToggleFeatured = async (proj: Project) => {
     const updated = await DB.saveProject({ ...proj, isFeatured: !proj.isFeatured });
     setProjects(updated);
-    setToast({ msg: 'Cập nhật trạng thái Nổi bật', type: 'success' });
+    setToast({
+      msg: proj.isFeatured
+        ? (language === 'vi' ? 'Đã bỏ đánh dấu Nổi bật' : 'Removed from featured')
+        : (language === 'vi' ? 'Đã đánh dấu Dự án Nổi bật' : 'Marked as featured project'),
+      type: 'success'
+    });
   };
 
   const handleConfirmDelete = async () => {
     if (deleteId) {
       const updated = await DB.deleteProject(deleteId);
       setProjects(updated);
-      setToast({ msg: 'Đã xóa dự án!', type: 'success' });
+      setToast({ msg: language === 'vi' ? 'Đã xóa dự án!' : 'Project deleted!', type: 'success' });
     }
   };
 
@@ -107,29 +121,35 @@ export const AdminProjectsPage: React.FC = () => {
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Quản Lý Dự Án Giảng Dạy</h1>
-          <p className="text-xs text-slate-500">Tạo, sửa, xóa, xuất bản và nhân bản các dự án tiếng Anh</p>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+            {language === 'vi' ? 'Quản Lý Dự Án Giảng Dạy' : 'Teaching Projects Management'}
+          </h1>
+          <p className="text-xs text-slate-500">
+            {language === 'vi'
+              ? 'Tạo, sửa, xóa, xuất bản và nhân bản các dự án tiếng Anh'
+              : 'Create, edit, delete, publish, and duplicate English projects'}
+          </p>
         </div>
         <button
           onClick={handleOpenAdd}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold shadow-md shadow-sky-600/20"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold shadow-md shadow-sky-600/20 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          <span>Tạo Dự Án Mới</span>
+          <span>{language === 'vi' ? 'Tạo Dự Án Mới' : 'Add New Project'}</span>
         </button>
       </div>
 
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-md">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 dark:bg-slate-950 text-slate-500 border-b border-slate-200 dark:border-slate-800">
+            <thead className="bg-slate-50 dark:bg-slate-950 text-slate-500 border-b border-slate-200 dark:border-slate-800 uppercase font-semibold">
               <tr>
-                <th className="p-4">Ảnh</th>
-                <th className="p-4">Tên dự án (VI)</th>
-                <th className="p-4">Chuyên mục</th>
-                <th className="p-4">Khối lớp</th>
-                <th className="p-4">Trạng thái</th>
-                <th className="p-4 text-right">Thao tác</th>
+                <th className="p-4">{language === 'vi' ? 'Ảnh' : 'Image'}</th>
+                <th className="p-4">{language === 'vi' ? 'Tên dự án' : 'Project Title'}</th>
+                <th className="p-4">{language === 'vi' ? 'Chuyên mục' : 'Category'}</th>
+                <th className="p-4">{language === 'vi' ? 'Khối lớp' : 'Grade'}</th>
+                <th className="p-4">{language === 'vi' ? 'Trạng thái' : 'Status'}</th>
+                <th className="p-4 text-right">{language === 'vi' ? 'Thao tác' : 'Actions'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -139,39 +159,51 @@ export const AdminProjectsPage: React.FC = () => {
                     <img src={item.thumbnailUrl} alt="" className="w-14 h-10 rounded-lg object-cover" />
                   </td>
                   <td className="p-4 font-bold text-slate-900 dark:text-white max-w-xs truncate">
-                    {item.titleVi}
+                    <div>{language === 'vi' ? item.titleVi : item.titleEn}</div>
+                    <div className="text-[11px] text-slate-400 font-normal">{language === 'vi' ? item.titleEn : item.titleVi}</div>
                   </td>
-                  <td className="p-4">{item.categoryName}</td>
+                  <td className="p-4">{language === 'vi' ? item.categoryName : (item.categoryEn || item.categoryName)}</td>
                   <td className="p-4">
-                    <Badge variant="sky">{item.grade}</Badge>
+                    <Badge variant="sky">{language === 'vi' ? item.grade : (item.gradeEn || item.grade)}</Badge>
                   </td>
                   <td className="p-4">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5">
                       <button
                         onClick={() => handleTogglePublish(item)}
-                        className={`p-1 rounded-md text-[11px] font-semibold flex items-center gap-1 ${
-                          item.isPublished ? 'bg-emerald-500/10 text-emerald-600' : 'bg-slate-500/10 text-slate-500'
-                        }`}
+                        className="cursor-pointer"
+                        title={language === 'vi' ? 'Bấm để chuyển trạng thái xuất bản' : 'Click to toggle publish status'}
                       >
-                        {item.isPublished ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
-                        <span>{item.isPublished ? 'Published' : 'Draft'}</span>
+                        {item.isPublished ? (
+                          <Badge variant="emerald">{language === 'vi' ? 'Đã xuất bản' : 'Published'}</Badge>
+                        ) : (
+                          <Badge variant="amber">{language === 'vi' ? 'Nháp' : 'Draft'}</Badge>
+                        )}
                       </button>
-                      <button
-                        onClick={() => handleToggleFeatured(item)}
-                        className={`p-1 rounded-md ${
-                          item.isFeatured ? 'text-amber-500 fill-amber-500' : 'text-slate-300'
-                        }`}
-                        title="Nổi bật"
-                      >
-                        <Star className="w-4 h-4" />
-                      </button>
+                      {item.isFeatured && (
+                        <button
+                          onClick={() => handleToggleFeatured(item)}
+                          className="cursor-pointer"
+                          title={language === 'vi' ? 'Bấm để bỏ đánh dấu Nổi bật' : 'Click to unfeature'}
+                        >
+                          <Badge variant="indigo">{language === 'vi' ? 'Nổi bật' : 'Featured'}</Badge>
+                        </button>
+                      )}
+                      {!item.isFeatured && (
+                        <button
+                          onClick={() => handleToggleFeatured(item)}
+                          className="p-1 text-slate-300 hover:text-amber-500 cursor-pointer transition-colors"
+                          title={language === 'vi' ? 'Bấm để đánh dấu Dự án Nổi bật' : 'Click to feature project'}
+                        >
+                          <Star className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
                   </td>
                   <td className="p-4 text-right space-x-1.5">
                     <button
                       onClick={() => handleDuplicate(item.id)}
-                      title="Nhân bản"
-                      className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-600 hover:bg-indigo-500/20"
+                      title={language === 'vi' ? 'Nhân bản' : 'Duplicate'}
+                      className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-600 hover:bg-indigo-500/20 cursor-pointer"
                     >
                       <Copy className="w-4 h-4" />
                     </button>
@@ -180,15 +212,15 @@ export const AdminProjectsPage: React.FC = () => {
                         setEditing(item);
                         setModalOpen(true);
                       }}
-                      title="Sửa"
-                      className="p-1.5 rounded-lg bg-sky-500/10 text-sky-600 hover:bg-sky-500/20"
+                      title={language === 'vi' ? 'Sửa' : 'Edit'}
+                      className="p-1.5 rounded-lg bg-sky-500/10 text-sky-600 hover:bg-sky-500/20 cursor-pointer"
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => setDeleteId(item.id)}
-                      title="Xóa"
-                      className="p-1.5 rounded-lg bg-rose-500/10 text-rose-600 hover:bg-rose-500/20"
+                      title={language === 'vi' ? 'Xóa' : 'Delete'}
+                      className="p-1.5 rounded-lg bg-rose-500/10 text-rose-600 hover:bg-rose-500/20 cursor-pointer"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -201,7 +233,12 @@ export const AdminProjectsPage: React.FC = () => {
       </div>
 
       {/* Modal Edit/Add */}
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Chỉnh sửa Dự án Giảng dạy" maxWidth="max-w-3xl">
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={language === 'vi' ? 'Chỉnh sửa Dự án Giảng dạy' : 'Edit Teaching Project'}
+        maxWidth="max-w-3xl"
+      >
         {editing && (
           <form onSubmit={handleSave} className="space-y-4 text-left">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -423,16 +460,39 @@ export const AdminProjectsPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-4">
+            {/* Checkboxes: Xuất bản ngay & Dự án Nổi bật */}
+            <div className="flex items-center gap-6 pt-3 border-t border-slate-100 dark:border-slate-800">
+              <label className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300 font-semibold text-xs">
+                <input
+                  type="checkbox"
+                  checked={editing.isPublished ?? true}
+                  onChange={(e) => setEditing({ ...editing, isPublished: e.target.checked })}
+                  className="rounded text-sky-600 focus:ring-sky-500"
+                />
+                <span>{language === 'vi' ? 'Xuất bản ngay' : 'Publish now'}</span>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300 font-semibold text-xs">
+                <input
+                  type="checkbox"
+                  checked={editing.isFeatured ?? false}
+                  onChange={(e) => setEditing({ ...editing, isFeatured: e.target.checked })}
+                  className="rounded text-sky-600 focus:ring-sky-500"
+                />
+                <span>{language === 'vi' ? 'Dự án Nổi bật' : 'Featured Project'}</span>
+              </label>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-4 border-t border-slate-200 dark:border-slate-800">
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
-                className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold"
+                className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
               >
-                Hủy
+                {language === 'vi' ? 'Hủy' : 'Cancel'}
               </button>
-              <button type="submit" className="px-4 py-2 rounded-xl bg-sky-600 text-white text-xs font-bold">
-                Lưu Dự Án
+              <button type="submit" className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold transition-colors">
+                {language === 'vi' ? 'Lưu Dự Án' : 'Save Project'}
               </button>
             </div>
           </form>

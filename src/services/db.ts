@@ -719,10 +719,10 @@ const INITIAL_SITE_SETTINGS: SiteSettings = {
   logoText: 'Huy Hoang English',
   primaryColor: '#0284C7',
   secondaryColor: '#0F172A',
-  contactEmail: 'huynhkimhungabmthaydangtu@gmail.com',
+  contactEmail: 'teacherhuyhoang@gmail.com',
   contactPhone: '0987654321',
-  websiteUrl: 'https://thaydangtu.com',
-  notificationEmail: 'huynhkimhungabmthaydangtu@gmail.com',
+  websiteUrl: 'https://teacherhuyhoang.com',
+  notificationEmail: 'teacherhuyhoang@gmail.com',
   defaultLanguage: 'vi',
   defaultTheme: 'dark',
   facebookUrl: 'https://facebook.com',
@@ -743,7 +743,7 @@ const INITIAL_SITE_SETTINGS: SiteSettings = {
   clientAdminAccounts: [
     {
       id: 'ca_default',
-      email: 'huynhkimhungabmthaydangtu@gmail.com',
+      email: 'teacherhuyhoang@gmail.com',
       password: 'Admin@123',
       name: 'Tài khoản bàn giao Khách hàng',
       role: 'client_admin',
@@ -829,7 +829,9 @@ const syncToSupabase = async (key: string, val: any) => {
   try {
     if (key === 'db_settings') {
       const s = val as SiteSettings;
-      await supabase.from('site_settings').upsert({
+      const SETTINGS_ROW_ID = '00000000-0000-0000-0000-000000000001';
+      const { error } = await supabase.from('site_settings').upsert({
+        id: SETTINGS_ROW_ID,
         site_title_en: s.siteTitleEn,
         site_title_vi: s.siteTitleVi,
         logo_text: s.logoText,
@@ -858,7 +860,10 @@ const syncToSupabase = async (key: string, val: any) => {
         emailjs_template_id_admin: s.emailjsTemplateIdAdmin,
         emailjs_public_key: s.emailjsPublicKey,
         updated_at: new Date().toISOString()
-      });
+      }, { onConflict: 'id' });
+      if (error) {
+        console.error('Supabase Site Settings Upsert Error:', error);
+      }
     } else if (key === 'db_course_regs') {
       const list = val as CourseRegistration[];
       if (list && list.length > 0) {
@@ -2210,6 +2215,49 @@ export const DB = {
 
   // SITE SETTINGS
   async getSiteSettings(): Promise<SiteSettings> {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase.from('site_settings').select('*').order('updated_at', { ascending: false }).limit(1).maybeSingle();
+        if (data && !error) {
+          const s: SiteSettings = {
+            siteTitleEn: data.site_title_en || INITIAL_SITE_SETTINGS.siteTitleEn,
+            siteTitleVi: data.site_title_vi || INITIAL_SITE_SETTINGS.siteTitleVi,
+            logoText: data.logo_text || INITIAL_SITE_SETTINGS.logoText,
+            logoUrl: data.logo_url || INITIAL_SITE_SETTINGS.logoUrl,
+            faviconUrl: data.favicon_url || INITIAL_SITE_SETTINGS.faviconUrl,
+            primaryColor: data.primary_color || INITIAL_SITE_SETTINGS.primaryColor,
+            secondaryColor: data.secondary_color || INITIAL_SITE_SETTINGS.secondaryColor,
+            contactEmail: data.contact_email || INITIAL_SITE_SETTINGS.contactEmail,
+            contactPhone: data.contact_phone || INITIAL_SITE_SETTINGS.contactPhone,
+            websiteUrl: data.website_url || INITIAL_SITE_SETTINGS.websiteUrl,
+            notificationEmail: data.notification_email || INITIAL_SITE_SETTINGS.notificationEmail,
+            defaultLanguage: data.default_language || INITIAL_SITE_SETTINGS.defaultLanguage,
+            defaultTheme: data.default_theme || INITIAL_SITE_SETTINGS.defaultTheme,
+            facebookUrl: data.facebook_url || INITIAL_SITE_SETTINGS.facebookUrl,
+            youtubeUrl: data.youtube_url || INITIAL_SITE_SETTINGS.youtubeUrl,
+            tiktokUrl: data.tiktok_url || INITIAL_SITE_SETTINGS.tiktokUrl,
+            instagramUrl: data.instagram_url || INITIAL_SITE_SETTINGS.instagramUrl,
+            linkedinUrl: data.linkedin_url || INITIAL_SITE_SETTINGS.linkedinUrl,
+            footerTextEn: data.footer_text_en || INITIAL_SITE_SETTINGS.footerTextEn,
+            footerTextVi: data.footer_text_vi || INITIAL_SITE_SETTINGS.footerTextVi,
+            clientAdminAccounts: data.client_admin_accounts || INITIAL_SITE_SETTINGS.clientAdminAccounts,
+            enableEmailNotification: data.enable_email_notification !== false,
+            emailProvider: data.email_provider || INITIAL_SITE_SETTINGS.emailProvider,
+            emailjsServiceId: data.emailjs_service_id || '',
+            emailjsTemplateIdCustomer: data.emailjs_template_id_customer || '',
+            emailjsTemplateIdAdmin: data.emailjs_template_id_admin || '',
+            emailjsPublicKey: data.emailjs_public_key || '',
+            adminPassword: INITIAL_SITE_SETTINGS.adminPassword,
+            superAdminPassword: INITIAL_SITE_SETTINGS.superAdminPassword
+          };
+          setStorageItem('db_settings', s);
+          applyPrimaryColor(s.primaryColor);
+          return s;
+        }
+      } catch (err) {
+        console.error('Failed to load settings from Supabase:', err);
+      }
+    }
     return getStorageItem('db_settings', INITIAL_SITE_SETTINGS);
   },
 
@@ -2219,6 +2267,8 @@ export const DB = {
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new Event('site-settings-updated'));
     }
+    syncToDisk();
+    syncToSupabase('db_settings', settings);
     return settings;
   },
 

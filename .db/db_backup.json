@@ -64,42 +64,35 @@
     "secondaryColor": "#0F172A",
     "contactEmail": "huynhkimhungabmthaydangtu@gmail.com",
     "contactPhone": "0987654321",
-    "defaultLanguage": "vi",
-    "facebookUrl": "https://facebook.com",
-    "youtubeUrl": "https://youtube.com",
-    "linkedinUrl": "",
-    "footerTextEn": "© 2026 Teacher Nguyen Trong Huy Hoang. Duong Minh Chau Primary School.",
-    "footerTextVi": "© 2026 Thầy giáo Nguyễn Trọng Huy Hoàng. Trường TH Dương Minh Châu.",
-    "showBlogMenu": true,
-    "showGalleryMenu": true,
-    "footerTaglineVi": "Được tạo với ❤️ cho Giáo Dục",
-    "footerTaglineEn": "Crafted with ❤️ for Education",
-    "adminPassword": "Admin@123",
-    "xUrl": "https://x.com",
-    "zaloUrl": "https://zalo.me/0929053750",
-    "tiktokUrl": "https://tiktok.com",
-    "instagramUrl": "https://instagram.com",
-    "showProjectsMenu": true,
-    "showAchievementsMenu": true,
-    "defaultTheme": "dark",
-    "superAdminPassword": "Admin@2020",
-    "emailProvider": "emailjs",
-    "emailjsServiceId": "service_zs3o9xk",
-    "emailjsPublicKey": "WO1ouvFyJLF6lTfz8",
-    "emailjsTemplateIdAdmin": "template_x0sq81m",
-    "emailjsTemplateIdCustomer": "template_x0sq81m",
     "websiteUrl": "https://teacherhuyhoang.com",
     "notificationEmail": "huynhkimhungabmthaydangtu@gmail.com",
+    "defaultLanguage": "vi",
+    "defaultTheme": "dark",
+    "facebookUrl": "https://facebook.com",
+    "youtubeUrl": "https://youtube.com",
+    "tiktokUrl": "https://tiktok.com",
+    "instagramUrl": "https://instagram.com",
+    "linkedinUrl": "https://linkedin.com",
+    "footerTextEn": "© 2026 Teacher Nguyen Trong Huy Hoang. Duong Minh Chau Primary School.",
+    "footerTextVi": "© 2026 Thầy giáo Nguyễn Trọng Huy Hoàng. Trường TH Dương Minh Châu.",
     "clientAdminAccounts": [
       {
         "id": "ca_default",
-        "email": "huynhkimhung2023@gmail.com",
-        "password": "Admin@123",
         "name": "Tài khoản bàn giao Khách hàng",
         "role": "client_admin",
+        "email": "huynhkimhung2023@gmail.com",
+        "password": "Admin@123",
         "createdAt": "2026-01-01"
       }
-    ]
+    ],
+    "enableEmailNotification": true,
+    "emailProvider": "emailjs",
+    "emailjsServiceId": "service_zs3o9xk",
+    "emailjsTemplateIdCustomer": "template_x0sq81m",
+    "emailjsTemplateIdAdmin": "template_x0sq81m",
+    "emailjsPublicKey": "WO1ouvFyJLF6lTfz8",
+    "adminPassword": "Admin@123",
+    "superAdminPassword": "Admin@2020"
   },
   "db_teaching": [
     {
@@ -184,6 +177,74 @@
     }
   ],
   "db_projects": [
+    {
+      "id": "proj_1789022641658",
+      "slug": "my-green-planet-project-copy-1789022641658",
+      "titleEn": "Project: \"My Green Planet & Environmental Heroes\" (Copy)",
+      "titleVi": "Dự án: \"Hành Tinh Xanh & Hiệp Sĩ Môi Trường\" (Bản sao)",
+      "categoryName": "Dự án học tập",
+      "grade": "Lớp 4 & 5",
+      "year": "2025-2026",
+      "descriptionEn": "A 4-week integrated PBL project where students learned vocabulary about nature, recycled materials, and presented solutions in English.",
+      "descriptionVi": "Dự án PBL kéo dài 4 tuần giúp học sinh tiếp thu từ vựng về môi trường, vật liệu tái chế và thuyết trình giải pháp bằng tiếng Anh.",
+      "objectivesEn": [
+        "Master 30+ vocabulary terms related to environment and recycling.",
+        "Practice present continuous and modal verbs (should/shouldnt).",
+        "Boost team collaboration and public speaking skills."
+      ],
+      "objectivesVi": [
+        "Làm chủ 30+ từ vựng về môi trường và phân loại rác thải.",
+        "Thực hành thì hiện tại tiếp diễn và động từ khuyết thiếu (should/shouldnt).",
+        "Nâng cao kỹ năng làm việc nhóm và thuyết trình trước lớp."
+      ],
+      "activitiesEn": [
+        "Week 1: Environmental vocabulary discovery with flashcards and songs.",
+        "Week 2: Poster creation using recycled paper and colored markers.",
+        "Week 3: Group presentation rehearsal with peer evaluation rubric.",
+        "Week 4: Exhibition day for parents and school teachers."
+      ],
+      "activitiesVi": [
+        "Tuần 1: Khám phá từ vựng môi trường qua tranh ảnh và bài hát.",
+        "Tuần 2: Thiết kế áp phích từ giấy tái chế và màu vẽ.",
+        "Tuần 3: Luyện tập thuyết trình nhóm và đánh giá chéo.",
+        "Tuần 4: Ngày hội triển lãm dành cho phụ huynh và thầy cô."
+      ],
+      "methodsEn": [
+        "Project-Based Learning",
+        "Collaborative Group Work",
+        "Visual Art Integration"
+      ],
+      "methodsVi": [
+        "Học theo dự án",
+        "Thảo luận nhóm",
+        "Tích hợp nghệ thuật trực quan"
+      ],
+      "outcomesEn": [
+        "120 student posters created",
+        "95% student confidence increase in public speaking"
+      ],
+      "outcomesVi": [
+        "120 áp phích được học sinh hoàn thiện",
+        "95% học sinh tự tin hơn khi phát biểu tiếng Anh"
+      ],
+      "thumbnailUrl": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800",
+      "galleryUrls": [
+        "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800",
+        "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=800"
+      ],
+      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "tags": [
+        "PBL",
+        "Environment",
+        "Speaking",
+        "Poster"
+      ],
+      "isFeatured": false,
+      "isPublished": true,
+      "createdAt": "2026-02-15",
+      "categoryEn": "Learning Projects",
+      "gradeEn": "Grade 4 & 5"
+    },
     {
       "id": "proj1",
       "slug": "my-green-planet-project",
