@@ -24,6 +24,7 @@ import {
 import { Toast } from '../components/common/Toast';
 import { LoadingSkeleton } from '../components/common/LoadingSkeleton';
 import { ImageLightbox } from '../components/common/ImageLightbox';
+import { BankPaymentCardModal } from '../components/common/BankPaymentCardModal';
 import { sendResourceOrderEmails } from '../services/emailNotifier';
 import { SEO } from '../components/common/SEO';
 
@@ -528,6 +529,9 @@ export const ResourceDetailPage: React.FC = () => {
                   <Send className="w-4 h-4" />
                   <span>{submitting ? t('btn.submitting') : t('resource.requestOrder')}</span>
                 </button>
+
+                {/* Bank Payment Account Card */}
+                <BankPaymentCardModal className="mt-3" />
               </div>
             </div>
           </div>

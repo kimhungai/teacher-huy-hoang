@@ -22,6 +22,7 @@ import {
 import { Toast } from '../components/common/Toast';
 import { LoadingSkeleton } from '../components/common/LoadingSkeleton';
 import { ImageLightbox } from '../components/common/ImageLightbox';
+import { BankPaymentCardModal } from '../components/common/BankPaymentCardModal';
 import { sendRegistrationEmails } from '../services/emailNotifier';
 import { SEO } from '../components/common/SEO';
 
@@ -500,6 +501,9 @@ export const CourseDetailPage: React.FC = () => {
                   <Send className="w-4 h-4" />
                   <span>{submitting ? t('btn.submitting') : t('course.registerNow')}</span>
                 </button>
+
+                {/* Bank Payment Account Card */}
+                <BankPaymentCardModal className="mt-3" />
               </div>
             </div>
           </div>

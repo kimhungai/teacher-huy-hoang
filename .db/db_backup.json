@@ -91,6 +91,14 @@
         "email": "gentlemanhoang@gmail.com",
         "password": "Admin@123",
         "createdAt": "2026-09-10"
+      },
+      {
+        "id": "ca_1789037998990",
+        "name": "Tai khoản khách hàng DEMO",
+        "role": "client_admin",
+        "email": "huynhkimhungabmthaydangtu@gmail.com",
+        "password": "Admin@123",
+        "createdAt": "2026-09-10"
       }
     ],
     "enableEmailNotification": true,
@@ -99,6 +107,10 @@
     "emailjsTemplateIdCustomer": "template_x0sq81m",
     "emailjsTemplateIdAdmin": "template_x0sq81m",
     "emailjsPublicKey": "WO1ouvFyJLF6lTfz8",
+    "bankName": "Ngân hàng VPBank",
+    "bankAccountNo": "268330518",
+    "bankAccountHolder": "HUỲNH KIM HƯNG",
+    "bankCode": "VPB",
     "adminPassword": "Admin@123",
     "superAdminPassword": "Admin@2020"
   },
@@ -186,14 +198,12 @@
   ],
   "db_projects": [
     {
-      "id": "49e91874-d024-473e-a627-710f123c2185",
-      "slug": "my-green-planet-project",
-      "titleEn": "Project: \"My Green Planet & Environmental Heroes\"",
-      "titleVi": "Dự án: \"Hành Tinh Xanh & Hiệp Sĩ Môi Trường\"",
+      "id": "proj_1789022641658",
+      "slug": "my-green-planet-project-copy-1789022641658",
+      "titleEn": "Project: \"My Green Planet & Environmental Heroes\" (Copy)",
+      "titleVi": "Dự án: \"Hành Tinh Xanh & Hiệp Sĩ Môi Trường\" (Bản sao)",
       "categoryName": "Dự án học tập",
-      "categoryEn": "Dự án học tập",
       "grade": "Lớp 4 & 5",
-      "gradeEn": "Lớp 4 & 5",
       "year": "2025-2026",
       "descriptionEn": "A 4-week integrated PBL project where students learned vocabulary about nature, recycled materials, and presented solutions in English.",
       "descriptionVi": "Dự án PBL kéo dài 4 tuần giúp học sinh tiếp thu từ vựng về môi trường, vật liệu tái chế và thuyết trình giải pháp bằng tiếng Anh.",
@@ -243,7 +253,74 @@
         "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=800"
       ],
       "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      "attachments": [],
+      "tags": [
+        "PBL",
+        "Environment",
+        "Speaking",
+        "Poster"
+      ],
+      "isFeatured": false,
+      "isPublished": true,
+      "createdAt": "2026-02-15",
+      "categoryEn": "Learning Projects",
+      "gradeEn": "Grade 4 & 5"
+    },
+    {
+      "id": "proj1",
+      "slug": "my-green-planet-project",
+      "titleEn": "Project: \"My Green Planet & Environmental Heroes\"",
+      "titleVi": "Dự án: \"Hành Tinh Xanh & Hiệp Sĩ Môi Trường\"",
+      "categoryName": "Dự án học tập",
+      "grade": "Lớp 4 & 5",
+      "year": "2025-2026",
+      "descriptionEn": "A 4-week integrated PBL project where students learned vocabulary about nature, recycled materials, and presented solutions in English.",
+      "descriptionVi": "Dự án PBL kéo dài 4 tuần giúp học sinh tiếp thu từ vựng về môi trường, vật liệu tái chế và thuyết trình giải pháp bằng tiếng Anh.",
+      "objectivesEn": [
+        "Master 30+ vocabulary terms related to environment and recycling.",
+        "Practice present continuous and modal verbs (should/shouldnt).",
+        "Boost team collaboration and public speaking skills."
+      ],
+      "objectivesVi": [
+        "Làm chủ 30+ từ vựng về môi trường và phân loại rác thải.",
+        "Thực hành thì hiện tại tiếp diễn và động từ khuyết thiếu (should/shouldnt).",
+        "Nâng cao kỹ năng làm việc nhóm và thuyết trình trước lớp."
+      ],
+      "activitiesEn": [
+        "Week 1: Environmental vocabulary discovery with flashcards and songs.",
+        "Week 2: Poster creation using recycled paper and colored markers.",
+        "Week 3: Group presentation rehearsal with peer evaluation rubric.",
+        "Week 4: Exhibition day for parents and school teachers."
+      ],
+      "activitiesVi": [
+        "Tuần 1: Khám phá từ vựng môi trường qua tranh ảnh và bài hát.",
+        "Tuần 2: Thiết kế áp phích từ giấy tái chế và màu vẽ.",
+        "Tuần 3: Luyện tập thuyết trình nhóm và đánh giá chéo.",
+        "Tuần 4: Ngày hội triển lãm dành cho phụ huynh và thầy cô."
+      ],
+      "methodsEn": [
+        "Project-Based Learning",
+        "Collaborative Group Work",
+        "Visual Art Integration"
+      ],
+      "methodsVi": [
+        "Học theo dự án",
+        "Thảo luận nhóm",
+        "Tích hợp nghệ thuật trực quan"
+      ],
+      "outcomesEn": [
+        "120 student posters created",
+        "95% student confidence increase in public speaking"
+      ],
+      "outcomesVi": [
+        "120 áp phích được học sinh hoàn thiện",
+        "95% học sinh tự tin hơn khi phát biểu tiếng Anh"
+      ],
+      "thumbnailUrl": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800",
+      "galleryUrls": [
+        "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800",
+        "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=800"
+      ],
+      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       "tags": [
         "PBL",
         "Environment",
@@ -252,17 +329,17 @@
       ],
       "isFeatured": true,
       "isPublished": true,
-      "createdAt": "2026-09-02"
+      "createdAt": "2026-02-15",
+      "categoryEn": "Learning Projects",
+      "gradeEn": "Grade 4 & 5"
     },
     {
-      "id": "48f68885-f5ae-413b-a72d-24c68d349a18",
+      "id": "proj2",
       "slug": "english-phonics-fair",
       "titleEn": "Interactive Phonics Fair & Word Games",
       "titleVi": "Ngày Hội Phonics & Trò Chơi Từ Vựng Sinh Động",
       "categoryName": "Hoạt động lớp học",
-      "categoryEn": "Hoạt động lớp học",
       "grade": "Lớp 1 & 2",
-      "gradeEn": "Lớp 1 & 2",
       "year": "2025",
       "descriptionEn": "A joyful day filled with phonics games, sound matching stations, and mini-certificates for young beginners.",
       "descriptionVi": "Ngày hội vui học ngữ âm với các trạm ghép âm, phát âm chuẩn và trao chứng chỉ nhí cho học sinh lớp 1 và 2.",
@@ -302,8 +379,6 @@
       "galleryUrls": [
         "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800"
       ],
-      "videoUrl": "",
-      "attachments": [],
       "tags": [
         "Phonics",
         "Grade 1",
@@ -311,17 +386,17 @@
       ],
       "isFeatured": true,
       "isPublished": true,
-      "createdAt": "2026-09-02"
+      "createdAt": "2025-11-20",
+      "categoryEn": "Classroom Activities",
+      "gradeEn": "Grade 1 & 2"
     },
     {
-      "id": "df5b5bea-2c38-4961-8312-1f59e3124477",
+      "id": "proj3",
       "slug": "digital-storytelling-with-canva",
       "titleEn": "Digital Storytelling: \"My Dream Career\"",
       "titleVi": "Kể Chuyện Số: \"Uớc Mơ Ngề Nghiệp Của Em\"",
       "categoryName": "Công nghệ trong giáo dục",
-      "categoryEn": "Công nghệ trong giáo dục",
       "grade": "Lớp 5",
-      "gradeEn": "Lớp 5",
       "year": "2025",
       "descriptionEn": "Students created digital comic strips and short presentations introducing their future career aspirations using Canva.",
       "descriptionVi": "Học sinh thiết kế truyện tranh số và bài thuyết trình giới thiệu ước mơ nghề nghiệp tương lai bằng phần mềm Canva.",
@@ -359,8 +434,6 @@
       "galleryUrls": [
         "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800"
       ],
-      "videoUrl": "",
-      "attachments": [],
       "tags": [
         "EdTech",
         "Canva",
@@ -368,140 +441,66 @@
       ],
       "isFeatured": true,
       "isPublished": true,
-      "createdAt": "2026-09-02"
+      "createdAt": "2025-10-10",
+      "categoryEn": "Technology in Education",
+      "gradeEn": "Grade 5"
     }
   ],
   "db_courses": [
     {
-      "id": "c_1788330124313",
-      "slug": "khoa-anh-van-tre-em-sang-tao-copy-1788330124313",
-      "titleEn": "Creative English for Young Learners (Copy)",
-      "titleVi": "Khóa Anh Văn Trẻ Em Sáng Tạo & Tương Tác (Bản sao)",
-      "categoryName": "Anh văn trẻ em",
-      "categoryEn": "Young Learners English",
-      "priceType": "free",
-      "priceEn": "Free",
-      "priceVi": "Miễn phí",
-      "gradeLevel": "Grade 1 - 3 (6-9 tuổi)",
-      "gradeLevelEn": "Grade 1 - 3 (Ages 6-9)",
-      "durationEn": "8 Sessions (4 Weeks)",
-      "durationVi": "8 Buổi (4 Tuần)",
-      "scheduleEn": "Sat & Sun Morning (9:00 - 10:30 AM)",
-      "scheduleVi": "Sáng Thứ 7 & Chủ Nhật (9:00 - 10:30)",
-      "descriptionEn": "An engaging foundational English course combining singing, crafts, and interactive games for young beginners.",
-      "descriptionVi": "Khóa học tiếng Anh nền tảng sinh động kết hợp hát múa, làm thủ công và trò chơi vận động dành cho trẻ mầm non & tiểu học.",
+      "id": "4ec5dc2a-cc20-4616-8e4a-774f2183cbb6",
+      "slug": "khoa-luyen-nghe-noi-giao-tiep",
+      "titleEn": "Confident Speaking & Everyday Listening",
+      "titleVi": "Khóa Luyện Nghe Nói & Giao Tiếp Tự Tin",
+      "categoryName": "Luyện nghe nói",
+      "categoryEn": "Luyện nghe nói",
+      "priceType": "paid",
+      "priceEn": "600.000 VNĐ / Khóa",
+      "priceVi": "600.000 VNĐ / Khóa",
+      "gradeLevel": "Grade 3 - 5",
+      "gradeLevelEn": "Grade 3 - 5",
+      "durationEn": "10 Sessions (5 Weeks)",
+      "durationVi": "10 Buổi (5 Tuần)",
+      "scheduleEn": "Tue & Thu Evening (6:30 - 8:00 PM)",
+      "scheduleVi": "Tối Thứ 3 & Thứ 5 (18:30 - 20:00)",
+      "descriptionEn": "Intensive speaking course helping primary students overcome fear of speaking through real scenarios.",
+      "descriptionVi": "Khóa học chuyên sâu rèn kỹ năng phát âm, nối âm và xử lý tình huống giao tiếp tiếng Anh hàng ngày.",
       "objectivesEn": [
-        "Master 50+ basic sight words and daily greetings.",
-        "Build confidence in simple English Q&A.",
-        "Develop natural pronunciation through Phonics songs."
+        "Speak with correct intonation and fluency",
+        "Improve listening for main ideas"
       ],
       "objectivesVi": [
-        "Làm chủ 50+ từ vựng giao tiếp cơ bản và câu chào hỏi hàng ngày.",
-        "Tạo sự tự tin phản xạ các câu hỏi - đáp tiếng Anh đơn giản.",
-        "Phát triển ngữ âm chuẩn qua các bài hát Phonics sôi động."
+        "Phát âm chuẩn ngữ điệu và biểu cảm",
+        "Lắng nghe tốt ý chính bài hội thoại"
       ],
       "curriculumEn": [
-        "Session 1: Hello Friends & Family Vocabulary",
-        "Session 2: Phonics Letters A-D Sound Practice",
-        "Session 3: Colors & Shapes Crafting Project",
-        "Session 4: Animals & Action Verbs Game",
-        "Session 5: My Body Parts & Song Rotation",
-        "Session 6: Food & Preferences Dialogue",
-        "Session 7: Show and Tell Rehearsal",
-        "Session 8: Graduation Showcase & Presentation"
+        "Week 1: Intonation & Linking Sounds",
+        "Week 2: Shopping & Order Food Roleplay"
       ],
       "curriculumVi": [
-        "Buổi 1: Chào hỏi & Từ vựng Gia đình thân thương",
-        "Buổi 2: Luyện phát âm Phonics Bảng chữ cái A-D",
-        "Buổi 3: Dự án làm thủ công Màu sắc & Hình khối",
-        "Buổi 4: Game tương tác Động vật & Động từ chỉ hành động",
-        "Buổi 5: Học từ vựng Các bộ phận cơ thể qua âm nhạc",
-        "Buổi 6: Hội thoại Món ăn yêu thích & Sở thích",
-        "Buổi 7: Luyện tập thuyết trình Show and Tell nhí",
-        "Buổi 8: Báo cáo tốt nghiệp & Trao chứng chỉ nhí"
+        "Tuần 1: Ngữ điệu & Kỹ thuật nối âm chuẩn",
+        "Tuần 2: Đóng vai Mua sắm & Gọi món ăn"
       ],
-      "thumbnailUrl": "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800",
-      "galleryUrls": [
-        "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800",
-        "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=800"
-      ],
+      "thumbnailUrl": "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=800",
+      "galleryUrls": [],
       "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      "isFeatured": true,
-      "isPublished": false,
-      "createdAt": "2026-02-01"
-    },
-    {
-      "id": "c1",
-      "slug": "khoa-anh-van-tre-em-sang-tao",
-      "titleEn": "Creative English for Young Learners",
-      "titleVi": "Khóa Anh Văn Trẻ Em Sáng Tạo & Tương Tác",
-      "categoryName": "Anh văn trẻ em",
-      "categoryEn": "Young Learners English",
-      "priceType": "free",
-      "priceEn": "Free",
-      "priceVi": "Miễn phí",
-      "gradeLevel": "Grade 1 - 3 (6-9 tuổi)",
-      "gradeLevelEn": "Grade 1 - 3 (Ages 6-9)",
-      "durationEn": "8 Sessions (4 Weeks)",
-      "durationVi": "8 Buổi (4 Tuần)",
-      "scheduleEn": "Sat & Sun Morning (9:00 - 10:30 AM)",
-      "scheduleVi": "Sáng Thứ 7 & Chủ Nhật (9:00 - 10:30)",
-      "descriptionEn": "An engaging foundational English course combining singing, crafts, and interactive games for young beginners.",
-      "descriptionVi": "Khóa học tiếng Anh nền tảng sinh động kết hợp hát múa, làm thủ công và trò chơi vận động dành cho trẻ mầm non & tiểu học.",
-      "objectivesEn": [
-        "Master 50+ basic sight words and daily greetings.",
-        "Build confidence in simple English Q&A.",
-        "Develop natural pronunciation through Phonics songs."
-      ],
-      "objectivesVi": [
-        "Làm chủ 50+ từ vựng giao tiếp cơ bản và câu chào hỏi hàng ngày.",
-        "Tạo sự tự tin phản xạ các câu hỏi - đáp tiếng Anh đơn giản.",
-        "Phát triển ngữ âm chuẩn qua các bài hát Phonics sôi động."
-      ],
-      "curriculumEn": [
-        "Session 1: Hello Friends & Family Vocabulary",
-        "Session 2: Phonics Letters A-D Sound Practice",
-        "Session 3: Colors & Shapes Crafting Project",
-        "Session 4: Animals & Action Verbs Game",
-        "Session 5: My Body Parts & Song Rotation",
-        "Session 6: Food & Preferences Dialogue",
-        "Session 7: Show and Tell Rehearsal",
-        "Session 8: Graduation Showcase & Presentation"
-      ],
-      "curriculumVi": [
-        "Buổi 1: Chào hỏi & Từ vựng Gia đình thân thương",
-        "Buổi 2: Luyện phát âm Phonics Bảng chữ cái A-D",
-        "Buổi 3: Dự án làm thủ công Màu sắc & Hình khối",
-        "Buổi 4: Game tương tác Động vật & Động từ chỉ hành động",
-        "Buổi 5: Học từ vựng Các bộ phận cơ thể qua âm nhạc",
-        "Buổi 6: Hội thoại Món ăn yêu thích & Sở thích",
-        "Buổi 7: Luyện tập thuyết trình Show and Tell nhí",
-        "Buổi 8: Báo cáo tốt nghiệp & Trao chứng chỉ nhí"
-      ],
-      "thumbnailUrl": "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800",
-      "galleryUrls": [
-        "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800",
-        "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=800"
-      ],
-      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      "isFeatured": true,
+      "registrationFormUrl": "",
+      "isFeatured": false,
       "isPublished": true,
-      "createdAt": "2026-02-01"
+      "createdAt": "2026-09-02"
     },
     {
-      "id": "c2",
+      "id": "2e40efae-e3f7-41a5-ad50-38a708e6be1f",
       "slug": "khoa-luyen-van-pham-sinh-dong",
       "titleEn": "Dynamic Grammar & Sentence Building",
       "titleVi": "Khóa Luyện Văn Phạm & Cấu Trúc Câu Sinh Động",
       "categoryName": "Luyện văn phạm",
-      "categoryEn": "Grammar Mastery",
+      "categoryEn": "Luyện văn phạm",
       "priceType": "paid",
       "priceEn": "450.000 VNĐ / Khóa",
       "priceVi": "450.000 VNĐ / Khóa",
-      "discountPriceVi": "399.000 VNĐ / Khóa",
-      "discountPriceEn": "399.000 VNĐ / Khóa",
       "gradeLevel": "Grade 3 - 5 (8-11 tuổi)",
-      "gradeLevelEn": "Grade 3 - 5 (Ages 8-11)",
+      "gradeLevelEn": "Grade 3 - 5 (8-11 tuổi)",
       "durationEn": "12 Sessions (6 Weeks)",
       "durationVi": "12 Buổi (6 Tuần)",
       "scheduleEn": "Mon & Wed Evening (6:00 - 7:30 PM)",
@@ -531,21 +530,132 @@
         "Chương 4: Thực hành viết đoạn văn ngắn & Nhận xét nhóm"
       ],
       "thumbnailUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=800",
-      "galleryUrls": [
-        "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=800"
-      ],
+      "galleryUrls": [],
       "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "registrationFormUrl": "",
       "isFeatured": true,
       "isPublished": true,
-      "createdAt": "2026-01-20"
+      "createdAt": "2026-09-02"
     },
     {
-      "id": "c3",
+      "id": "16329fdd-52dc-4f76-b051-a33037a12528",
+      "slug": "khoa-anh-van-tre-em-sang-tao-copy-1788330124313",
+      "titleEn": "Creative English for Young Learners (Copy)",
+      "titleVi": "Khóa Anh Văn Trẻ Em Sáng Tạo & Tương Tác (Bản sao)",
+      "categoryName": "Anh văn trẻ em",
+      "categoryEn": "Anh văn trẻ em",
+      "priceType": "free",
+      "priceEn": "Free",
+      "priceVi": "Miễn phí",
+      "gradeLevel": "Grade 1 - 3 (6-9 tuổi)",
+      "gradeLevelEn": "Grade 1 - 3 (6-9 tuổi)",
+      "durationEn": "8 Sessions (4 Weeks)",
+      "durationVi": "8 Buổi (4 Tuần)",
+      "scheduleEn": "Sat & Sun Morning (9:00 - 10:30 AM)",
+      "scheduleVi": "Sáng Thứ 7 & Chủ Nhật (9:00 - 10:30)",
+      "descriptionEn": "An engaging foundational English course combining singing, crafts, and interactive games for young beginners.",
+      "descriptionVi": "Khóa học tiếng Anh nền tảng sinh động kết hợp hát múa, làm thủ công và trò chơi vận động dành cho trẻ mầm non & tiểu học.",
+      "objectivesEn": [
+        "Master 50+ basic sight words and daily greetings.",
+        "Build confidence in simple English Q&A.",
+        "Develop natural pronunciation through Phonics songs."
+      ],
+      "objectivesVi": [
+        "Làm chủ 50+ từ vựng giao tiếp cơ bản và câu chào hỏi hàng ngày.",
+        "Tạo sự tự tin phản xạ các câu hỏi - đáp tiếng Anh đơn giản.",
+        "Phát triển ngữ âm chuẩn qua các bài hát Phonics sôi động."
+      ],
+      "curriculumEn": [
+        "Session 1: Hello Friends & Family Vocabulary",
+        "Session 2: Phonics Letters A-D Sound Practice",
+        "Session 3: Colors & Shapes Crafting Project",
+        "Session 4: Animals & Action Verbs Game",
+        "Session 5: My Body Parts & Song Rotation",
+        "Session 6: Food & Preferences Dialogue",
+        "Session 7: Show and Tell Rehearsal",
+        "Session 8: Graduation Showcase & Presentation"
+      ],
+      "curriculumVi": [
+        "Buổi 1: Chào hỏi & Từ vựng Gia đình thân thương",
+        "Buổi 2: Luyện phát âm Phonics Bảng chữ cái A-D",
+        "Buổi 3: Dự án làm thủ công Màu sắc & Hình khối",
+        "Buổi 4: Game tương tác Động vật & Động từ chỉ hành động",
+        "Buổi 5: Học từ vựng Các bộ phận cơ thể qua âm nhạc",
+        "Buổi 6: Hội thoại Món ăn yêu thích & Sở thích",
+        "Buổi 7: Luyện tập thuyết trình Show and Tell nhí",
+        "Buổi 8: Báo cáo tốt nghiệp & Trao chứng chỉ nhí"
+      ],
+      "thumbnailUrl": "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800",
+      "galleryUrls": [],
+      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "registrationFormUrl": "",
+      "isFeatured": true,
+      "isPublished": false,
+      "createdAt": "2026-09-02"
+    },
+    {
+      "id": "544b8f7b-e39d-4650-8d74-0844af0df97b",
+      "slug": "khoa-anh-van-tre-em-sang-tao",
+      "titleEn": "Creative English for Young Learners",
+      "titleVi": "Khóa Anh Văn Trẻ Em Sáng Tạo & Tương Tác",
+      "categoryName": "Anh văn trẻ em",
+      "categoryEn": "Anh văn trẻ em",
+      "priceType": "free",
+      "priceEn": "Free",
+      "priceVi": "Miễn phí",
+      "gradeLevel": "Grade 1 - 3 (6-9 tuổi)",
+      "gradeLevelEn": "Grade 1 - 3 (6-9 tuổi)",
+      "durationEn": "8 Sessions (4 Weeks)",
+      "durationVi": "8 Buổi (4 Tuần)",
+      "scheduleEn": "Sat & Sun Morning (9:00 - 10:30 AM)",
+      "scheduleVi": "Sáng Thứ 7 & Chủ Nhật (9:00 - 10:30)",
+      "descriptionEn": "An engaging foundational English course combining singing, crafts, and interactive games for young beginners.",
+      "descriptionVi": "Khóa học tiếng Anh nền tảng sinh động kết hợp hát múa, làm thủ công và trò chơi vận động dành cho trẻ mầm non & tiểu học.",
+      "objectivesEn": [
+        "Master 50+ basic sight words and daily greetings.",
+        "Build confidence in simple English Q&A.",
+        "Develop natural pronunciation through Phonics songs."
+      ],
+      "objectivesVi": [
+        "Làm chủ 50+ từ vựng giao tiếp cơ bản và câu chào hỏi hàng ngày.",
+        "Tạo sự tự tin phản xạ các câu hỏi - đáp tiếng Anh đơn giản.",
+        "Phát triển ngữ âm chuẩn qua các bài hát Phonics sôi động."
+      ],
+      "curriculumEn": [
+        "Session 1: Hello Friends & Family Vocabulary",
+        "Session 2: Phonics Letters A-D Sound Practice",
+        "Session 3: Colors & Shapes Crafting Project",
+        "Session 4: Animals & Action Verbs Game",
+        "Session 5: My Body Parts & Song Rotation",
+        "Session 6: Food & Preferences Dialogue",
+        "Session 7: Show and Tell Rehearsal",
+        "Session 8: Graduation Showcase & Presentation"
+      ],
+      "curriculumVi": [
+        "Buổi 1: Chào hỏi & Từ vựng Gia đình thân thương",
+        "Buổi 2: Luyện phát âm Phonics Bảng chữ cái A-D",
+        "Buổi 3: Dự án làm thủ công Màu sắc & Hình khối",
+        "Buổi 4: Game tương tác Động vật & Động từ chỉ hành động",
+        "Buổi 5: Học từ vựng Các bộ phận cơ thể qua âm nhạc",
+        "Buổi 6: Hội thoại Món ăn yêu thích & Sở thích",
+        "Buổi 7: Luyện tập thuyết trình Show and Tell nhí",
+        "Buổi 8: Báo cáo tốt nghiệp & Trao chứng chỉ nhí"
+      ],
+      "thumbnailUrl": "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800",
+      "galleryUrls": [],
+      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "registrationFormUrl": "",
+      "isFeatured": true,
+      "isPublished": true,
+      "createdAt": "2026-09-02"
+    },
+    {
+      "id": "750cdd00-7bbe-4116-81e3-3c0b0f1502a0",
       "slug": "khoa-luyen-phan-xa-game-tuong-tac",
       "titleEn": "Gamified English Fluency & Speed Quiz",
       "titleVi": "Khóa Luyện Phản Xạ Tiếng Anh Qua Game Tương Tác",
       "categoryName": "Luyện phản xạ game",
-      "categoryEn": "Gamified Fluency",
+      "categoryEn": "Luyện phản xạ game",
       "priceType": "free",
       "priceEn": "Free",
       "priceVi": "Miễn phí",
@@ -584,55 +694,12 @@
         "Buổi 6: Giải đấu vô địch phản xạ & Trao quà"
       ],
       "thumbnailUrl": "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=800",
+      "galleryUrls": [],
       "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "registrationFormUrl": "",
       "isFeatured": true,
       "isPublished": true,
-      "createdAt": "2026-01-10"
-    },
-    {
-      "id": "c4",
-      "slug": "khoa-luyen-nghe-noi-giao-tiep",
-      "titleEn": "Confident Speaking & Everyday Listening",
-      "titleVi": "Khóa Luyện Nghe Nói & Giao Tiếp Tự Tin",
-      "categoryName": "Luyện nghe nói",
-      "categoryEn": "Listening & Speaking",
-      "priceType": "paid",
-      "priceEn": "600.000 VNĐ / Khóa",
-      "priceVi": "600.000 VNĐ / Khóa",
-      "discountPriceVi": "499.000 VNĐ / Khóa",
-      "discountPriceEn": "499.000 VNĐ / Khóa",
-      "gradeLevel": "Grade 3 - 5",
-      "gradeLevelEn": "Grade 3 - 5",
-      "durationEn": "10 Sessions (5 Weeks)",
-      "durationVi": "10 Buổi (5 Tuần)",
-      "scheduleEn": "Tue & Thu Evening (6:30 - 8:00 PM)",
-      "scheduleVi": "Tối Thứ 3 & Thứ 5 (18:30 - 20:00)",
-      "descriptionEn": "Intensive speaking course helping primary students overcome fear of speaking through real scenarios.",
-      "descriptionVi": "Khóa học chuyên sâu rèn kỹ năng phát âm, nối âm và xử lý tình huống giao tiếp tiếng Anh hàng ngày.",
-      "objectivesEn": [
-        "Speak with correct intonation and fluency",
-        "Improve listening for main ideas"
-      ],
-      "objectivesVi": [
-        "Phát âm chuẩn ngữ điệu và biểu cảm",
-        "Lắng nghe tốt ý chính bài hội thoại"
-      ],
-      "curriculumEn": [
-        "Week 1: Intonation & Linking Sounds",
-        "Week 2: Shopping & Order Food Roleplay"
-      ],
-      "curriculumVi": [
-        "Tuần 1: Ngữ điệu & Kỹ thuật nối âm chuẩn",
-        "Tuần 2: Đóng vai Mua sắm & Gọi món ăn"
-      ],
-      "thumbnailUrl": "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=800",
-      "galleryUrls": [
-        "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=800"
-      ],
-      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      "isFeatured": false,
-      "isPublished": true,
-      "createdAt": "2025-12-15"
+      "createdAt": "2026-09-02"
     }
   ],
   "db_resources": [
