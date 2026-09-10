@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DB } from '../services/db';
 import type { SiteSettings, Profile } from '../types';
 import { useLanguage } from '../context/LanguageContext';
-import { Mail, Send, MapPin, Phone, MessageCircle, User } from 'lucide-react';
+import { Mail, Send, MapPin, Phone, MessageCircle, User, CreditCard, QrCode, Copy, Check, X, ShieldCheck, Building2 } from 'lucide-react';
 import { Toast } from '../components/common/Toast';
 
 import { SEO } from '../components/common/SEO';
@@ -14,9 +14,14 @@ export const ContactPage: React.FC = () => {
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  const [showBankModal, setShowBankModal] = useState(false);
+  const [copiedAccountNo, setCopiedAccountNo] = useState(false);
+  const [copiedAccountHolder, setCopiedAccountHolder] = useState(false);
 
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
 
@@ -24,6 +29,27 @@ export const ContactPage: React.FC = () => {
     DB.getSiteSettings().then(setSettings);
     DB.getProfile().then(setProfile);
   }, []);
+
+  const bankName = settings?.bankName || 'Ngân hàng VPBank';
+  const bankAccountNo = settings?.bankAccountNo || '268330518';
+  const bankAccountHolder = settings?.bankAccountHolder || 'HUỲNH KIM HƯNG';
+  const bankCode = settings?.bankCode || 'VPB';
+
+  const vietQrUrl = `https://img.vietqr.io/image/${bankCode}-${bankAccountNo}-compact2.png?accountName=${encodeURIComponent(bankAccountHolder)}`;
+
+  const copyToClipboard = (text: string, type: 'no' | 'holder') => {
+    navigator.clipboard.writeText(text).then(() => {
+      if (type === 'no') {
+        setCopiedAccountNo(true);
+        setTimeout(() => setCopiedAccountNo(false), 2000);
+      } else {
+        setCopiedAccountHolder(true);
+        setTimeout(() => setCopiedAccountHolder(false), 2000);
+      }
+    }).catch(() => {
+      // fallback
+    });
+  };
 
   const seoTitle = language === 'vi'
     ? 'Thông Tin Liên Hệ & Tư Vấn Khóa Học — Thầy Nguyễn Trọng Huy Hoàng'
@@ -48,6 +74,7 @@ export const ContactPage: React.FC = () => {
       await DB.createContactMessage({
         fullName,
         email,
+        phone: phone.trim() || undefined,
         subject: subject || 'Liên hệ từ Website',
         message
       });
@@ -59,6 +86,7 @@ export const ContactPage: React.FC = () => {
 
       setFullName('');
       setEmail('');
+      setPhone('');
       setSubject('');
       setMessage('');
     } catch {
@@ -106,9 +134,9 @@ export const ContactPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 text-left">
-          {/* Contact Details Card */}
-          <div className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200/80 dark:border-slate-800 shadow-xl space-y-8 flex flex-col justify-between">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch text-left">
+          {/* Contact Details Card (Column A) */}
+          <div className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200/80 dark:border-slate-800 shadow-xl space-y-8 flex flex-col justify-between h-full">
             <div className="space-y-6">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white">
                 {language === 'vi' ? 'Thông Tin Liên Hệ' : 'Contact Details'}
@@ -181,10 +209,35 @@ export const ContactPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Bank Payment Account Card Trigger */}
+                <button
+                  type="button"
+                  onClick={() => setShowBankModal(true)}
+                  className="w-full flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-sky-950 to-slate-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 border border-amber-500/40 text-white hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/10 transition-all text-left group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center shrink-0">
+                      <CreditCard className="w-5 h-5 text-amber-400" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-xs text-white group-hover:text-amber-300 transition-colors">
+                        {language === 'vi' ? 'Tài Khoản Thanh Toán' : 'Payment Account'}
+                      </div>
+                      <div className="text-[11px] text-slate-300 font-medium mt-0.5">
+                        {bankName} • {bankAccountNo}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="px-2.5 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 text-[11px] font-bold border border-amber-500/30 group-hover:bg-amber-500 group-hover:text-slate-950 transition-all flex items-center gap-1 shrink-0">
+                    <span>{language === 'vi' ? 'Mở QR' : 'View QR'}</span>
+                    <QrCode className="w-3.5 h-3.5" />
+                  </div>
+                </button>
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-700 dark:text-sky-300 text-xs">
+            <div className="p-4 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-700 dark:text-sky-300 text-xs mt-6">
               <p className="font-semibold">
                 {language === 'vi'
                   ? 'Thầy Hoàng luôn sẵn sàng trao đổi kinh nghiệm chuyên môn, chia sẻ tài liệu và hợp tác!'
@@ -193,70 +246,87 @@ export const ContactPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Form Card */}
-          <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200/80 dark:border-slate-800 shadow-xl">
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {t('contact.name')} *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder="e.g. Nguyen Van A"
-                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-sky-500"
-                  />
+          {/* Form Card (Column B) */}
+          <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200/80 dark:border-slate-800 shadow-xl flex flex-col justify-between h-full">
+            <form onSubmit={handleSubmit} className="space-y-5 flex-1 flex flex-col justify-between">
+              <div className="space-y-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                      {t('contact.name')} *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="e.g. Nguyen Van A"
+                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-sky-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                      {t('contact.email')} *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="email@example.com"
+                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-sky-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                      {language === 'vi' ? 'Số điện thoại di động' : 'Mobile Phone'} <span className="text-slate-400 font-normal">({language === 'vi' ? 'Tùy chọn' : 'Optional'})</span>
+                    </label>
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="e.g. 0987654321"
+                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-sky-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                      {t('contact.subject')}
+                    </label>
+                    <input
+                      type="text"
+                      value={subject}
+                      onChange={(e) => setSubject(e.target.value)}
+                      placeholder="e.g. Trao đổi tài liệu giảng dạy"
+                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-sky-500"
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {t('contact.email')} *
+                    {t('contact.message')} *
                   </label>
-                  <input
-                    type="email"
+                  <textarea
                     required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="email@example.com"
-                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-sky-500"
+                    rows={5}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Nội dung lời nhắn..."
+                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-sky-500 resize-none"
                   />
                 </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {t('contact.subject')}
-                </label>
-                <input
-                  type="text"
-                  value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
-                  placeholder="e.g. Trao đổi tài liệu giảng dạy"
-                  className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-sky-500"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {t('contact.message')} *
-                </label>
-                <textarea
-                  required
-                  rows={5}
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Nội dung lời nhắn..."
-                  className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-sky-500 resize-none"
-                />
               </div>
 
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white font-extrabold text-xs shadow-lg shadow-sky-600/25 disabled:opacity-50 transition-all"
+                className="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white font-extrabold text-xs shadow-lg shadow-sky-600/25 disabled:opacity-50 transition-all mt-4"
               >
                 <Send className="w-4 h-4" />
                 <span>{submitting ? t('btn.submitting') : t('btn.submit')}</span>
@@ -265,6 +335,144 @@ export const ContactPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Bank Payment Information Modal */}
+      {showBankModal && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-[#0b192e] text-white border border-slate-700/60 rounded-3xl shadow-2xl max-w-3xl w-full p-6 md:p-8 relative my-8 text-left animate-in fade-in zoom-in-95 duration-200">
+            {/* Top Badge */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-300 text-[11px] font-bold uppercase tracking-wider">
+              <Building2 className="w-3.5 h-3.5" />
+              <span>{language === 'vi' ? 'Tài Khoản Thanh Toán Chính Thức' : 'Official Payment Account'}</span>
+            </div>
+
+            {/* Header */}
+            <div className="flex items-center justify-between mt-2 mb-6">
+              <div className="flex items-center gap-2">
+                <h2 className="text-2xl md:text-3xl font-extrabold text-white">
+                  {language === 'vi' ? 'Thông Tin Ngân Hàng' : 'Bank Information'}
+                </h2>
+                <ShieldCheck className="w-6 h-6 text-emerald-400 shrink-0" />
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span>{language === 'vi' ? `Tài Khoản Đã Xác Thực ${bankCode}` : `Verified ${bankCode} Account`}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowBankModal(false)}
+                  className="p-2 rounded-full bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
+              {/* Left Side Details */}
+              <div className="md:col-span-7 space-y-4 flex flex-col justify-between">
+                {/* Bank Name */}
+                <div className="p-4 rounded-2xl bg-[#11243e] border border-slate-700/50 flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-sky-500/20 border border-sky-400/30 flex items-center justify-center font-black text-sky-400 text-base shrink-0">
+                    {bankCode}
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                      {language === 'vi' ? 'Ngân hàng tiếp nhận' : 'Receiving Bank'}
+                    </div>
+                    <div className="text-base font-extrabold text-white mt-0.5">{bankName}</div>
+                    <div className="text-xs text-slate-400">({bankCode} - {bankName})</div>
+                  </div>
+                </div>
+
+                {/* Account Number */}
+                <div className="p-4 rounded-2xl bg-[#11243e] border border-slate-700/50 flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                      {language === 'vi' ? 'Số tài khoản ngân hàng' : 'Bank Account Number'}
+                    </div>
+                    <div className="text-xl md:text-2xl font-black text-amber-400 tracking-wider mt-1">
+                      {bankAccountNo}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => copyToClipboard(bankAccountNo, 'no')}
+                    className="px-3.5 py-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500 hover:text-slate-950 text-xs font-bold transition-all flex items-center gap-1.5 shrink-0"
+                  >
+                    {copiedAccountNo ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                    <span>{copiedAccountNo ? (language === 'vi' ? 'Đã chép' : 'Copied') : (language === 'vi' ? 'Sao Chép Số TK' : 'Copy Acc No')}</span>
+                  </button>
+                </div>
+
+                {/* Account Holder */}
+                <div className="p-4 rounded-2xl bg-[#11243e] border border-slate-700/50 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 shrink-0">
+                      <User className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                        {language === 'vi' ? 'Chủ tài khoản' : 'Account Holder'}
+                      </div>
+                      <div className="text-base font-extrabold text-white mt-0.5 uppercase tracking-wide">
+                        {bankAccountHolder}
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => copyToClipboard(bankAccountHolder, 'holder')}
+                    className="px-3.5 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 shrink-0"
+                  >
+                    {copiedAccountHolder ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                    <span>{copiedAccountHolder ? (language === 'vi' ? 'Đã chép' : 'Copied') : (language === 'vi' ? 'Sao chép' : 'Copy')}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Right Side VietQR Card */}
+              <div className="md:col-span-5 bg-white rounded-3xl p-5 border-2 border-amber-400/80 shadow-2xl text-slate-900 flex flex-col items-center justify-between space-y-3 text-center">
+                <div className="flex items-center justify-between w-full text-xs font-extrabold text-slate-900">
+                  <span>VIETQR CHUYỂN KHOẢN</span>
+                  <span className="px-2.5 py-0.5 rounded-md bg-blue-950 text-white font-bold text-[10px] uppercase">
+                    {bankCode}
+                  </span>
+                </div>
+
+                {/* VietQR Code Image */}
+                <div className="p-2 bg-slate-50 rounded-2xl border border-slate-200 w-full flex flex-col items-center justify-center">
+                  <img
+                    src={vietQrUrl}
+                    alt="VietQR Payment Code"
+                    className="max-w-[200px] w-full h-auto object-contain rounded-lg shadow-sm"
+                  />
+                </div>
+
+                <div className="space-y-0.5">
+                  <div className="text-lg font-black text-slate-950 tracking-wider">{bankAccountNo}</div>
+                  <div className="text-xs font-extrabold text-slate-800 uppercase">{bankAccountHolder}</div>
+                </div>
+
+                <div className="text-[11px] text-slate-500 font-medium max-w-[240px] leading-tight">
+                  {language === 'vi' 
+                    ? 'Mở App Ngân hàng hoặc MoMo để quét mã QR tự động điền số tiền và thông tin'
+                    : 'Open Bank App or MoMo to scan QR code and auto-fill payment details'}
+                </div>
+
+                <div className="pt-2 border-t border-slate-200 w-full text-center text-[11px] font-bold text-slate-700 flex items-center justify-center gap-1.5">
+                  <Phone className="w-3.5 h-3.5 text-sky-600" />
+                  <span>Xác nhận qua Hotline/Zalo: {phoneNum}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+

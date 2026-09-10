@@ -331,4 +331,8 @@ export interface SiteSettings {
   emailjsTemplateIdAdmin?: string;
   emailjsPublicKey?: string;
   customEmailEndpoint?: string;
+  bankName?: string;
+  bankAccountNo?: string;
+  bankAccountHolder?: string;
+  bankCode?: string;
 }

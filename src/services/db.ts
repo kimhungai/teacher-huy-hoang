@@ -754,7 +754,11 @@ const INITIAL_SITE_SETTINGS: SiteSettings = {
   emailjsServiceId: '',
   emailjsTemplateIdCustomer: '',
   emailjsTemplateIdAdmin: '',
-  emailjsPublicKey: ''
+  emailjsPublicKey: '',
+  bankName: 'Ngân hàng VPBank',
+  bankAccountNo: '268330518',
+  bankAccountHolder: 'HUỲNH KIM HƯNG',
+  bankCode: 'VPB'
 };
 
 // STORAGE & DISK PERSISTENCE HELPERS
@@ -1103,6 +1107,10 @@ const syncToSupabase = async (key: string, val: any) => {
         emailjs_template_id_customer: s.emailjsTemplateIdCustomer,
         emailjs_template_id_admin: s.emailjsTemplateIdAdmin,
         emailjs_public_key: s.emailjsPublicKey,
+        bank_name: s.bankName,
+        bank_account_no: s.bankAccountNo,
+        bank_account_holder: s.bankAccountHolder,
+        bank_code: s.bankCode,
         updated_at: new Date().toISOString()
       }, { onConflict: 'id' });
     } else if (key === 'db_course_regs') {
@@ -2715,6 +2723,10 @@ export const DB = {
             emailjsTemplateIdCustomer: data.emailjs_template_id_customer || '',
             emailjsTemplateIdAdmin: data.emailjs_template_id_admin || '',
             emailjsPublicKey: data.emailjs_public_key || '',
+            bankName: data.bank_name || INITIAL_SITE_SETTINGS.bankName,
+            bankAccountNo: data.bank_account_no || INITIAL_SITE_SETTINGS.bankAccountNo,
+            bankAccountHolder: data.bank_account_holder || INITIAL_SITE_SETTINGS.bankAccountHolder,
+            bankCode: data.bank_code || INITIAL_SITE_SETTINGS.bankCode,
             adminPassword: INITIAL_SITE_SETTINGS.adminPassword,
             superAdminPassword: INITIAL_SITE_SETTINGS.superAdminPassword
           };

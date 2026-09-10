@@ -426,6 +426,55 @@ export const AdminSettingsPage: React.FC = () => {
 
         <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800">
           <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <span>💳</span>
+            <span>Cấu Hình Ngân Hàng & Thanh Toán VietQR</span>
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">Ngân hàng tiếp nhận</label>
+              <input
+                type="text"
+                value={settings.bankName || ''}
+                onChange={(e) => setSettings({ ...settings, bankName: e.target.value })}
+                placeholder="Ngân hàng VPBank"
+                className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-900 dark:text-white"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">Mã ngân hàng VietQR (Bank Code)</label>
+              <input
+                type="text"
+                value={settings.bankCode || ''}
+                onChange={(e) => setSettings({ ...settings, bankCode: e.target.value.toUpperCase() })}
+                placeholder="VPB (hoặc MB, VCB, TCB, ACB, BIDV...)"
+                className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-mono font-bold text-sky-600 dark:text-sky-400"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">Số tài khoản ngân hàng</label>
+              <input
+                type="text"
+                value={settings.bankAccountNo || ''}
+                onChange={(e) => setSettings({ ...settings, bankAccountNo: e.target.value })}
+                placeholder="268330518"
+                className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-mono font-bold text-slate-900 dark:text-white"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">Chủ tài khoản (In hoa không dấu)</label>
+              <input
+                type="text"
+                value={settings.bankAccountHolder || ''}
+                onChange={(e) => setSettings({ ...settings, bankAccountHolder: e.target.value.toUpperCase() })}
+                placeholder="HUỲNH KIM HƯNG"
+                className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-900 dark:text-white"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <span>🌐</span>
             <span>Liên Kết Mạng Xã Hội</span>
           </h3>
