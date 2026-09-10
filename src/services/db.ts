@@ -1312,6 +1312,7 @@ export const DB = {
       // 14. Site Settings
       try {
         const settings = await this.getSiteSettings();
+        await supabase.from('site_settings').delete().neq('id', SETTINGS_ROW_ID);
         await syncToSupabase('db_settings', settings);
         totalSynced += 1;
       } catch (err) {
@@ -1344,7 +1345,11 @@ export const DB = {
   async getProfile(): Promise<Profile> {
     if (isSupabaseConfigured && supabase) {
       try {
-        const { data, error } = await supabase.from('profiles').select('*').order('updated_at', { ascending: false }).limit(1).maybeSingle();
+        let { data, error } = await supabase.from('profiles').select('*').eq('id', PROFILE_ROW_ID).maybeSingle();
+        if (!data || error) {
+          const res = await supabase.from('profiles').select('*').order('updated_at', { ascending: false }).limit(1).maybeSingle();
+          data = res.data;
+        }
         if (data && !error) {
           const prof: Profile = {
             id: data.id || 'p1',
@@ -1405,7 +1410,11 @@ export const DB = {
   async getHeroSettings(): Promise<HeroSettings> {
     if (isSupabaseConfigured && supabase) {
       try {
-        const { data, error } = await supabase.from('hero_settings').select('*').limit(1).maybeSingle();
+        let { data, error } = await supabase.from('hero_settings').select('*').eq('id', HERO_ROW_ID).maybeSingle();
+        if (!data || error) {
+          const res = await supabase.from('hero_settings').select('*').limit(1).maybeSingle();
+          data = res.data;
+        }
         if (data && !error) {
           const hero: HeroSettings = {
             headlineEn: data.headline_en || INITIAL_HERO.headlineEn,
@@ -2653,8 +2662,31 @@ export const DB = {
   async getSiteSettings(): Promise<SiteSettings> {
     if (isSupabaseConfigured && supabase) {
       try {
-        const { data, error } = await supabase.from('site_settings').select('*').order('updated_at', { ascending: false }).limit(1).maybeSingle();
-        if (data && !error) {
+        let { data, error } = await supabase
+          .from('site_settings')
+          .select('*')
+          .eq('id', SETTINGS_ROW_ID)
+          .maybeSingle();
+
+        if (!data || error) {
+          const res = await supabase
+            .from('site_settings')
+            .select('*')
+            .order('updated_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          data = res.data;
+        }
+
+        if (data) {
+          const localSettings = getStorageItem('db_settings', INITIAL_SITE_SETTINGS);
+          const cloudAccounts = Array.isArray(data.client_admin_accounts) && data.client_admin_accounts.length > 0
+            ? data.client_admin_accounts
+            : null;
+          const localAccounts = Array.isArray(localSettings.clientAdminAccounts) && localSettings.clientAdminAccounts.length > 0
+            ? localSettings.clientAdminAccounts
+            : null;
+
           const s: SiteSettings = {
             siteTitleEn: data.site_title_en || INITIAL_SITE_SETTINGS.siteTitleEn,
             siteTitleVi: data.site_title_vi || INITIAL_SITE_SETTINGS.siteTitleVi,
@@ -2676,7 +2708,7 @@ export const DB = {
             linkedinUrl: data.linkedin_url || INITIAL_SITE_SETTINGS.linkedinUrl,
             footerTextEn: data.footer_text_en || INITIAL_SITE_SETTINGS.footerTextEn,
             footerTextVi: data.footer_text_vi || INITIAL_SITE_SETTINGS.footerTextVi,
-            clientAdminAccounts: data.client_admin_accounts || INITIAL_SITE_SETTINGS.clientAdminAccounts,
+            clientAdminAccounts: cloudAccounts || localAccounts || INITIAL_SITE_SETTINGS.clientAdminAccounts,
             enableEmailNotification: data.enable_email_notification !== false,
             emailProvider: data.email_provider || INITIAL_SITE_SETTINGS.emailProvider,
             emailjsServiceId: data.emailjs_service_id || '',
@@ -2686,7 +2718,7 @@ export const DB = {
             adminPassword: INITIAL_SITE_SETTINGS.adminPassword,
             superAdminPassword: INITIAL_SITE_SETTINGS.superAdminPassword
           };
-          setStorageItem('db_settings', s);
+          localStorage.setItem('db_settings', JSON.stringify(s));
           applyPrimaryColor(s.primaryColor);
           return s;
         }
