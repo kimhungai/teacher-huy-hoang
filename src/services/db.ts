@@ -444,6 +444,8 @@ const INITIAL_COURSES: Course[] = [
     priceType: 'paid',
     priceEn: '$25 / Course',
     priceVi: '600.000 VNĐ / Khóa',
+    discountPriceVi: '499.000 VNĐ / Khóa',
+    discountPriceEn: '$20 / Course',
     gradeLevel: 'Grade 3 - 5',
     gradeLevelEn: 'Grade 3 - 5',
     durationEn: '10 Sessions (5 Weeks)',
@@ -931,6 +933,8 @@ const syncToSupabase = async (key: string, val: any) => {
           price_type: c.priceType,
           price_en: c.priceEn,
           price_vi: c.priceVi,
+          discount_price_en: c.discountPriceEn || '',
+          discount_price_vi: c.discountPriceVi || '',
           grade_level: c.gradeLevel,
           duration_en: c.durationEn,
           duration_vi: c.durationVi,
@@ -961,6 +965,11 @@ const syncToSupabase = async (key: string, val: any) => {
           description_en: r.descriptionEn,
           description_vi: r.descriptionVi,
           category_name: r.categoryName,
+          price_type: r.priceType,
+          price_en: r.priceEn,
+          price_vi: r.priceVi,
+          discount_price_en: r.discountPriceEn || '',
+          discount_price_vi: r.discountPriceVi || '',
           grade: r.grade,
           level: (r as any).level || 'Beginner',
           file_type: validFileTypes.includes(r.fileType) ? r.fileType : 'PDF',
@@ -1690,38 +1699,55 @@ export const DB = {
       try {
         const { data, error } = await supabase.from('courses').select('*').order('created_at', { ascending: false });
         if (data && !error && data.length > 0) {
-          const list: Course[] = data.map((c) => ({
-            id: c.id,
-            slug: c.slug,
-            titleEn: c.title_en,
-            titleVi: c.title_vi,
-            categoryName: c.category_name,
-            categoryEn: c.category_en || c.category_name,
-            priceType: c.price_type || 'free',
-            priceEn: c.price_en || 'Free',
-            priceVi: c.price_vi || 'Miễn phí',
-            discountPriceEn: c.discount_price_en,
-            discountPriceVi: c.discount_price_vi,
-            gradeLevel: c.grade_level,
-            gradeLevelEn: c.grade_level_en || c.grade_level,
-            durationEn: c.duration_en,
-            durationVi: c.duration_vi,
-            scheduleEn: c.schedule_en,
-            scheduleVi: c.schedule_vi,
-            descriptionEn: c.description_en,
-            descriptionVi: c.description_vi,
-            objectivesEn: c.objectives_en || [],
-            objectivesVi: c.objectives_vi || [],
-            curriculumEn: c.curriculum_en || [],
-            curriculumVi: c.curriculum_vi || [],
-            thumbnailUrl: c.thumbnail_url || '',
-            galleryUrls: c.gallery_urls || [],
-            videoUrl: c.video_url || '',
-            registrationFormUrl: c.registration_form_url || '',
-            isFeatured: c.is_featured !== false,
-            isPublished: c.is_published !== false,
-            createdAt: c.created_at ? c.created_at.split('T')[0] : new Date().toISOString().split('T')[0]
-          }));
+          const cachedCourses: Course[] = (() => {
+            try {
+              const c = localStorage.getItem('db_courses');
+              return c ? JSON.parse(c) : [];
+            } catch { return []; }
+          })();
+
+          const list: Course[] = data.map((c) => {
+            const cachedMatch = cachedCourses.find(x => x.id === c.id || x.slug === c.slug);
+            const discVi = (c.discount_price_vi !== null && c.discount_price_vi !== undefined)
+              ? c.discount_price_vi
+              : (cachedMatch?.discountPriceVi || '');
+            const discEn = (c.discount_price_en !== null && c.discount_price_en !== undefined)
+              ? c.discount_price_en
+              : (cachedMatch?.discountPriceEn || '');
+
+            return {
+              id: c.id,
+              slug: c.slug,
+              titleEn: c.title_en,
+              titleVi: c.title_vi,
+              categoryName: c.category_name,
+              categoryEn: c.category_en || c.category_name,
+              priceType: c.price_type || 'free',
+              priceEn: c.price_en || 'Free',
+              priceVi: c.price_vi || 'Miễn phí',
+              discountPriceEn: discEn,
+              discountPriceVi: discVi,
+              gradeLevel: c.grade_level,
+              gradeLevelEn: c.grade_level_en || c.grade_level,
+              durationEn: c.duration_en,
+              durationVi: c.duration_vi,
+              scheduleEn: c.schedule_en,
+              scheduleVi: c.schedule_vi,
+              descriptionEn: c.description_en,
+              descriptionVi: c.description_vi,
+              objectivesEn: c.objectives_en || [],
+              objectivesVi: c.objectives_vi || [],
+              curriculumEn: c.curriculum_en || [],
+              curriculumVi: c.curriculum_vi || [],
+              thumbnailUrl: c.thumbnail_url || '',
+              galleryUrls: c.gallery_urls || [],
+              videoUrl: c.video_url || '',
+              registrationFormUrl: c.registration_form_url || '',
+              isFeatured: c.is_featured !== false,
+              isPublished: c.is_published !== false,
+              createdAt: c.created_at ? c.created_at.split('T')[0] : new Date().toISOString().split('T')[0]
+            };
+          });
           localStorage.setItem('db_courses', JSON.stringify(list));
           return list;
         }
@@ -1942,35 +1968,54 @@ export const DB = {
       try {
         const { data, error } = await supabase.from('resources').select('*').order('created_at', { ascending: false });
         if (data && !error && data.length > 0) {
-          const list: TeachingResource[] = data.map((r) => ({
-            id: r.id,
-            slug: r.slug || r.id,
-            titleEn: r.title_en,
-            titleVi: r.title_vi,
-            descriptionEn: r.description_en,
-            descriptionVi: r.description_vi,
-            categoryName: r.category_name,
-            categoryEn: r.category_en || r.category_name,
-            resourceType: r.resource_type || 'digital_file',
-            priceType: r.price_type || 'free',
-            priceEn: r.price_en || 'Free',
-            priceVi: r.price_vi || 'Miễn phí',
-            grade: r.grade,
-            gradeEn: r.grade_en || r.grade,
-            fileType: r.file_type || 'PDF',
-            fileTypeEn: r.file_type_en || r.file_type,
-            fileUrl: r.file_url || '',
-            previewUrl: r.preview_url || '',
-            galleryUrls: r.gallery_urls || [],
-            videoUrl: r.video_url || '',
-            downloadCount: r.download_count || 0,
-            specificationsEn: r.specifications_en || [],
-            specificationsVi: r.specifications_vi || [],
-            tags: r.tags || [],
-            isFeatured: r.is_featured !== false,
-            isPublished: r.is_published !== false,
-            createdAt: r.created_at ? r.created_at.split('T')[0] : new Date().toISOString().split('T')[0]
-          }));
+          const cachedResources: TeachingResource[] = (() => {
+            try {
+              const r = localStorage.getItem('db_resources_v3');
+              return r ? JSON.parse(r) : [];
+            } catch { return []; }
+          })();
+
+          const list: TeachingResource[] = data.map((r) => {
+            const cachedMatch = cachedResources.find(x => x.id === r.id || x.slug === r.slug);
+            const discVi = (r.discount_price_vi !== null && r.discount_price_vi !== undefined)
+              ? r.discount_price_vi
+              : (cachedMatch?.discountPriceVi || '');
+            const discEn = (r.discount_price_en !== null && r.discount_price_en !== undefined)
+              ? r.discount_price_en
+              : (cachedMatch?.discountPriceEn || '');
+
+            return {
+              id: r.id,
+              slug: r.slug || r.id,
+              titleEn: r.title_en,
+              titleVi: r.title_vi,
+              descriptionEn: r.description_en,
+              descriptionVi: r.description_vi,
+              categoryName: r.category_name,
+              categoryEn: r.category_en || r.category_name,
+              resourceType: r.resource_type || 'digital_file',
+              priceType: r.price_type || 'free',
+              priceEn: r.price_en || 'Free',
+              priceVi: r.price_vi || 'Miễn phí',
+              discountPriceEn: discEn,
+              discountPriceVi: discVi,
+              grade: r.grade,
+              gradeEn: r.grade_en || r.grade,
+              fileType: r.file_type || 'PDF',
+              fileTypeEn: r.file_type_en || r.file_type,
+              fileUrl: r.file_url || '',
+              previewUrl: r.preview_url || '',
+              galleryUrls: r.gallery_urls || [],
+              videoUrl: r.video_url || '',
+              downloadCount: r.download_count || 0,
+              specificationsEn: r.specifications_en || [],
+              specificationsVi: r.specifications_vi || [],
+              tags: r.tags || [],
+              isFeatured: r.is_featured !== false,
+              isPublished: r.is_published !== false,
+              createdAt: r.created_at ? r.created_at.split('T')[0] : new Date().toISOString().split('T')[0]
+            };
+          });
           localStorage.setItem('db_resources_v3', JSON.stringify(list));
           return list;
         }
