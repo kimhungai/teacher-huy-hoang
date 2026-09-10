@@ -11,8 +11,20 @@ import { SEO } from '../components/common/SEO';
 
 export const StudentWorksPage: React.FC = () => {
   const { t, language } = useLanguage();
-  const [works, setWorks] = useState<StudentWork[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [works, setWorks] = useState<StudentWork[]>(() => {
+    try {
+      const cached = localStorage.getItem('db_student_works');
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return [];
+  });
+  const [loading, setLoading] = useState<boolean>(() => {
+    try {
+      const cached = localStorage.getItem('db_student_works');
+      if (cached) return JSON.parse(cached).length === 0;
+    } catch {}
+    return true;
+  });
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 

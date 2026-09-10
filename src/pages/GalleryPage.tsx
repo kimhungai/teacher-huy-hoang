@@ -21,8 +21,20 @@ export const GALLERY_CATEGORIES = [
 
 export const GalleryPage: React.FC = () => {
   const { t, language } = useLanguage();
-  const [items, setItems] = useState<GalleryItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [items, setItems] = useState<GalleryItem[]>(() => {
+    try {
+      const cached = localStorage.getItem('db_gallery');
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return [];
+  });
+  const [loading, setLoading] = useState<boolean>(() => {
+    try {
+      const cached = localStorage.getItem('db_gallery');
+      if (cached) return JSON.parse(cached).length === 0;
+    } catch {}
+    return true;
+  });
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeLightboxIndex, setActiveLightboxIndex] = useState<number | null>(null);
 

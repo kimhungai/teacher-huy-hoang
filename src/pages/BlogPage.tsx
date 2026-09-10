@@ -13,8 +13,20 @@ import { SEO } from '../components/common/SEO';
 
 export const BlogPage: React.FC = () => {
   const { t, language } = useLanguage();
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [posts, setPosts] = useState<BlogPost[]>(() => {
+    try {
+      const cached = localStorage.getItem('db_posts');
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return [];
+  });
+  const [loading, setLoading] = useState<boolean>(() => {
+    try {
+      const cached = localStorage.getItem('db_posts');
+      if (cached) return JSON.parse(cached).length === 0;
+    } catch {}
+    return true;
+  });
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');

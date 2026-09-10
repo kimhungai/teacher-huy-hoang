@@ -31,9 +31,43 @@ export const CourseDetailPage: React.FC = () => {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
 
-  const [course, setCourse] = useState<Course | null>(null);
-  const [relatedCourses, setRelatedCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [course, setCourse] = useState<Course | null>(() => {
+    try {
+      const cached = localStorage.getItem('db_courses');
+      if (cached && slug) {
+        const list: Course[] = JSON.parse(cached);
+        return list.find(c => c.slug === slug || c.id === slug) || null;
+      }
+    } catch {}
+    return null;
+  });
+
+  const [relatedCourses, setRelatedCourses] = useState<Course[]>(() => {
+    try {
+      const cached = localStorage.getItem('db_courses');
+      if (cached && slug) {
+        const list: Course[] = JSON.parse(cached);
+        const target = list.find(c => c.slug === slug || c.id === slug);
+        if (target) {
+          const otherPublished = list.filter(c => c.isPublished && c.id !== target.id);
+          const sameCategory = otherPublished.filter(c => c.categoryName === target.categoryName);
+          return (sameCategory.length > 0 ? sameCategory : otherPublished).slice(0, 3);
+        }
+      }
+    } catch {}
+    return [];
+  });
+
+  const [loading, setLoading] = useState(() => {
+    try {
+      const cached = localStorage.getItem('db_courses');
+      if (cached && slug) {
+        const list: Course[] = JSON.parse(cached);
+        return !list.some(c => c.slug === slug || c.id === slug);
+      }
+    } catch {}
+    return true;
+  });
 
   // Success Registration Modal State
   const [successRegData, setSuccessRegData] = useState<CourseRegistration | null>(null);
@@ -45,7 +79,7 @@ export const CourseDetailPage: React.FC = () => {
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [gradeLevel, setGradeLevel] = useState('');
+  const [gradeLevel, setGradeLevel] = useState(() => course ? course.gradeLevel : '');
   const [note, setNote] = useState('');
 
   const [submitting, setSubmitting] = useState(false);

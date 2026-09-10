@@ -33,9 +33,43 @@ export const ResourceDetailPage: React.FC = () => {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
 
-  const [resource, setResource] = useState<TeachingResource | null>(null);
-  const [relatedResources, setRelatedResources] = useState<TeachingResource[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [resource, setResource] = useState<TeachingResource | null>(() => {
+    try {
+      const cached = localStorage.getItem('db_resources');
+      if (cached && slug) {
+        const list: TeachingResource[] = JSON.parse(cached);
+        return list.find(r => r.slug === slug || r.id === slug) || null;
+      }
+    } catch {}
+    return null;
+  });
+
+  const [relatedResources, setRelatedResources] = useState<TeachingResource[]>(() => {
+    try {
+      const cached = localStorage.getItem('db_resources');
+      if (cached && slug) {
+        const list: TeachingResource[] = JSON.parse(cached);
+        const target = list.find(r => r.slug === slug || r.id === slug);
+        if (target) {
+          const otherPublished = list.filter(r => r.isPublished && r.id !== target.id);
+          const sameCategory = otherPublished.filter(r => r.categoryName === target.categoryName || r.resourceType === target.resourceType);
+          return (sameCategory.length > 0 ? sameCategory : otherPublished).slice(0, 3);
+        }
+      }
+    } catch {}
+    return [];
+  });
+
+  const [loading, setLoading] = useState(() => {
+    try {
+      const cached = localStorage.getItem('db_resources');
+      if (cached && slug) {
+        const list: TeachingResource[] = JSON.parse(cached);
+        return !list.some(r => r.slug === slug || r.id === slug);
+      }
+    } catch {}
+    return true;
+  });
 
   // Success Resource Order Modal State
   const [successOrderData, setSuccessOrderData] = useState<ResourceOrder | null>(null);

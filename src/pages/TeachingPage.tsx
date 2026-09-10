@@ -8,8 +8,20 @@ import { SEO } from '../components/common/SEO';
 
 export const TeachingPage: React.FC = () => {
   const { language } = useLanguage();
-  const [approaches, setApproaches] = useState<TeachingApproach[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [approaches, setApproaches] = useState<TeachingApproach[]>(() => {
+    try {
+      const cached = localStorage.getItem('db_teaching_approaches');
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return [];
+  });
+  const [loading, setLoading] = useState<boolean>(() => {
+    try {
+      const cached = localStorage.getItem('db_teaching_approaches');
+      if (cached) return JSON.parse(cached).length === 0;
+    } catch {}
+    return true;
+  });
 
   const iconMap: Record<string, React.ElementType> = {
     MessageSquare,

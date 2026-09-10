@@ -13,8 +13,20 @@ import { SEO } from '../components/common/SEO';
 
 export const ProjectsPage: React.FC = () => {
   const { t, language } = useLanguage();
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [projects, setProjects] = useState<Project[]>(() => {
+    try {
+      const cached = localStorage.getItem('db_projects');
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return [];
+  });
+  const [loading, setLoading] = useState<boolean>(() => {
+    try {
+      const cached = localStorage.getItem('db_projects');
+      if (cached) return JSON.parse(cached).length === 0;
+    } catch {}
+    return true;
+  });
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');

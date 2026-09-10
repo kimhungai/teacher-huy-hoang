@@ -11,8 +11,20 @@ import { SEO } from '../components/common/SEO';
 
 export const AchievementsPage: React.FC = () => {
   const { language } = useLanguage();
-  const [achievements, setAchievements] = useState<Achievement[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [achievements, setAchievements] = useState<Achievement[]>(() => {
+    try {
+      const cached = localStorage.getItem('db_achievements');
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return [];
+  });
+  const [loading, setLoading] = useState<boolean>(() => {
+    try {
+      const cached = localStorage.getItem('db_achievements');
+      if (cached) return JSON.parse(cached).length === 0;
+    } catch {}
+    return true;
+  });
   const [lightboxImages, setLightboxImages] = useState<string[]>([]);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 

@@ -10,8 +10,6 @@ import { BankPaymentCardModal } from '../components/common/BankPaymentCardModal'
 
 export const ContactPage: React.FC = () => {
   const { t, language } = useLanguage();
-  const [settings, setSettings] = useState<SiteSettings | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -19,6 +17,23 @@ export const ContactPage: React.FC = () => {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  const [settings, setSettings] = useState<SiteSettings | null>(() => {
+    try {
+      const cached = localStorage.getItem('db_site_settings');
+      return cached ? JSON.parse(cached) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [profile, setProfile] = useState<Profile | null>(() => {
+    try {
+      const cached = localStorage.getItem('db_profile');
+      return cached ? JSON.parse(cached) : null;
+    } catch {
+      return null;
+    }
+  });
 
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
 

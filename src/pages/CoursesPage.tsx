@@ -11,8 +11,20 @@ import { SEO } from '../components/common/SEO';
 
 export const CoursesPage: React.FC = () => {
   const { t, language } = useLanguage();
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [courses, setCourses] = useState<Course[]>(() => {
+    try {
+      const cached = localStorage.getItem('db_courses');
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return [];
+  });
+  const [loading, setLoading] = useState(() => {
+    try {
+      const cached = localStorage.getItem('db_courses');
+      if (cached) return JSON.parse(cached).length === 0;
+    } catch {}
+    return true;
+  });
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');

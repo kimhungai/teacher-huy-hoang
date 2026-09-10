@@ -13,15 +13,33 @@ export const ProjectDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { t, language } = useLanguage();
-  const [project, setProject] = useState<Project | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [project, setProject] = useState<Project | null>(() => {
+    try {
+      const cached = localStorage.getItem('db_projects');
+      if (cached && slug) {
+        const list: Project[] = JSON.parse(cached);
+        return list.find(p => p.slug === slug || p.id === slug) || null;
+      }
+    } catch {}
+    return null;
+  });
+
+  const [loading, setLoading] = useState<boolean>(() => {
+    try {
+      const cached = localStorage.getItem('db_projects');
+      if (cached && slug) {
+        const list: Project[] = JSON.parse(cached);
+        return !list.some(p => p.slug === slug || p.id === slug);
+      }
+    } catch {}
+    return true;
+  });
 
   // Lightbox State
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   useEffect(() => {
     if (slug) {
-      setLoading(true);
       DB.getProjectBySlug(slug).then((proj) => {
         if (proj) {
           setProject(proj);

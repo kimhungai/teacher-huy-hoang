@@ -7,9 +7,27 @@ import type { SiteSettings, HeroSettings, Profile } from '../../types';
 
 export const Footer: React.FC = () => {
   const { t, language } = useLanguage();
-  const [settings, setSettings] = useState<SiteSettings | null>(null);
-  const [heroSettings, setHeroSettings] = useState<HeroSettings | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [settings, setSettings] = useState<SiteSettings | null>(() => {
+    try {
+      const cached = localStorage.getItem('db_site_settings');
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return null;
+  });
+  const [heroSettings, setHeroSettings] = useState<HeroSettings | null>(() => {
+    try {
+      const cached = localStorage.getItem('db_hero');
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return null;
+  });
+  const [profile, setProfile] = useState<Profile | null>(() => {
+    try {
+      const cached = localStorage.getItem('db_profile');
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return null;
+  });
   const pluginContainerRef = useRef<HTMLDivElement>(null);
 
   const loadSettings = () => {

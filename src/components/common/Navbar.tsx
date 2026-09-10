@@ -12,7 +12,13 @@ export const Navbar: React.FC = () => {
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [settings, setSettings] = useState<SiteSettings | null>(null);
+  const [settings, setSettings] = useState<SiteSettings | null>(() => {
+    try {
+      const cached = localStorage.getItem('db_site_settings');
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return null;
+  });
 
   const loadSettings = () => {
     DB.getSiteSettings().then(setSettings);

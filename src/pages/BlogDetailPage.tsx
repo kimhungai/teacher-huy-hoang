@@ -24,14 +24,46 @@ export const BlogDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { t, language } = useLanguage();
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [related, setRelated] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [post, setPost] = useState<BlogPost | null>(() => {
+    try {
+      const cached = localStorage.getItem('db_posts');
+      if (cached && slug) {
+        const list: BlogPost[] = JSON.parse(cached);
+        return list.find(b => b.slug === slug || b.id === slug) || null;
+      }
+    } catch {}
+    return null;
+  });
+
+  const [related, setRelated] = useState<BlogPost[]>(() => {
+    try {
+      const cached = localStorage.getItem('db_posts');
+      if (cached && slug) {
+        const list: BlogPost[] = JSON.parse(cached);
+        const target = list.find(b => b.slug === slug || b.id === slug);
+        if (target) {
+          return list.filter(x => x.id !== target.id && x.status === 'published').slice(0, 2);
+        }
+      }
+    } catch {}
+    return [];
+  });
+
+  const [loading, setLoading] = useState<boolean>(() => {
+    try {
+      const cached = localStorage.getItem('db_posts');
+      if (cached && slug) {
+        const list: BlogPost[] = JSON.parse(cached);
+        return !list.some(b => b.slug === slug || b.id === slug);
+      }
+    } catch {}
+    return true;
+  });
+
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   useEffect(() => {
     if (slug) {
-      setLoading(true);
       DB.getBlogPostBySlug(slug).then((res) => {
         if (res) {
           setPost(res);
