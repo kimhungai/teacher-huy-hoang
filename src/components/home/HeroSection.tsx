@@ -9,6 +9,8 @@ interface HeroSectionProps {
   profile: Profile | null;
 }
 
+const DEFAULT_TEACHER_AVATAR = 'https://ik.imagekit.io/hkh/OK_0.jpg?updatedAt=1787823395930';
+
 export const HeroSection: React.FC<HeroSectionProps> = ({ hero, profile }) => {
   const { t, language } = useLanguage();
 
@@ -95,7 +97,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ hero, profile }) => {
               <div className="relative bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-800">
                 <div className="aspect-[4/5] rounded-2xl overflow-hidden relative group">
                   <img
-                    src={hero?.avatarUrl || profile?.avatarUrl || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600'}
+                    src={hero?.avatarUrl || profile?.avatarUrl || DEFAULT_TEACHER_AVATAR}
                     alt="Teacher Nguyen Trong Huy Hoang"
                     className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-500"
                   />

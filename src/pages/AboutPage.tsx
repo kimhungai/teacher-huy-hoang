@@ -6,10 +6,24 @@ import { School, CheckCircle2, Heart, Sparkles, BookOpen } from 'lucide-react';
 
 import { SEO } from '../components/common/SEO';
 
+const DEFAULT_TEACHER_AVATAR = 'https://ik.imagekit.io/hkh/OK_0.jpg?updatedAt=1787823395930';
+
 export const AboutPage: React.FC = () => {
   const { language } = useLanguage();
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [hero, setHero] = useState<HeroSettings | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(() => {
+    try {
+      const cached = localStorage.getItem('db_profile');
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return null;
+  });
+  const [hero, setHero] = useState<HeroSettings | null>(() => {
+    try {
+      const cached = localStorage.getItem('db_hero');
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return null;
+  });
 
   const loadData = () => {
     Promise.all([
@@ -48,7 +62,7 @@ export const AboutPage: React.FC = () => {
         description={seoDesc}
         url="/about"
         lang={language as 'vi' | 'en'}
-        image={profile?.avatarUrl}
+        image={profile?.avatarUrl || DEFAULT_TEACHER_AVATAR}
         breadcrumbs={[
           { name: language === 'vi' ? 'Trang chủ' : 'Home', item: '/' },
           { name: seoTitle, item: '/about' }
@@ -68,7 +82,7 @@ export const AboutPage: React.FC = () => {
               <div className="relative bg-white dark:bg-slate-900 p-3.5 rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-800">
                 <div className="aspect-square rounded-2xl overflow-hidden relative group">
                   <img
-                    src={hero?.avatarUrl || profile?.avatarUrl || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600'}
+                    src={hero?.avatarUrl || profile?.avatarUrl || DEFAULT_TEACHER_AVATAR}
                     alt="Teacher Nguyen Trong Huy Hoang"
                     loading="lazy"
                     decoding="async"

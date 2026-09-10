@@ -16,8 +16,20 @@ import { SEO } from '../components/common/SEO';
 
 export const HomePage: React.FC = () => {
   const { language } = useLanguage();
-  const [hero, setHero] = useState<HeroSettings | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [hero, setHero] = useState<HeroSettings | null>(() => {
+    try {
+      const cached = localStorage.getItem('db_hero');
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return null;
+  });
+  const [profile, setProfile] = useState<Profile | null>(() => {
+    try {
+      const cached = localStorage.getItem('db_profile');
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return null;
+  });
   const [settings, setSettings] = useState<SiteSettings | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);

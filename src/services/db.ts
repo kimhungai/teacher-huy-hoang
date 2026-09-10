@@ -2641,7 +2641,7 @@ export const DB = {
       {
         id: 'm1',
         filename: 'teacher-portrait.jpg',
-        fileUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600',
+        fileUrl: 'https://ik.imagekit.io/hkh/OK_0.jpg?updatedAt=1787823395930',
         fileType: 'image/jpeg',
         fileSize: 1024 * 450,
         createdAt: '2026-01-01'
