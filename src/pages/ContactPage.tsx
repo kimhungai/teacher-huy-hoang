@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DB } from '../services/db';
 import type { SiteSettings, Profile } from '../types';
 import { useLanguage } from '../context/LanguageContext';
-import { Mail, Send, MapPin, School, Phone, MessageCircle } from 'lucide-react';
+import { Mail, Send, MapPin, Phone, MessageCircle, User } from 'lucide-react';
 import { Toast } from '../components/common/Toast';
 
 import { SEO } from '../components/common/SEO';
@@ -115,28 +115,32 @@ export const ContactPage: React.FC = () => {
               </h3>
 
               <div className="space-y-4 text-xs">
-                {/* School */}
+                {/* Full Name */}
                 <div className="flex items-start gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800">
-                  <School className="w-5 h-5 text-sky-600 shrink-0 mt-0.5" />
+                  <User className="w-5 h-5 text-sky-600 shrink-0 mt-0.5" />
                   <div>
                     <div className="font-bold text-slate-900 dark:text-white">
-                      {language === 'vi' ? 'Đơn vị công tác' : 'Teaching School'}
+                      {language === 'vi' ? 'Họ và tên' : 'Full Name'}
                     </div>
                     <div className="text-slate-500 mt-0.5">
-                      {language === 'vi' ? 'Trường TH Dương Minh Châu' : 'Duong Minh Chau Primary School'}
+                      {language === 'vi' 
+                        ? (profile?.fullName || 'Nguyễn Trọng Huy Hoàng') 
+                        : (profile?.fullNameEn || profile?.fullName || 'Nguyen Trong Huy Hoang')}
                     </div>
                   </div>
                 </div>
 
-                {/* Location */}
+                {/* Contact Address */}
                 <div className="flex items-start gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800">
                   <MapPin className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                   <div>
                     <div className="font-bold text-slate-900 dark:text-white">
-                      {language === 'vi' ? 'Địa điểm' : 'Location'}
+                      {language === 'vi' ? 'Địa chỉ liên hệ' : 'Contact Address'}
                     </div>
                     <div className="text-slate-500 mt-0.5">
-                      {language === 'vi' ? 'Quận 10, TP. Hồ Chí Minh, Việt Nam' : 'District 10, Ho Chi Minh City, Vietnam'}
+                      {language === 'vi' 
+                        ? (profile?.locationVi || 'Quận 10, Thành phố Hồ Chí Minh, Việt Nam') 
+                        : (profile?.locationEn || 'District 10, Ho Chi Minh City, Vietnam')}
                     </div>
                   </div>
                 </div>

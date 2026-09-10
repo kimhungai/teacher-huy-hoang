@@ -213,6 +213,50 @@ Learn Together: Building empathy, teamwork, and active listening skills in small
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
               />
             </div>
+
+            <div className="space-y-1.5">
+              <label className="block font-extrabold text-slate-800 dark:text-slate-200 text-xs md:text-sm">Đơn vị công tác (Tiếng Việt)</label>
+              <input
+                type="text"
+                value={profile.schoolVi || ''}
+                onChange={(e) => setProfile({ ...profile, schoolVi: e.target.value })}
+                placeholder="Trường TH Dương Minh Châu"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block font-extrabold text-slate-800 dark:text-slate-200 text-xs md:text-sm">Đơn vị công tác (Tiếng Anh)</label>
+              <input
+                type="text"
+                value={profile.schoolEn || ''}
+                onChange={(e) => setProfile({ ...profile, schoolEn: e.target.value })}
+                placeholder="Duong Minh Chau Primary School"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block font-extrabold text-slate-800 dark:text-slate-200 text-xs md:text-sm">Địa chỉ liên hệ (Tiếng Việt)</label>
+              <input
+                type="text"
+                value={profile.locationVi || ''}
+                onChange={(e) => setProfile({ ...profile, locationVi: e.target.value })}
+                placeholder="Quận 10, Thành phố Hồ Chí Minh, Việt Nam"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block font-extrabold text-slate-800 dark:text-slate-200 text-xs md:text-sm">Địa chỉ liên hệ (Tiếng Anh)</label>
+              <input
+                type="text"
+                value={profile.locationEn || ''}
+                onChange={(e) => setProfile({ ...profile, locationEn: e.target.value })}
+                placeholder="District 10, Ho Chi Minh City, Vietnam"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+              />
+            </div>
           </div>
         </div>
 

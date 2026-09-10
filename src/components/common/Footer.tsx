@@ -3,17 +3,19 @@ import { Link } from 'react-router-dom';
 import { GraduationCap, Mail, MapPin, School, Globe } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { DB } from '../../services/db';
-import type { SiteSettings, HeroSettings } from '../../types';
+import type { SiteSettings, HeroSettings, Profile } from '../../types';
 
 export const Footer: React.FC = () => {
   const { t, language } = useLanguage();
   const [settings, setSettings] = useState<SiteSettings | null>(null);
   const [heroSettings, setHeroSettings] = useState<HeroSettings | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const pluginContainerRef = useRef<HTMLDivElement>(null);
 
   const loadSettings = () => {
     DB.getSiteSettings().then(setSettings);
     DB.getHeroSettings().then(setHeroSettings);
+    DB.getProfile().then(setProfile);
   };
 
   useEffect(() => {
@@ -263,15 +265,17 @@ export const Footer: React.FC = () => {
               <li className="flex items-start gap-2">
                 <School className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
                 <span>
-                  {language === 'vi' ? 'Trường TH Dương Minh Châu' : 'Duong Minh Chau Primary School'}
+                  {language === 'vi'
+                    ? ((profile?.schoolVi && profile.schoolVi.trim() !== '') ? profile.schoolVi : (profile?.fullName || 'Nguyễn Trọng Huy Hoàng'))
+                    : ((profile?.schoolEn && profile.schoolEn.trim() !== '') ? profile.schoolEn : (profile?.fullNameEn || profile?.fullName || 'Nguyen Trong Huy Hoang'))}
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
                 <span>
                   {language === 'vi'
-                    ? 'Quận 10, Thành phố Hồ Chí Minh, Việt Nam'
-                    : 'District 10, Ho Chi Minh City, Vietnam'}
+                    ? (profile?.locationVi || 'Quận 10, Thành phố Hồ Chí Minh, Việt Nam')
+                    : (profile?.locationEn || 'District 10, Ho Chi Minh City, Vietnam')}
                 </span>
               </li>
               <li className="flex items-center gap-2">
