@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ImageLightboxProps {
@@ -46,9 +47,9 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
   const hasPrev = currentIndex > 0;
   const hasNext = currentIndex < images.length - 1;
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md animate-in fade-in duration-200"
       onClick={onClose}
     >
       {/* Top Bar with Close Button & Counter */}
@@ -108,6 +109,7 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
           className="max-h-[82vh] max-w-[92vw] rounded-2xl shadow-2xl object-contain border border-white/10"
         />
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

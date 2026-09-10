@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { DB } from '../../services/db';
 import type { SiteSettings, Profile } from '../../types';
 import { useLanguage } from '../../context/LanguageContext';
@@ -68,9 +69,9 @@ export const BankPaymentCardModal: React.FC<{ className?: string }> = ({ classNa
         </div>
       </button>
 
-      {/* Modal Popup */}
-      {showModal && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[9999] flex items-center justify-center p-4 overflow-y-auto">
+      {/* Modal Popup via Portal to document.body */}
+      {showModal && createPortal(
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[99999] flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-[#0b192e] text-white border border-slate-700/60 rounded-3xl shadow-2xl max-w-3xl w-full p-6 md:p-8 relative my-8 text-left animate-in fade-in zoom-in-95 duration-200">
             {/* Top Badge */}
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-300 text-[11px] font-bold uppercase tracking-wider">
@@ -202,8 +203,10 @@ export const BankPaymentCardModal: React.FC<{ className?: string }> = ({ classNa
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
 };
+
