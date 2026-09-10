@@ -62,10 +62,10 @@
     "logoText": "Huy Hoang English",
     "primaryColor": "#0284C7",
     "secondaryColor": "#0F172A",
-    "contactEmail": "huynhkimhungabmthaydangtu@gmail.com",
+    "contactEmail": "teacherhuyhoang@gmail.com",
     "contactPhone": "0987654321",
     "websiteUrl": "https://teacherhuyhoang.com",
-    "notificationEmail": "huynhkimhungabmthaydangtu@gmail.com",
+    "notificationEmail": "teacherhuyhoang@gmail.com",
     "defaultLanguage": "vi",
     "defaultTheme": "dark",
     "facebookUrl": "https://facebook.com",
@@ -80,9 +80,17 @@
         "id": "ca_default",
         "name": "Tài khoản bàn giao Khách hàng",
         "role": "client_admin",
-        "email": "huynhkimhung2023@gmail.com",
+        "email": "teacherhuyhoang@gmail.com",
         "password": "Admin@123",
         "createdAt": "2026-01-01"
+      },
+      {
+        "id": "ca_1789030561533",
+        "name": "Tài khoản khách hàng 2",
+        "role": "client_admin",
+        "email": "gentlemanhoang@gmail.com",
+        "password": "Admin@123",
+        "createdAt": "2026-09-10"
       }
     ],
     "enableEmailNotification": true,
@@ -178,80 +186,14 @@
   ],
   "db_projects": [
     {
-      "id": "proj_1789022641658",
-      "slug": "my-green-planet-project-copy-1789022641658",
-      "titleEn": "Project: \"My Green Planet & Environmental Heroes\" (Copy)",
-      "titleVi": "Dự án: \"Hành Tinh Xanh & Hiệp Sĩ Môi Trường\" (Bản sao)",
-      "categoryName": "Dự án học tập",
-      "grade": "Lớp 4 & 5",
-      "year": "2025-2026",
-      "descriptionEn": "A 4-week integrated PBL project where students learned vocabulary about nature, recycled materials, and presented solutions in English.",
-      "descriptionVi": "Dự án PBL kéo dài 4 tuần giúp học sinh tiếp thu từ vựng về môi trường, vật liệu tái chế và thuyết trình giải pháp bằng tiếng Anh.",
-      "objectivesEn": [
-        "Master 30+ vocabulary terms related to environment and recycling.",
-        "Practice present continuous and modal verbs (should/shouldnt).",
-        "Boost team collaboration and public speaking skills."
-      ],
-      "objectivesVi": [
-        "Làm chủ 30+ từ vựng về môi trường và phân loại rác thải.",
-        "Thực hành thì hiện tại tiếp diễn và động từ khuyết thiếu (should/shouldnt).",
-        "Nâng cao kỹ năng làm việc nhóm và thuyết trình trước lớp."
-      ],
-      "activitiesEn": [
-        "Week 1: Environmental vocabulary discovery with flashcards and songs.",
-        "Week 2: Poster creation using recycled paper and colored markers.",
-        "Week 3: Group presentation rehearsal with peer evaluation rubric.",
-        "Week 4: Exhibition day for parents and school teachers."
-      ],
-      "activitiesVi": [
-        "Tuần 1: Khám phá từ vựng môi trường qua tranh ảnh và bài hát.",
-        "Tuần 2: Thiết kế áp phích từ giấy tái chế và màu vẽ.",
-        "Tuần 3: Luyện tập thuyết trình nhóm và đánh giá chéo.",
-        "Tuần 4: Ngày hội triển lãm dành cho phụ huynh và thầy cô."
-      ],
-      "methodsEn": [
-        "Project-Based Learning",
-        "Collaborative Group Work",
-        "Visual Art Integration"
-      ],
-      "methodsVi": [
-        "Học theo dự án",
-        "Thảo luận nhóm",
-        "Tích hợp nghệ thuật trực quan"
-      ],
-      "outcomesEn": [
-        "120 student posters created",
-        "95% student confidence increase in public speaking"
-      ],
-      "outcomesVi": [
-        "120 áp phích được học sinh hoàn thiện",
-        "95% học sinh tự tin hơn khi phát biểu tiếng Anh"
-      ],
-      "thumbnailUrl": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800",
-      "galleryUrls": [
-        "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800",
-        "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=800"
-      ],
-      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      "tags": [
-        "PBL",
-        "Environment",
-        "Speaking",
-        "Poster"
-      ],
-      "isFeatured": false,
-      "isPublished": true,
-      "createdAt": "2026-02-15",
-      "categoryEn": "Learning Projects",
-      "gradeEn": "Grade 4 & 5"
-    },
-    {
-      "id": "proj1",
+      "id": "49e91874-d024-473e-a627-710f123c2185",
       "slug": "my-green-planet-project",
       "titleEn": "Project: \"My Green Planet & Environmental Heroes\"",
       "titleVi": "Dự án: \"Hành Tinh Xanh & Hiệp Sĩ Môi Trường\"",
       "categoryName": "Dự án học tập",
+      "categoryEn": "Dự án học tập",
       "grade": "Lớp 4 & 5",
+      "gradeEn": "Lớp 4 & 5",
       "year": "2025-2026",
       "descriptionEn": "A 4-week integrated PBL project where students learned vocabulary about nature, recycled materials, and presented solutions in English.",
       "descriptionVi": "Dự án PBL kéo dài 4 tuần giúp học sinh tiếp thu từ vựng về môi trường, vật liệu tái chế và thuyết trình giải pháp bằng tiếng Anh.",
@@ -301,6 +243,7 @@
         "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=800"
       ],
       "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "attachments": [],
       "tags": [
         "PBL",
         "Environment",
@@ -309,17 +252,17 @@
       ],
       "isFeatured": true,
       "isPublished": true,
-      "createdAt": "2026-02-15",
-      "categoryEn": "Learning Projects",
-      "gradeEn": "Grade 4 & 5"
+      "createdAt": "2026-09-02"
     },
     {
-      "id": "proj2",
+      "id": "48f68885-f5ae-413b-a72d-24c68d349a18",
       "slug": "english-phonics-fair",
       "titleEn": "Interactive Phonics Fair & Word Games",
       "titleVi": "Ngày Hội Phonics & Trò Chơi Từ Vựng Sinh Động",
       "categoryName": "Hoạt động lớp học",
+      "categoryEn": "Hoạt động lớp học",
       "grade": "Lớp 1 & 2",
+      "gradeEn": "Lớp 1 & 2",
       "year": "2025",
       "descriptionEn": "A joyful day filled with phonics games, sound matching stations, and mini-certificates for young beginners.",
       "descriptionVi": "Ngày hội vui học ngữ âm với các trạm ghép âm, phát âm chuẩn và trao chứng chỉ nhí cho học sinh lớp 1 và 2.",
@@ -359,6 +302,8 @@
       "galleryUrls": [
         "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800"
       ],
+      "videoUrl": "",
+      "attachments": [],
       "tags": [
         "Phonics",
         "Grade 1",
@@ -366,17 +311,17 @@
       ],
       "isFeatured": true,
       "isPublished": true,
-      "createdAt": "2025-11-20",
-      "categoryEn": "Classroom Activities",
-      "gradeEn": "Grade 1 & 2"
+      "createdAt": "2026-09-02"
     },
     {
-      "id": "proj3",
+      "id": "df5b5bea-2c38-4961-8312-1f59e3124477",
       "slug": "digital-storytelling-with-canva",
       "titleEn": "Digital Storytelling: \"My Dream Career\"",
       "titleVi": "Kể Chuyện Số: \"Uớc Mơ Ngề Nghiệp Của Em\"",
       "categoryName": "Công nghệ trong giáo dục",
+      "categoryEn": "Công nghệ trong giáo dục",
       "grade": "Lớp 5",
+      "gradeEn": "Lớp 5",
       "year": "2025",
       "descriptionEn": "Students created digital comic strips and short presentations introducing their future career aspirations using Canva.",
       "descriptionVi": "Học sinh thiết kế truyện tranh số và bài thuyết trình giới thiệu ước mơ nghề nghiệp tương lai bằng phần mềm Canva.",
@@ -414,6 +359,8 @@
       "galleryUrls": [
         "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800"
       ],
+      "videoUrl": "",
+      "attachments": [],
       "tags": [
         "EdTech",
         "Canva",
@@ -421,9 +368,7 @@
       ],
       "isFeatured": true,
       "isPublished": true,
-      "createdAt": "2025-10-10",
-      "categoryEn": "Technology in Education",
-      "gradeEn": "Grade 5"
+      "createdAt": "2026-09-02"
     }
   ],
   "db_courses": [

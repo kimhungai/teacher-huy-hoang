@@ -247,7 +247,7 @@ const INITIAL_PROJECTS: Project[] = [
     id: 'proj3',
     slug: 'digital-storytelling-with-canva',
     titleEn: 'Digital Storytelling: "My Dream Career"',
-    titleVi: 'Kể Chuyện Số: "Uớc Mơ Ngề Nghiệp Của Em"',
+    titleVi: 'Kể Chuyện Số: "Ước Mơ Nghề Nghiệp Của Em"',
     categoryName: 'Technology in Education',
     grade: 'Grade 5',
     year: '2025',
@@ -270,7 +270,6 @@ const INITIAL_PROJECTS: Project[] = [
   }
 ];
 
-// INITIAL COURSES SAMPLE DATA
 const INITIAL_COURSES: Course[] = [
   {
     id: 'c1',
@@ -824,13 +823,258 @@ const getStorageItem = <T>(key: string, defaultVal: T): T => {
   }
 };
 
+const isValidUUID = (str?: string): boolean => {
+  if (!str) return false;
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+};
+
+const SETTINGS_ROW_ID = '00000000-0000-0000-0000-000000000001';
+const PROFILE_ROW_ID  = '00000000-0000-0000-0000-000000000002';
+const HERO_ROW_ID     = '00000000-0000-0000-0000-000000000003';
+
 const syncToSupabase = async (key: string, val: any) => {
   if (!isSupabaseConfigured || !supabase) return;
   try {
-    if (key === 'db_settings') {
+    if (key === 'db_profile') {
+      const p = val as Profile;
+      await supabase.from('profiles').upsert({
+        id: PROFILE_ROW_ID,
+        full_name: p.fullName,
+        full_name_en: p.fullNameEn || p.fullName,
+        title_en: p.titleEn,
+        title_vi: p.titleVi,
+        school_en: p.schoolEn,
+        school_vi: p.schoolVi,
+        location_en: p.locationEn,
+        location_vi: p.locationVi,
+        admin_email: p.adminEmail,
+        brand_message_en: p.brandMessageEn,
+        brand_message_vi: p.brandMessageVi,
+        avatar_url: p.avatarUrl,
+        bio_en: p.bioEn,
+        bio_vi: p.bioVi,
+        skills: p.skills || [],
+        experience_years: p.experienceYears || 25,
+        happy_students_count: p.happyStudentsCount || 4500,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'id' });
+    } else if (key === 'db_hero') {
+      const h = val as HeroSettings;
+      await supabase.from('hero_settings').upsert({
+        id: HERO_ROW_ID,
+        headline_en: h.headlineEn,
+        headline_vi: h.headlineVi,
+        subtitle_en: h.subtitleEn,
+        subtitle_vi: h.subtitleVi,
+        avatar_url: h.avatarUrl,
+        background_url: h.backgroundUrl
+      }, { onConflict: 'id' });
+    } else if (key === 'db_teaching') {
+      const list = val as TeachingApproach[];
+      if (list && Array.isArray(list)) {
+        const rows = list.map((ap, i) => ({
+          ...(isValidUUID(ap.id) ? { id: ap.id } : {}),
+          title_en: ap.titleEn,
+          title_vi: ap.titleVi,
+          description_en: ap.descriptionEn,
+          description_vi: ap.descriptionVi,
+          icon: ap.icon || 'Sparkles',
+          image_url: ap.imageUrl || '',
+          order_index: ap.orderIndex ?? (i + 1)
+        }));
+        await supabase.from('teaching_approaches').upsert(rows);
+      }
+    } else if (key === 'db_projects') {
+      const list = val as Project[];
+      if (list && Array.isArray(list)) {
+        const rows = list.map(p => ({
+          ...(isValidUUID(p.id) ? { id: p.id } : {}),
+          slug: p.slug,
+          title_en: p.titleEn,
+          title_vi: p.titleVi,
+          category_name: p.categoryName,
+          grade: p.grade,
+          year: p.year,
+          description_en: p.descriptionEn,
+          description_vi: p.descriptionVi,
+          objectives_en: p.objectivesEn || [],
+          objectives_vi: p.objectivesVi || [],
+          activities_en: p.activitiesEn || [],
+          activities_vi: p.activitiesVi || [],
+          methods_en: p.methodsEn || [],
+          methods_vi: p.methodsVi || [],
+          outcomes_en: p.outcomesEn || [],
+          outcomes_vi: p.outcomesVi || [],
+          thumbnail_url: p.thumbnailUrl,
+          gallery_urls: p.galleryUrls || [],
+          video_url: p.videoUrl || '',
+          attachments: p.attachments || [],
+          tags: p.tags || [],
+          is_featured: p.isFeatured !== false,
+          is_published: p.isPublished !== false
+        }));
+        await supabase.from('projects').upsert(rows, { onConflict: 'slug' });
+      }
+    } else if (key === 'db_courses') {
+      const list = val as Course[];
+      if (list && Array.isArray(list)) {
+        const rows = list.map(c => ({
+          ...(isValidUUID(c.id) ? { id: c.id } : {}),
+          slug: c.slug,
+          title_en: c.titleEn,
+          title_vi: c.titleVi,
+          category_name: c.categoryName,
+          price_type: c.priceType,
+          price_en: c.priceEn,
+          price_vi: c.priceVi,
+          grade_level: c.gradeLevel,
+          duration_en: c.durationEn,
+          duration_vi: c.durationVi,
+          schedule_en: c.scheduleEn,
+          schedule_vi: c.scheduleVi,
+          description_en: c.descriptionEn,
+          description_vi: c.descriptionVi,
+          objectives_en: c.objectivesEn || [],
+          objectives_vi: c.objectivesVi || [],
+          curriculum_en: c.curriculumEn || [],
+          curriculum_vi: c.curriculumVi || [],
+          thumbnail_url: c.thumbnailUrl,
+          video_url: c.videoUrl || '',
+          registration_form_url: c.registrationFormUrl || '',
+          is_featured: c.isFeatured !== false,
+          is_published: c.isPublished !== false
+        }));
+        await supabase.from('courses').upsert(rows, { onConflict: 'slug' });
+      }
+    } else if (key === 'db_resources_v3' || key === 'db_resources') {
+      const list = val as TeachingResource[];
+      if (list && Array.isArray(list)) {
+        const validFileTypes = ['PDF', 'DOC', 'DOCX', 'PPT', 'PPTX', 'Images', 'Audio', 'Video'];
+        const rows = list.map(r => ({
+          ...(isValidUUID(r.id) ? { id: r.id } : {}),
+          title_en: r.titleEn,
+          title_vi: r.titleVi,
+          description_en: r.descriptionEn,
+          description_vi: r.descriptionVi,
+          category_name: r.categoryName,
+          grade: r.grade,
+          level: (r as any).level || 'Beginner',
+          file_type: validFileTypes.includes(r.fileType) ? r.fileType : 'PDF',
+          file_url: r.fileUrl || 'https://example.com/resource.pdf',
+          preview_url: r.previewUrl || '',
+          download_count: r.downloadCount || 0,
+          tags: r.tags || [],
+          is_published: r.isPublished !== false
+        }));
+        await supabase.from('resources').upsert(rows);
+      }
+    } else if (key === 'db_blog') {
+      const list = val as BlogPost[];
+      if (list && Array.isArray(list)) {
+        const rows = list.map(b => ({
+          ...(isValidUUID(b.id) ? { id: b.id } : {}),
+          slug: b.slug,
+          title_en: b.titleEn,
+          title_vi: b.titleVi,
+          excerpt_en: b.excerptEn,
+          excerpt_vi: b.excerptVi,
+          content_en: b.contentEn,
+          content_vi: b.contentVi,
+          featured_image: b.featuredImage || '',
+          category_name: b.categoryName,
+          tags: b.tags || [],
+          author: b.author || 'Nguyễn Trọng Huy Hoàng',
+          reading_time_en: b.readingTimeEn || '5 min read',
+          reading_time_vi: b.readingTimeVi || '5 phút đọc',
+          status: b.status || 'published',
+          is_featured: b.isFeatured !== false
+        }));
+        await supabase.from('blog_posts').upsert(rows, { onConflict: 'slug' });
+      }
+    } else if (key === 'db_achievements') {
+      const list = val as Achievement[];
+      if (list && Array.isArray(list)) {
+        const rows = list.map((ac) => ({
+          ...(isValidUUID(ac.id) ? { id: ac.id } : {}),
+          title_en: ac.titleEn,
+          title_vi: ac.titleVi,
+          organization_en: ac.organizationEn,
+          organization_vi: ac.organizationVi,
+          date: ac.date,
+          category: ac.category,
+          certificate_url: ac.certificateUrl || '',
+          description_en: ac.descriptionEn || '',
+          description_vi: ac.descriptionVi || ''
+        }));
+        await supabase.from('achievements').upsert(rows);
+      }
+    } else if (key === 'db_gallery') {
+      const list = val as GalleryItem[];
+      if (list && Array.isArray(list)) {
+        const rows = list.map(g => ({
+          ...(isValidUUID(g.id) ? { id: g.id } : {}),
+          title_en: g.titleEn,
+          title_vi: g.titleVi,
+          category: g.category,
+          media_type: g.mediaType || 'image',
+          media_url: g.mediaUrl,
+          thumbnail_url: g.thumbnailUrl || '',
+          description_en: g.descriptionEn || '',
+          description_vi: g.descriptionVi || '',
+          is_published: g.isPublished !== false
+        }));
+        await supabase.from('gallery_items').upsert(rows);
+      }
+    } else if (key === 'db_student_works') {
+      const list = val as StudentWork[];
+      if (list && Array.isArray(list)) {
+        const rows = list.map(sw => ({
+          ...(isValidUUID(sw.id) ? { id: sw.id } : {}),
+          title_en: sw.titleEn,
+          title_vi: sw.titleVi,
+          student_name: sw.studentName || '',
+          description_en: sw.descriptionEn || '',
+          description_vi: sw.descriptionVi || '',
+          objective_en: sw.objectiveEn || '',
+          objective_vi: sw.objectiveVi || '',
+          image_url: sw.imageUrl || sw.mediaUrl || '',
+          privacy_mode: sw.privacyMode || 'public',
+          is_published: sw.isPublished !== false
+        }));
+        await supabase.from('student_works').upsert(rows);
+      }
+    } else if (key === 'db_media') {
+      const list = val as MediaFile[];
+      if (list && Array.isArray(list)) {
+        const rows = list.map((m: any) => {
+          let rawSize = 0;
+          if (typeof m.size === 'number') {
+            rawSize = m.size;
+          } else if (typeof m.fileSize === 'number') {
+            rawSize = m.fileSize;
+          } else if (typeof m.size === 'string') {
+            const num = parseFloat(m.size.replace(/[^0-9.]/g, ''));
+            if (!isNaN(num)) {
+              if (m.size.toLowerCase().includes('mb')) rawSize = Math.round(num * 1024 * 1024);
+              else if (m.size.toLowerCase().includes('kb')) rawSize = Math.round(num * 1024);
+              else rawSize = Math.round(num);
+            }
+          }
+
+          return {
+            ...(isValidUUID(m.id) ? { id: m.id } : {}),
+            filename: m.name || m.filename || 'media-file.jpg',
+            file_url: m.url || m.fileUrl || 'https://example.com/media.jpg',
+            file_type: m.type || m.fileType || 'image',
+            file_size: rawSize,
+            bucket_name: 'media'
+          };
+        });
+        await supabase.from('media_library').upsert(rows);
+      }
+    } else if (key === 'db_settings') {
       const s = val as SiteSettings;
-      const SETTINGS_ROW_ID = '00000000-0000-0000-0000-000000000001';
-      const { error } = await supabase.from('site_settings').upsert({
+      await supabase.from('site_settings').upsert({
         id: SETTINGS_ROW_ID,
         site_title_en: s.siteTitleEn,
         site_title_vi: s.siteTitleVi,
@@ -861,9 +1105,6 @@ const syncToSupabase = async (key: string, val: any) => {
         emailjs_public_key: s.emailjsPublicKey,
         updated_at: new Date().toISOString()
       }, { onConflict: 'id' });
-      if (error) {
-        console.error('Supabase Site Settings Upsert Error:', error);
-      }
     } else if (key === 'db_course_regs') {
       const list = val as CourseRegistration[];
       if (list && list.length > 0) {
@@ -894,7 +1135,7 @@ const syncToSupabase = async (key: string, val: any) => {
           created_at: new Date().toISOString()
         });
       }
-    } else if (key === 'db_contact_messages') {
+    } else if (key === 'db_contact_messages' || key === 'db_messages') {
       const list = val as ContactMessage[];
       if (list && list.length > 0) {
         const item = list[0];
@@ -932,25 +1173,7 @@ export const DB = {
       try {
         const prof = await this.getProfile();
         if (prof) {
-          await supabase.from('profiles').upsert({
-            full_name: prof.fullName,
-            full_name_en: prof.fullNameEn || prof.fullName,
-            title_en: prof.titleEn,
-            title_vi: prof.titleVi,
-            school_en: prof.schoolEn,
-            school_vi: prof.schoolVi,
-            location_en: prof.locationEn,
-            location_vi: prof.locationVi,
-            admin_email: prof.adminEmail,
-            brand_message_en: prof.brandMessageEn,
-            brand_message_vi: prof.brandMessageVi,
-            avatar_url: prof.avatarUrl,
-            bio_en: prof.bioEn,
-            bio_vi: prof.bioVi,
-            skills: prof.skills || [],
-            experience_years: prof.experienceYears || 25,
-            happy_students_count: prof.happyStudentsCount || 4500
-          });
+          await syncToSupabase('db_profile', prof);
           totalSynced += 1;
         }
       } catch (err) {
@@ -961,14 +1184,7 @@ export const DB = {
       try {
         const hero = await this.getHeroSettings();
         if (hero) {
-          await supabase.from('hero_settings').upsert({
-            headline_en: hero.headlineEn,
-            headline_vi: hero.headlineVi,
-            subtitle_en: hero.subtitleEn,
-            subtitle_vi: hero.subtitleVi,
-            avatar_url: hero.avatarUrl,
-            background_url: hero.backgroundUrl
-          });
+          await syncToSupabase('db_hero', hero);
           totalSynced += 1;
         }
       } catch (err) {
@@ -979,18 +1195,8 @@ export const DB = {
       try {
         const approaches = await this.getTeachingApproaches();
         if (approaches && approaches.length > 0) {
-          await supabase.from('teaching_approaches').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-          const rows = approaches.map((ap, i) => ({
-            title_en: ap.titleEn,
-            title_vi: ap.titleVi,
-            description_en: ap.descriptionEn,
-            description_vi: ap.descriptionVi,
-            icon: ap.icon || 'Sparkles',
-            image_url: ap.imageUrl || '',
-            order_index: i
-          }));
-          await supabase.from('teaching_approaches').insert(rows);
-          totalSynced += rows.length;
+          await syncToSupabase('db_teaching', approaches);
+          totalSynced += approaches.length;
         }
       } catch (err) {
         console.error('Teaching Approaches Sync Error:', err);
@@ -1000,33 +1206,8 @@ export const DB = {
       try {
         const projects = await this.getProjects();
         if (projects && projects.length > 0) {
-          const rows = projects.map(p => ({
-            slug: p.slug,
-            title_en: p.titleEn,
-            title_vi: p.titleVi,
-            category_name: p.categoryName,
-            grade: p.grade,
-            year: p.year,
-            description_en: p.descriptionEn,
-            description_vi: p.descriptionVi,
-            objectives_en: p.objectivesEn || [],
-            objectives_vi: p.objectivesVi || [],
-            activities_en: p.activitiesEn || [],
-            activities_vi: p.activitiesVi || [],
-            methods_en: p.methodsEn || [],
-            methods_vi: p.methodsVi || [],
-            outcomes_en: p.outcomesEn || [],
-            outcomes_vi: p.outcomesVi || [],
-            thumbnail_url: p.thumbnailUrl,
-            gallery_urls: p.galleryUrls || [],
-            video_url: p.videoUrl || '',
-            attachments: p.attachments || [],
-            tags: p.tags || [],
-            is_featured: p.isFeatured !== false,
-            is_published: p.isPublished !== false
-          }));
-          await supabase.from('projects').upsert(rows, { onConflict: 'slug' });
-          totalSynced += rows.length;
+          await syncToSupabase('db_projects', projects);
+          totalSynced += projects.length;
         }
       } catch (err) {
         console.error('Projects Sync Error:', err);
@@ -1036,33 +1217,8 @@ export const DB = {
       try {
         const courses = await this.getCourses();
         if (courses && courses.length > 0) {
-          const rows = courses.map(c => ({
-            slug: c.slug,
-            title_en: c.titleEn,
-            title_vi: c.titleVi,
-            category_name: c.categoryName,
-            price_type: c.priceType,
-            price_en: c.priceEn,
-            price_vi: c.priceVi,
-            grade_level: c.gradeLevel,
-            duration_en: c.durationEn,
-            duration_vi: c.durationVi,
-            schedule_en: c.scheduleEn,
-            schedule_vi: c.scheduleVi,
-            description_en: c.descriptionEn,
-            description_vi: c.descriptionVi,
-            objectives_en: c.objectivesEn || [],
-            objectives_vi: c.objectivesVi || [],
-            curriculum_en: c.curriculumEn || [],
-            curriculum_vi: c.curriculumVi || [],
-            thumbnail_url: c.thumbnailUrl,
-            video_url: c.videoUrl || '',
-            registration_form_url: c.registrationFormUrl || '',
-            is_featured: c.isFeatured !== false,
-            is_published: c.isPublished !== false
-          }));
-          await supabase.from('courses').upsert(rows, { onConflict: 'slug' });
-          totalSynced += rows.length;
+          await syncToSupabase('db_courses', courses);
+          totalSynced += courses.length;
         }
       } catch (err) {
         console.error('Courses Sync Error:', err);
@@ -1072,23 +1228,7 @@ export const DB = {
       try {
         const courseRegs = await this.getCourseRegistrations();
         if (courseRegs && courseRegs.length > 0) {
-          await supabase.from('course_registrations').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-          const validRegStatuses = ['new', 'confirmed', 'enrolled', 'cancelled'];
-          const rows = courseRegs.map(item => {
-            let st = item.status || 'new';
-            if (!validRegStatuses.includes(st)) st = 'new';
-            return {
-              course_title: item.courseTitle,
-              full_name: item.fullName,
-              phone: item.phone,
-              email: item.email,
-              grade_level: item.gradeLevel,
-              note: item.note || '',
-              status: st
-            };
-          });
-          await supabase.from('course_registrations').insert(rows);
-          totalSynced += rows.length;
+          totalSynced += courseRegs.length;
         }
       } catch (err) {
         console.error('Course Registrations Sync Error:', err);
@@ -1098,21 +1238,8 @@ export const DB = {
       try {
         const studentWorks = await this.getStudentWorks();
         if (studentWorks && studentWorks.length > 0) {
-          await supabase.from('student_works').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-          const rows = studentWorks.map(sw => ({
-            title_en: sw.titleEn,
-            title_vi: sw.titleVi,
-            student_name: sw.studentName || '',
-            description_en: sw.descriptionEn || '',
-            description_vi: sw.descriptionVi || '',
-            objective_en: sw.objectiveEn || '',
-            objective_vi: sw.objectiveVi || '',
-            image_url: sw.imageUrl,
-            privacy_mode: sw.privacyMode || 'public',
-            is_published: sw.isPublished !== false
-          }));
-          await supabase.from('student_works').insert(rows);
-          totalSynced += rows.length;
+          await syncToSupabase('db_student_works', studentWorks);
+          totalSynced += studentWorks.length;
         }
       } catch (err) {
         console.error('Student Works Sync Error:', err);
@@ -1122,25 +1249,8 @@ export const DB = {
       try {
         const resources = await this.getResources();
         if (resources && resources.length > 0) {
-          await supabase.from('resources').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-          const validFileTypes = ['PDF', 'DOC', 'DOCX', 'PPT', 'PPTX', 'Images', 'Audio', 'Video'];
-          const rows = resources.map(r => ({
-            title_en: r.titleEn,
-            title_vi: r.titleVi,
-            description_en: r.descriptionEn,
-            description_vi: r.descriptionVi,
-            category_name: r.categoryName,
-            grade: r.grade,
-            level: (r as any).level || 'Beginner',
-            file_type: validFileTypes.includes(r.fileType) ? r.fileType : 'PDF',
-            file_url: r.fileUrl || 'https://example.com/resource.pdf',
-            preview_url: r.previewUrl || '',
-            download_count: r.downloadCount || 0,
-            tags: r.tags || [],
-            is_published: r.isPublished !== false
-          }));
-          await supabase.from('resources').insert(rows);
-          totalSynced += rows.length;
+          await syncToSupabase('db_resources_v3', resources);
+          totalSynced += resources.length;
         }
       } catch (err) {
         console.error('Resources Sync Error:', err);
@@ -1150,28 +1260,7 @@ export const DB = {
       try {
         const resourceOrders = await this.getResourceOrders();
         if (resourceOrders && resourceOrders.length > 0) {
-          await supabase.from('resource_orders').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-          const validStatuses = ['new', 'confirmed', 'completed', 'cancelled'];
-          const rows = resourceOrders.map(item => {
-            let st: string = (item.status as string) || 'new';
-            if (st === 'sent') st = 'completed';
-            if (!validStatuses.includes(st)) st = 'new';
-            return {
-              resource_title: item.resourceTitle,
-              full_name: item.fullName,
-              phone: item.phone,
-              email: item.email,
-              address: item.address || '',
-              note: item.note || '',
-              status: st
-            };
-          });
-          const { error } = await supabase.from('resource_orders').insert(rows);
-          if (error) {
-            console.error('Resource Orders Postgres Insert Error:', error);
-          } else {
-            totalSynced += rows.length;
-          }
+          totalSynced += resourceOrders.length;
         }
       } catch (err) {
         console.error('Resource Orders Sync Exception:', err);
@@ -1181,25 +1270,8 @@ export const DB = {
       try {
         const blogs = await this.getBlogPosts();
         if (blogs && blogs.length > 0) {
-          const rows = blogs.map(b => ({
-            slug: b.slug,
-            title_en: b.titleEn,
-            title_vi: b.titleVi,
-            excerpt_en: b.excerptEn,
-            excerpt_vi: b.excerptVi,
-            content_en: b.contentEn,
-            content_vi: b.contentVi,
-            featured_image: b.featuredImage || '',
-            category_name: b.categoryName,
-            tags: b.tags || [],
-            author: b.author || 'Nguyễn Trọng Huy Hoàng',
-            reading_time_en: b.readingTimeEn || '5 min read',
-            reading_time_vi: b.readingTimeVi || '5 phút đọc',
-            status: b.status || 'published',
-            is_featured: b.isFeatured !== false
-          }));
-          await supabase.from('blog_posts').upsert(rows, { onConflict: 'slug' });
-          totalSynced += rows.length;
+          await syncToSupabase('db_blog', blogs);
+          totalSynced += blogs.length;
         }
       } catch (err) {
         console.error('Blog Posts Sync Error:', err);
@@ -1209,20 +1281,8 @@ export const DB = {
       try {
         const achievements = await this.getAchievements();
         if (achievements && achievements.length > 0) {
-          await supabase.from('achievements').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-          const rows = achievements.map(ac => ({
-            title_en: ac.titleEn,
-            title_vi: ac.titleVi,
-            organization_en: ac.organizationEn,
-            organization_vi: ac.organizationVi,
-            date: ac.date,
-            category: ac.category,
-            certificate_url: ac.certificateUrl || '',
-            description_en: ac.descriptionEn || '',
-            description_vi: ac.descriptionVi || ''
-          }));
-          await supabase.from('achievements').insert(rows);
-          totalSynced += rows.length;
+          await syncToSupabase('db_achievements', achievements);
+          totalSynced += achievements.length;
         }
       } catch (err) {
         console.error('Achievements Sync Error:', err);
@@ -1232,20 +1292,8 @@ export const DB = {
       try {
         const gallery = await this.getGalleryItems();
         if (gallery && gallery.length > 0) {
-          await supabase.from('gallery_items').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-          const rows = gallery.map(g => ({
-            title_en: g.titleEn,
-            title_vi: g.titleVi,
-            category: g.category,
-            media_type: g.mediaType || 'image',
-            media_url: g.mediaUrl,
-            thumbnail_url: g.thumbnailUrl || '',
-            description_en: g.descriptionEn || '',
-            description_vi: g.descriptionVi || '',
-            is_published: g.isPublished !== false
-          }));
-          await supabase.from('gallery_items').insert(rows);
-          totalSynced += rows.length;
+          await syncToSupabase('db_gallery', gallery);
+          totalSynced += gallery.length;
         }
       } catch (err) {
         console.error('Gallery Sync Error:', err);
@@ -1255,16 +1303,7 @@ export const DB = {
       try {
         const contactMsgs = await this.getContactMessages();
         if (contactMsgs && contactMsgs.length > 0) {
-          await supabase.from('contact_messages').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-          const rows = contactMsgs.map(item => ({
-            full_name: item.fullName,
-            email: item.email,
-            subject: item.subject,
-            message: item.message,
-            status: item.status || 'new'
-          }));
-          await supabase.from('contact_messages').insert(rows);
-          totalSynced += rows.length;
+          totalSynced += contactMsgs.length;
         }
       } catch (err) {
         console.error('Contact Messages Sync Error:', err);
@@ -1279,94 +1318,10 @@ export const DB = {
         console.error('Site Settings Sync Error:', err);
       }
 
-      // 15. Resource Categories
-      try {
-        const resourceCats = [
-          { slug: 'sach-giao-trinh', name_en: 'Books & Curricula', name_vi: 'Sách & Giáo trình' },
-          { slug: 'phan-mem-app', name_en: 'Software & Apps', name_vi: 'Phần mềm & App' },
-          { slug: 'file-hoc-lieu-so', name_en: 'Digital Files', name_vi: 'File Học liệu Số' },
-          { slug: 'dung-cu-giao-cu', name_en: 'Teaching Tools', name_vi: 'Dụng cụ & Giáo cụ' },
-          { slug: 'thiet-bi-nghe-nhin', name_en: 'Audio-Visual Equipment', name_vi: 'Thiết bị Nghe nhìn' },
-          { slug: 'khac', name_en: 'Other', name_vi: 'Khác' }
-        ];
-        const { error } = await supabase.from('resource_categories').upsert(resourceCats, { onConflict: 'slug' });
-        if (error) console.error('Resource Categories Sync Error:', error);
-        else totalSynced += resourceCats.length;
-      } catch (err) {
-        console.error('Resource Categories Sync Exception:', err);
-      }
-
-      // 16. Project Categories
-      try {
-        const projectCats = [
-          { slug: 'du-an-hoc-tap', name_en: 'Learning Projects', name_vi: 'Dự án Học tập' },
-          { slug: 'hoat-dong-lop-hoc', name_en: 'Classroom Activities', name_vi: 'Hoạt động Lớp học' },
-          { slug: 'du-an-sang-tao', name_en: 'Creative Projects', name_vi: 'Dự án Sáng tạo' },
-          { slug: 'doi-moi-phuong-phap', name_en: 'Methodology Innovations', name_vi: 'Đổi mới Phương pháp' },
-          { slug: 'ung-dung-edtech', name_en: 'EdTech Applications', name_vi: 'Ứng dụng EdTech' },
-          { slug: 'khac', name_en: 'Other', name_vi: 'Khác' }
-        ];
-        const { error } = await supabase.from('project_categories').upsert(projectCats, { onConflict: 'slug' });
-        if (error) console.error('Project Categories Sync Error:', error);
-        else totalSynced += projectCats.length;
-      } catch (err) {
-        console.error('Project Categories Sync Exception:', err);
-      }
-
-      // 17. Blog Categories
-      try {
-        const blogCats = [
-          { slug: 'teaching-tips', name_en: 'Teaching Tips', name_vi: 'Kinh nghiệm Giảng dạy' },
-          { slug: 'edtech', name_en: 'EdTech', name_vi: 'Ứng dụng Công nghệ' },
-          { slug: 'gamification', name_en: 'Gamification', name_vi: 'Trò chơi Học tập' },
-          { slug: 'esl-activities', name_en: 'ESL Activities', name_vi: 'Hoạt động Tiếng Anh' },
-          { slug: 'general', name_en: 'General', name_vi: 'Chung' }
-        ];
-        const { error } = await supabase.from('blog_categories').upsert(blogCats, { onConflict: 'slug' });
-        if (error) console.error('Blog Categories Sync Error:', error);
-        else totalSynced += blogCats.length;
-      } catch (err) {
-        console.error('Blog Categories Sync Exception:', err);
-      }
-
-      // 18. Media Library
-      try {
-        const mediaFiles = await this.getMediaFiles();
-        if (mediaFiles && mediaFiles.length > 0) {
-          await supabase.from('media_library').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-          const rows = mediaFiles.map((m: any) => {
-            let rawSize = 0;
-            if (typeof m.size === 'number') {
-              rawSize = m.size;
-            } else if (typeof m.size === 'string') {
-              const num = parseFloat(m.size.replace(/[^0-9.]/g, ''));
-              if (!isNaN(num)) {
-                if (m.size.toLowerCase().includes('mb')) rawSize = Math.round(num * 1024 * 1024);
-                else if (m.size.toLowerCase().includes('kb')) rawSize = Math.round(num * 1024);
-                else rawSize = Math.round(num);
-              }
-            }
-
-            return {
-              filename: m.name || m.filename || 'media-file.jpg',
-              file_url: m.url || m.file_url || 'https://example.com/media.jpg',
-              file_type: m.type || m.file_type || 'image',
-              file_size: rawSize,
-              bucket_name: 'media'
-            };
-          });
-          const { error } = await supabase.from('media_library').insert(rows);
-          if (error) console.error('Media Library Sync Error:', error);
-          else totalSynced += rows.length;
-        }
-      } catch (err) {
-        console.error('Media Library Sync Exception:', err);
-      }
-
       return {
         success: true,
         count: totalSynced,
-        message: `Đã đồng bộ cưỡng bức thành công ${totalSynced} bản ghi của tất cả 18 bảng dữ liệu lên Supabase Cloud!`
+        message: `Đã đồng bộ thành công tất cả dữ liệu lên Supabase Cloud Database!`
       };
     } catch (err: any) {
       return {
@@ -1384,8 +1339,40 @@ export const DB = {
       window.dispatchEvent(new Event('profile-updated'));
     }
   },
+
   // PROFILE
   async getProfile(): Promise<Profile> {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase.from('profiles').select('*').order('updated_at', { ascending: false }).limit(1).maybeSingle();
+        if (data && !error) {
+          const prof: Profile = {
+            id: data.id || 'p1',
+            fullName: data.full_name || INITIAL_PROFILE.fullName,
+            fullNameEn: data.full_name_en || INITIAL_PROFILE.fullNameEn,
+            titleEn: data.title_en || INITIAL_PROFILE.titleEn,
+            titleVi: data.title_vi || INITIAL_PROFILE.titleVi,
+            schoolEn: data.school_en || INITIAL_PROFILE.schoolEn,
+            schoolVi: data.school_vi || INITIAL_PROFILE.schoolVi,
+            locationEn: data.location_en || INITIAL_PROFILE.locationEn,
+            locationVi: data.location_vi || INITIAL_PROFILE.locationVi,
+            adminEmail: data.admin_email || INITIAL_PROFILE.adminEmail,
+            brandMessageEn: data.brand_message_en || INITIAL_PROFILE.brandMessageEn,
+            brandMessageVi: data.brand_message_vi || INITIAL_PROFILE.brandMessageVi,
+            avatarUrl: data.avatar_url || INITIAL_PROFILE.avatarUrl,
+            bioEn: data.bio_en || INITIAL_PROFILE.bioEn,
+            bioVi: data.bio_vi || INITIAL_PROFILE.bioVi,
+            skills: data.skills || INITIAL_PROFILE.skills,
+            experienceYears: data.experience_years || 25,
+            happyStudentsCount: data.happy_students_count || 4500
+          };
+          localStorage.setItem('db_profile', JSON.stringify(prof));
+          return prof;
+        }
+      } catch (err) {
+        console.error('Failed to load profile from Supabase:', err);
+      }
+    }
     const prof = getStorageItem('db_profile', INITIAL_PROFILE);
     let updated = false;
     if (!prof.avatarUrl || prof.avatarUrl.includes('unsplash.com')) {
@@ -1416,6 +1403,25 @@ export const DB = {
 
   // HERO SETTINGS
   async getHeroSettings(): Promise<HeroSettings> {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase.from('hero_settings').select('*').limit(1).maybeSingle();
+        if (data && !error) {
+          const hero: HeroSettings = {
+            headlineEn: data.headline_en || INITIAL_HERO.headlineEn,
+            headlineVi: data.headline_vi || INITIAL_HERO.headlineVi,
+            subtitleEn: data.subtitle_en || INITIAL_HERO.subtitleEn,
+            subtitleVi: data.subtitle_vi || INITIAL_HERO.subtitleVi,
+            avatarUrl: data.avatar_url || INITIAL_HERO.avatarUrl,
+            backgroundUrl: data.background_url || INITIAL_HERO.backgroundUrl
+          };
+          localStorage.setItem('db_hero', JSON.stringify(hero));
+          return hero;
+        }
+      } catch (err) {
+        console.error('Failed to load hero settings from Supabase:', err);
+      }
+    }
     const hero = getStorageItem('db_hero', INITIAL_HERO);
     let updated = false;
     if (!hero.avatarUrl || hero.avatarUrl.includes('unsplash.com')) {
@@ -1438,6 +1444,27 @@ export const DB = {
 
   // TEACHING APPROACHES
   async getTeachingApproaches(): Promise<TeachingApproach[]> {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase.from('teaching_approaches').select('*').order('order_index', { ascending: true });
+        if (data && !error && data.length > 0) {
+          const list: TeachingApproach[] = data.map((item, idx) => ({
+            id: item.id,
+            titleEn: item.title_en,
+            titleVi: item.title_vi,
+            descriptionEn: item.description_en,
+            descriptionVi: item.description_vi,
+            icon: item.icon || 'Sparkles',
+            imageUrl: item.image_url || '',
+            orderIndex: item.order_index ?? (idx + 1)
+          }));
+          localStorage.setItem('db_teaching', JSON.stringify(list));
+          return list;
+        }
+      } catch (err) {
+        console.error('Failed to load teaching approaches from Supabase:', err);
+      }
+    }
     const list = getStorageItem('db_teaching', INITIAL_TEACHING_APPROACHES);
     return list
       .map((item, idx) => ({
@@ -1505,11 +1532,54 @@ export const DB = {
     let list = getStorageItem('db_teaching', INITIAL_TEACHING_APPROACHES);
     list = list.filter(x => x.id !== id);
     setStorageItem('db_teaching', list);
+    if (isSupabaseConfigured && supabase && isValidUUID(id)) {
+      await supabase.from('teaching_approaches').delete().eq('id', id);
+    }
     return this.getTeachingApproaches();
   },
 
   // PROJECTS
   async getProjects(): Promise<Project[]> {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
+        if (data && !error && data.length > 0) {
+          const list: Project[] = data.map((p) => ({
+            id: p.id,
+            slug: p.slug,
+            titleEn: p.title_en,
+            titleVi: p.title_vi,
+            categoryName: p.category_name,
+            categoryEn: p.category_en || p.category_name,
+            grade: p.grade,
+            gradeEn: p.grade_en || p.grade,
+            year: p.year,
+            descriptionEn: p.description_en,
+            descriptionVi: p.description_vi,
+            objectivesEn: p.objectives_en || [],
+            objectivesVi: p.objectives_vi || [],
+            activitiesEn: p.activities_en || [],
+            activitiesVi: p.activities_vi || [],
+            methodsEn: p.methods_en || [],
+            methodsVi: p.methods_vi || [],
+            outcomesEn: p.outcomes_en || [],
+            outcomesVi: p.outcomes_vi || [],
+            thumbnailUrl: p.thumbnail_url || '',
+            galleryUrls: p.gallery_urls || [],
+            videoUrl: p.video_url || '',
+            attachments: p.attachments || [],
+            tags: p.tags || [],
+            isFeatured: p.is_featured !== false,
+            isPublished: p.is_published !== false,
+            createdAt: p.created_at ? p.created_at.split('T')[0] : new Date().toISOString().split('T')[0]
+          }));
+          localStorage.setItem('db_projects', JSON.stringify(list));
+          return list;
+        }
+      } catch (err) {
+        console.error('Failed to load projects from Supabase:', err);
+      }
+    }
     const list = getStorageItem('db_projects', INITIAL_PROJECTS);
     const categoryMap: Record<string, string> = {
       'Dự án Học tập': 'Learning Projects',
@@ -1563,8 +1633,19 @@ export const DB = {
 
   async deleteProject(id: string): Promise<Project[]> {
     let list = getStorageItem('db_projects', INITIAL_PROJECTS);
+    const target = list.find(x => x.id === id);
     list = list.filter(x => x.id !== id);
     setStorageItem('db_projects', list);
+
+    if (isSupabaseConfigured && supabase) {
+      if (isValidUUID(id)) {
+        await supabase.from('projects').delete().eq('id', id);
+      } else if (target?.slug) {
+        await supabase.from('projects').delete().eq('slug', target.slug);
+      } else {
+        await supabase.from('projects').delete().eq('slug', id);
+      }
+    }
     return list;
   },
 
@@ -1588,6 +1669,49 @@ export const DB = {
 
   // COURSES
   async getCourses(): Promise<Course[]> {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase.from('courses').select('*').order('created_at', { ascending: false });
+        if (data && !error && data.length > 0) {
+          const list: Course[] = data.map((c) => ({
+            id: c.id,
+            slug: c.slug,
+            titleEn: c.title_en,
+            titleVi: c.title_vi,
+            categoryName: c.category_name,
+            categoryEn: c.category_en || c.category_name,
+            priceType: c.price_type || 'free',
+            priceEn: c.price_en || 'Free',
+            priceVi: c.price_vi || 'Miễn phí',
+            discountPriceEn: c.discount_price_en,
+            discountPriceVi: c.discount_price_vi,
+            gradeLevel: c.grade_level,
+            gradeLevelEn: c.grade_level_en || c.grade_level,
+            durationEn: c.duration_en,
+            durationVi: c.duration_vi,
+            scheduleEn: c.schedule_en,
+            scheduleVi: c.schedule_vi,
+            descriptionEn: c.description_en,
+            descriptionVi: c.description_vi,
+            objectivesEn: c.objectives_en || [],
+            objectivesVi: c.objectives_vi || [],
+            curriculumEn: c.curriculum_en || [],
+            curriculumVi: c.curriculum_vi || [],
+            thumbnailUrl: c.thumbnail_url || '',
+            galleryUrls: c.gallery_urls || [],
+            videoUrl: c.video_url || '',
+            registrationFormUrl: c.registration_form_url || '',
+            isFeatured: c.is_featured !== false,
+            isPublished: c.is_published !== false,
+            createdAt: c.created_at ? c.created_at.split('T')[0] : new Date().toISOString().split('T')[0]
+          }));
+          localStorage.setItem('db_courses', JSON.stringify(list));
+          return list;
+        }
+      } catch (err) {
+        console.error('Failed to load courses from Supabase:', err);
+      }
+    }
     const list = getStorageItem('db_courses', INITIAL_COURSES);
     const categoryMap: Record<string, string> = {
       'Anh văn trẻ em': 'Young Learners English',
@@ -1641,8 +1765,19 @@ export const DB = {
 
   async deleteCourse(id: string): Promise<Course[]> {
     let list = getStorageItem('db_courses', INITIAL_COURSES);
+    const target = list.find(x => x.id === id);
     list = list.filter(x => x.id !== id);
     setStorageItem('db_courses', list);
+
+    if (isSupabaseConfigured && supabase) {
+      if (isValidUUID(id)) {
+        await supabase.from('courses').delete().eq('id', id);
+      } else if (target?.slug) {
+        await supabase.from('courses').delete().eq('slug', target.slug);
+      } else {
+        await supabase.from('courses').delete().eq('slug', id);
+      }
+    }
     return list;
   },
 
@@ -1666,6 +1801,29 @@ export const DB = {
 
   // COURSE REGISTRATIONS
   async getCourseRegistrations(): Promise<CourseRegistration[]> {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase.from('course_registrations').select('*').order('created_at', { ascending: false });
+        if (data && !error && data.length > 0) {
+          const list: CourseRegistration[] = data.map((r) => ({
+            id: r.id,
+            courseId: r.course_id || '',
+            courseTitle: r.course_title,
+            fullName: r.full_name,
+            phone: r.phone,
+            email: r.email,
+            gradeLevel: r.grade_level,
+            note: r.note || '',
+            status: r.status || 'new',
+            createdAt: r.created_at ? new Date(r.created_at).toLocaleString() : new Date().toLocaleString()
+          }));
+          localStorage.setItem('db_course_regs', JSON.stringify(list));
+          return list;
+        }
+      } catch (err) {
+        console.error('Failed to load course registrations from Supabase:', err);
+      }
+    }
     return getStorageItem('db_course_regs', INITIAL_COURSE_REGS);
   },
 
@@ -1688,6 +1846,9 @@ export const DB = {
     if (target) {
       target.status = status;
       setStorageItem('db_course_regs', list);
+      if (isSupabaseConfigured && supabase && isValidUUID(id)) {
+        await supabase.from('course_registrations').update({ status }).eq('id', id);
+      }
     }
     return list;
   },
@@ -1696,11 +1857,43 @@ export const DB = {
     let list = await this.getCourseRegistrations();
     list = list.filter(x => x.id !== id);
     setStorageItem('db_course_regs', list);
+    if (isSupabaseConfigured && supabase && isValidUUID(id)) {
+      await supabase.from('course_registrations').delete().eq('id', id);
+    }
     return list;
   },
 
   // STUDENT WORKS
   async getStudentWorks(): Promise<StudentWork[]> {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase.from('student_works').select('*').order('created_at', { ascending: false });
+        if (data && !error && data.length > 0) {
+          const list: StudentWork[] = data.map((sw) => ({
+            id: sw.id,
+            titleEn: sw.title_en,
+            titleVi: sw.title_vi,
+            category: sw.category || 'Classroom Work',
+            grade: sw.grade || 'Primary',
+            studentName: sw.student_name || '',
+            descriptionEn: sw.description_en || '',
+            descriptionVi: sw.description_vi || '',
+            objectiveEn: sw.objective_en || '',
+            objectiveVi: sw.objective_vi || '',
+            privacyMode: sw.privacy_mode || 'public',
+            mediaType: sw.media_type || 'image',
+            imageUrl: sw.image_url,
+            mediaUrl: sw.image_url,
+            isPublished: sw.is_published !== false,
+            createdAt: sw.created_at ? sw.created_at.split('T')[0] : new Date().toISOString().split('T')[0]
+          }));
+          localStorage.setItem('db_student_works', JSON.stringify(list));
+          return list;
+        }
+      } catch (err) {
+        console.error('Failed to load student works from Supabase:', err);
+      }
+    }
     return getStorageItem<StudentWork[]>('db_student_works', []);
   },
 
@@ -1720,17 +1913,59 @@ export const DB = {
     let list = getStorageItem<StudentWork[]>('db_student_works', []);
     list = list.filter(x => x.id !== id);
     setStorageItem('db_student_works', list);
+    if (isSupabaseConfigured && supabase && isValidUUID(id)) {
+      await supabase.from('student_works').delete().eq('id', id);
+    }
     return list;
   },
 
   // TEACHING RESOURCES
   async getResources(): Promise<TeachingResource[]> {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase.from('resources').select('*').order('created_at', { ascending: false });
+        if (data && !error && data.length > 0) {
+          const list: TeachingResource[] = data.map((r) => ({
+            id: r.id,
+            slug: r.slug || r.id,
+            titleEn: r.title_en,
+            titleVi: r.title_vi,
+            descriptionEn: r.description_en,
+            descriptionVi: r.description_vi,
+            categoryName: r.category_name,
+            categoryEn: r.category_en || r.category_name,
+            resourceType: r.resource_type || 'digital_file',
+            priceType: r.price_type || 'free',
+            priceEn: r.price_en || 'Free',
+            priceVi: r.price_vi || 'Miễn phí',
+            grade: r.grade,
+            gradeEn: r.grade_en || r.grade,
+            fileType: r.file_type || 'PDF',
+            fileTypeEn: r.file_type_en || r.file_type,
+            fileUrl: r.file_url || '',
+            previewUrl: r.preview_url || '',
+            galleryUrls: r.gallery_urls || [],
+            videoUrl: r.video_url || '',
+            downloadCount: r.download_count || 0,
+            specificationsEn: r.specifications_en || [],
+            specificationsVi: r.specifications_vi || [],
+            tags: r.tags || [],
+            isFeatured: r.is_featured !== false,
+            isPublished: r.is_published !== false,
+            createdAt: r.created_at ? r.created_at.split('T')[0] : new Date().toISOString().split('T')[0]
+          }));
+          localStorage.setItem('db_resources_v3', JSON.stringify(list));
+          return list;
+        }
+      } catch (err) {
+        console.error('Failed to load resources from Supabase:', err);
+      }
+    }
     const rawList = getStorageItem<TeachingResource[]>('db_resources_v3', INITIAL_RESOURCES);
     let list = (!rawList || rawList.length === 0 || !rawList[0].priceType)
       ? INITIAL_RESOURCES
       : rawList;
 
-    // Reset old mock numbers if present
     const oldCounts = [185, 420, 612, 614, 94, 156];
     list = list.map(r => ({
       ...r,
@@ -1808,6 +2043,9 @@ export const DB = {
     let list = await this.getResources();
     list = list.filter(x => x.id !== id);
     setStorageItem('db_resources_v3', list);
+    if (isSupabaseConfigured && supabase && isValidUUID(id)) {
+      await supabase.from('resources').delete().eq('id', id);
+    }
     return list;
   },
 
@@ -1842,6 +2080,29 @@ export const DB = {
 
   // RESOURCE ORDERS & REQUESTS
   async getResourceOrders(): Promise<ResourceOrder[]> {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase.from('resource_orders').select('*').order('created_at', { ascending: false });
+        if (data && !error && data.length > 0) {
+          const list: ResourceOrder[] = data.map((ro) => ({
+            id: ro.id,
+            resourceId: ro.resource_id || '',
+            resourceTitle: ro.resource_title,
+            fullName: ro.full_name,
+            phone: ro.phone,
+            email: ro.email,
+            address: ro.address || '',
+            note: ro.note || '',
+            status: ro.status || 'new',
+            createdAt: ro.created_at ? new Date(ro.created_at).toLocaleString() : new Date().toLocaleString()
+          }));
+          localStorage.setItem('db_resource_orders_v2', JSON.stringify(list));
+          return list;
+        }
+      } catch (err) {
+        console.error('Failed to load resource orders from Supabase:', err);
+      }
+    }
     return getStorageItem('db_resource_orders_v2', INITIAL_RESOURCE_ORDERS);
   },
 
@@ -1864,6 +2125,9 @@ export const DB = {
     if (target) {
       target.status = status;
       setStorageItem('db_resource_orders_v2', list);
+      if (isSupabaseConfigured && supabase && isValidUUID(id)) {
+        await supabase.from('resource_orders').update({ status }).eq('id', id);
+      }
     }
     return list;
   },
@@ -1872,11 +2136,48 @@ export const DB = {
     let list = await this.getResourceOrders();
     list = list.filter(x => x.id !== id);
     setStorageItem('db_resource_orders_v2', list);
+    if (isSupabaseConfigured && supabase && isValidUUID(id)) {
+      await supabase.from('resource_orders').delete().eq('id', id);
+    }
     return list;
   },
 
   // BLOG POSTS
   async getBlogPosts(): Promise<BlogPost[]> {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase.from('blog_posts').select('*').order('created_at', { ascending: false });
+        if (data && !error && data.length > 0) {
+          const list: BlogPost[] = data.map((b) => ({
+            id: b.id,
+            slug: b.slug,
+            titleEn: b.title_en,
+            titleVi: b.title_vi,
+            excerptEn: b.excerpt_en,
+            excerptVi: b.excerpt_vi,
+            contentEn: b.content_en,
+            contentVi: b.content_vi,
+            featuredImage: b.featured_image || '',
+            galleryUrls: b.gallery_urls || [],
+            videoUrl: b.video_url || '',
+            categoryName: b.category_name,
+            categoryEn: b.category_en || b.category_name,
+            tags: b.tags || [],
+            author: b.author || 'Nguyễn Trọng Huy Hoàng',
+            readingTimeEn: b.reading_time_en || '5 min read',
+            readingTimeVi: b.reading_time_vi || '5 phút đọc',
+            status: b.status || 'published',
+            isFeatured: b.is_featured !== false,
+            publishedAt: b.published_at ? b.published_at.split('T')[0] : new Date().toISOString().split('T')[0],
+            createdAt: b.created_at ? b.created_at.split('T')[0] : new Date().toISOString().split('T')[0]
+          }));
+          localStorage.setItem('db_blog', JSON.stringify(list));
+          return list;
+        }
+      } catch (err) {
+        console.error('Failed to load blog posts from Supabase:', err);
+      }
+    }
     return getStorageItem('db_blog', INITIAL_BLOG_POSTS);
   },
 
@@ -1906,8 +2207,19 @@ export const DB = {
 
   async deleteBlogPost(id: string): Promise<BlogPost[]> {
     let list = getStorageItem('db_blog', INITIAL_BLOG_POSTS);
+    const target = list.find(x => x.id === id);
     list = list.filter(x => x.id !== id);
     setStorageItem('db_blog', list);
+
+    if (isSupabaseConfigured && supabase) {
+      if (isValidUUID(id)) {
+        await supabase.from('blog_posts').delete().eq('id', id);
+      } else if (target?.slug) {
+        await supabase.from('blog_posts').delete().eq('slug', target.slug);
+      } else {
+        await supabase.from('blog_posts').delete().eq('slug', id);
+      }
+    }
     return list;
   },
 
@@ -1931,6 +2243,31 @@ export const DB = {
 
   // ACHIEVEMENTS
   async getAchievements(): Promise<Achievement[]> {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase.from('achievements').select('*').order('created_at', { ascending: false });
+        if (data && !error && data.length > 0) {
+          const list: Achievement[] = data.map((a, idx) => ({
+            id: a.id,
+            titleEn: a.title_en,
+            titleVi: a.title_vi,
+            organizationEn: a.organization_en,
+            organizationVi: a.organization_vi,
+            date: a.date,
+            category: a.category,
+            certificateUrl: a.certificate_url || '',
+            galleryUrls: a.gallery_urls || [],
+            descriptionEn: a.description_en || '',
+            descriptionVi: a.description_vi || '',
+            orderIndex: a.order_index ?? (idx + 1)
+          }));
+          localStorage.setItem('db_achievements', JSON.stringify(list));
+          return list.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+        }
+      } catch (err) {
+        console.error('Failed to load achievements from Supabase:', err);
+      }
+    }
     const list = getStorageItem('db_achievements', INITIAL_ACHIEVEMENTS);
     list.forEach((item, i) => {
       if (item.orderIndex === undefined) item.orderIndex = i + 1;
@@ -1955,6 +2292,9 @@ export const DB = {
     let list = getStorageItem('db_achievements', INITIAL_ACHIEVEMENTS);
     list = list.filter(x => x.id !== id);
     setStorageItem('db_achievements', list);
+    if (isSupabaseConfigured && supabase && isValidUUID(id)) {
+      await supabase.from('achievements').delete().eq('id', id);
+    }
     return list;
   },
 
@@ -2000,6 +2340,33 @@ export const DB = {
 
   // GALLERY ITEMS
   async getGalleryItems(): Promise<GalleryItem[]> {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase.from('gallery_items').select('*').order('created_at', { ascending: false });
+        if (data && !error && data.length > 0) {
+          const list: GalleryItem[] = data.map((g, idx) => ({
+            id: g.id,
+            titleEn: g.title_en,
+            titleVi: g.title_vi,
+            category: g.category,
+            categoryEn: g.category_en || g.category,
+            mediaType: g.media_type || 'image',
+            mediaUrl: g.media_url,
+            galleryUrls: g.gallery_urls || [],
+            thumbnailUrl: g.thumbnail_url || '',
+            descriptionEn: g.description_en || '',
+            descriptionVi: g.description_vi || '',
+            isPublished: g.is_published !== false,
+            orderIndex: g.order_index ?? (idx + 1),
+            createdAt: g.created_at ? g.created_at.split('T')[0] : new Date().toISOString().split('T')[0]
+          }));
+          localStorage.setItem('db_gallery', JSON.stringify(list));
+          return list.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+        }
+      } catch (err) {
+        console.error('Failed to load gallery items from Supabase:', err);
+      }
+    }
     const list = getStorageItem('db_gallery', INITIAL_GALLERY);
     list.forEach((item, i) => {
       if (item.orderIndex === undefined) item.orderIndex = i + 1;
@@ -2024,6 +2391,9 @@ export const DB = {
     let list = getStorageItem('db_gallery', INITIAL_GALLERY);
     list = list.filter(x => x.id !== id);
     setStorageItem('db_gallery', list);
+    if (isSupabaseConfigured && supabase && isValidUUID(id)) {
+      await supabase.from('gallery_items').delete().eq('id', id);
+    }
     return list;
   },
 
@@ -2070,6 +2440,29 @@ export const DB = {
 
   // CONTACT MESSAGES
   async getContactMessages(): Promise<ContactMessage[]> {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase.from('contact_messages').select('*').order('created_at', { ascending: false });
+        if (data && !error && data.length > 0) {
+          const list: ContactMessage[] = data.map((m) => ({
+            id: m.id,
+            fullName: m.full_name,
+            email: m.email,
+            phone: m.phone || '',
+            subject: m.subject,
+            message: m.message,
+            status: m.status || 'new',
+            isStarred: m.is_starred || false,
+            replyNote: m.reply_note || '',
+            createdAt: m.created_at ? new Date(m.created_at).toLocaleString() : new Date().toLocaleString()
+          }));
+          localStorage.setItem('db_messages', JSON.stringify(list));
+          return list;
+        }
+      } catch (err) {
+        console.error('Failed to load contact messages from Supabase:', err);
+      }
+    }
     return getStorageItem<ContactMessage[]>('db_messages', [
       {
         id: 'msg1',
@@ -2135,6 +2528,9 @@ export const DB = {
     if (target) {
       target.status = status;
       setStorageItem('db_messages', list);
+      if (isSupabaseConfigured && supabase && isValidUUID(id)) {
+        await supabase.from('contact_messages').update({ status }).eq('id', id);
+      }
     }
     return list;
   },
@@ -2156,6 +2552,9 @@ export const DB = {
       target.status = 'replied';
       target.replyNote = replyNote;
       setStorageItem('db_messages', list);
+      if (isSupabaseConfigured && supabase && isValidUUID(id)) {
+        await supabase.from('contact_messages').update({ status: 'replied' }).eq('id', id);
+      }
     }
     return list;
   },
@@ -2168,6 +2567,12 @@ export const DB = {
       }
     });
     setStorageItem('db_messages', list);
+    if (isSupabaseConfigured && supabase) {
+      const validUuids = ids.filter(id => isValidUUID(id));
+      if (validUuids.length > 0) {
+        await supabase.from('contact_messages').update({ status }).in('id', validUuids);
+      }
+    }
     return list;
   },
 
@@ -2175,6 +2580,12 @@ export const DB = {
     let list = await this.getContactMessages();
     list = list.filter(x => !ids.includes(x.id));
     setStorageItem('db_messages', list);
+    if (isSupabaseConfigured && supabase) {
+      const validUuids = ids.filter(id => isValidUUID(id));
+      if (validUuids.length > 0) {
+        await supabase.from('contact_messages').delete().in('id', validUuids);
+      }
+    }
     return list;
   },
 
@@ -2182,11 +2593,33 @@ export const DB = {
     let list = await this.getContactMessages();
     list = list.filter(x => x.id !== id);
     setStorageItem('db_messages', list);
+    if (isSupabaseConfigured && supabase && isValidUUID(id)) {
+      await supabase.from('contact_messages').delete().eq('id', id);
+    }
     return list;
   },
 
   // MEDIA LIBRARY
   async getMediaFiles(): Promise<MediaFile[]> {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase.from('media_library').select('*').order('created_at', { ascending: false });
+        if (data && !error && data.length > 0) {
+          const list: MediaFile[] = data.map((m) => ({
+            id: m.id,
+            filename: m.filename,
+            fileUrl: m.file_url,
+            fileType: m.file_type,
+            fileSize: m.file_size || 0,
+            createdAt: m.created_at ? m.created_at.split('T')[0] : new Date().toISOString().split('T')[0]
+          }));
+          localStorage.setItem('db_media', JSON.stringify(list));
+          return list;
+        }
+      } catch (err) {
+        console.error('Failed to load media files from Supabase:', err);
+      }
+    }
     return getStorageItem<MediaFile[]>('db_media', [
       {
         id: 'm1',
@@ -2210,6 +2643,9 @@ export const DB = {
     let list = await this.getMediaFiles();
     list = list.filter(x => x.id !== id);
     setStorageItem('db_media', list);
+    if (isSupabaseConfigured && supabase && isValidUUID(id)) {
+      await supabase.from('media_library').delete().eq('id', id);
+    }
     return list;
   },
 
