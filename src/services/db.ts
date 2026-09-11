@@ -83,7 +83,7 @@ const INITIAL_HERO: HeroSettings = {
   headlineVi: 'Biến Tiếng Anh Thành Hành Trình Vui Vẻ, Ý Nghĩa & Đáng Nhớ',
   subtitleEn: 'Welcome to the digital corner of Teacher Huy Hoang — English Educator & EdTech Innovator at Duong Minh Chau Primary School.',
   subtitleVi: 'Chào mừng đến với không gian số của Thầy Nguyễn Trọng Huy Hoàng — Giáo viên Tiếng Anh & Sáng tạo EdTech tại Trường TH Dương Minh Châu.',
-  avatarUrl: 'https://ik.imagekit.io/hkh/OK_0.jpg?updatedAt=1787823395930',
+  avatarUrl: 'https://ik.imagekit.io/hkh/OK_2.jpg?updatedAt=1787823395938',
   backgroundUrl: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&q=80&w=1600'
 };
 
