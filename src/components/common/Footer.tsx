@@ -331,8 +331,8 @@ export const Footer: React.FC = () => {
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
           <p>
             {language === 'vi'
-              ? (settings?.footerCopyrightVi || settings?.footerTextVi || '© 2026 Thầy giáo Nguyễn Trọng Huy Hoàng. Trường TH Dương Minh Châu.')
-              : (settings?.footerCopyrightEn || settings?.footerTextEn || '© 2026 Teacher Nguyen Trong Huy Hoang. Duong Minh Chau Primary School.')}
+              ? (settings?.footerCopyrightVi || settings?.footerTextVi || `© 2026 Thầy giáo ${profile?.fullName || 'Nguyễn Trọng Huy Hoàng'}.${profile?.schoolVi && profile.schoolVi.trim() !== '' ? ` ${profile.schoolVi}.` : ''}`)
+              : (settings?.footerCopyrightEn || settings?.footerTextEn || `© 2026 Teacher ${profile?.fullNameEn || profile?.fullName || 'Nguyen Trong Huy Hoang'}.${profile?.schoolEn && profile.schoolEn.trim() !== '' ? ` ${profile.schoolEn}.` : ''}`)}
           </p>
           <div className="flex items-center gap-1">
             {language === 'vi'
