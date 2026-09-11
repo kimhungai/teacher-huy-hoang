@@ -961,29 +961,37 @@ const syncToSupabase = async (key: string, val: any) => {
     } else if (key === 'db_resources_v3' || key === 'db_resources') {
       const list = val as TeachingResource[];
       if (list && Array.isArray(list)) {
-        const validFileTypes = ['PDF', 'DOC', 'DOCX', 'PPT', 'PPTX', 'Images', 'Audio', 'Video'];
         const rows = list.map(r => ({
           ...(isValidUUID(r.id) ? { id: r.id } : {}),
+          slug: r.slug,
           title_en: r.titleEn,
           title_vi: r.titleVi,
           description_en: r.descriptionEn,
           description_vi: r.descriptionVi,
           category_name: r.categoryName,
-          price_type: r.priceType,
-          price_en: r.priceEn,
-          price_vi: r.priceVi,
+          category_en: r.categoryEn || r.categoryName,
+          resource_type: r.resourceType || 'digital_file',
+          price_type: r.priceType || 'free',
+          price_en: r.priceEn || 'Free',
+          price_vi: r.priceVi || 'Miễn phí',
           discount_price_en: r.discountPriceEn || '',
           discount_price_vi: r.discountPriceVi || '',
           grade: r.grade,
-          level: (r as any).level || 'Beginner',
-          file_type: validFileTypes.includes(r.fileType) ? r.fileType : 'PDF',
-          file_url: r.fileUrl || 'https://example.com/resource.pdf',
+          grade_en: r.gradeEn || r.grade,
+          file_type: r.fileType || 'PDF',
+          file_type_en: r.fileTypeEn || r.fileType,
+          file_url: r.fileUrl || '',
           preview_url: r.previewUrl || '',
+          gallery_urls: r.galleryUrls || [],
+          video_url: r.videoUrl || '',
           download_count: r.downloadCount || 0,
+          specifications_en: r.specificationsEn || [],
+          specifications_vi: r.specificationsVi || [],
           tags: r.tags || [],
+          is_featured: r.isFeatured ?? false,
           is_published: r.isPublished !== false
         }));
-        await supabase.from('resources').upsert(rows);
+        await supabase.from('resources').upsert(rows, { onConflict: 'slug' });
       }
     } else if (key === 'db_blog') {
       const list = val as BlogPost[];
@@ -1712,10 +1720,17 @@ export const DB = {
 
           const list: Course[] = data.map((c) => {
             const cachedMatch = cachedCourses.find(x => x.id === c.id || x.slug === c.slug);
-            const discVi = (c.discount_price_vi !== null && c.discount_price_vi !== undefined)
+            const priceType = (c.price_type && c.price_type !== '') ? c.price_type : (cachedMatch?.priceType || 'free');
+            const priceVi = (c.price_vi !== null && c.price_vi !== undefined && c.price_vi !== '')
+              ? c.price_vi
+              : (cachedMatch?.priceVi || (priceType === 'paid' ? 'Có phí' : 'Miễn phí'));
+            const priceEn = (c.price_en !== null && c.price_en !== undefined && c.price_en !== '')
+              ? c.price_en
+              : (cachedMatch?.priceEn || (priceType === 'paid' ? 'Paid' : 'Free'));
+            const discVi = (c.discount_price_vi !== null && c.discount_price_vi !== undefined && c.discount_price_vi !== '')
               ? c.discount_price_vi
               : (cachedMatch?.discountPriceVi || '');
-            const discEn = (c.discount_price_en !== null && c.discount_price_en !== undefined)
+            const discEn = (c.discount_price_en !== null && c.discount_price_en !== undefined && c.discount_price_en !== '')
               ? c.discount_price_en
               : (cachedMatch?.discountPriceEn || '');
 
@@ -1726,9 +1741,9 @@ export const DB = {
               titleVi: c.title_vi,
               categoryName: c.category_name,
               categoryEn: c.category_en || c.category_name,
-              priceType: c.price_type || 'free',
-              priceEn: c.price_en || 'Free',
-              priceVi: c.price_vi || 'Miễn phí',
+              priceType: priceType,
+              priceEn: priceEn,
+              priceVi: priceVi,
               discountPriceEn: discEn,
               discountPriceVi: discVi,
               gradeLevel: c.grade_level,
@@ -1981,10 +1996,17 @@ export const DB = {
 
           const list: TeachingResource[] = data.map((r) => {
             const cachedMatch = cachedResources.find(x => x.id === r.id || x.slug === r.slug);
-            const discVi = (r.discount_price_vi !== null && r.discount_price_vi !== undefined)
+            const priceType = (r.price_type && r.price_type !== '') ? r.price_type : (cachedMatch?.priceType || 'free');
+            const priceVi = (r.price_vi !== null && r.price_vi !== undefined && r.price_vi !== '')
+              ? r.price_vi
+              : (cachedMatch?.priceVi || (priceType === 'paid' ? 'Có phí' : 'Miễn phí'));
+            const priceEn = (r.price_en !== null && r.price_en !== undefined && r.price_en !== '')
+              ? r.price_en
+              : (cachedMatch?.priceEn || (priceType === 'paid' ? 'Paid' : 'Free'));
+            const discVi = (r.discount_price_vi !== null && r.discount_price_vi !== undefined && r.discount_price_vi !== '')
               ? r.discount_price_vi
               : (cachedMatch?.discountPriceVi || '');
-            const discEn = (r.discount_price_en !== null && r.discount_price_en !== undefined)
+            const discEn = (r.discount_price_en !== null && r.discount_price_en !== undefined && r.discount_price_en !== '')
               ? r.discount_price_en
               : (cachedMatch?.discountPriceEn || '');
 
@@ -1998,9 +2020,9 @@ export const DB = {
               categoryName: r.category_name,
               categoryEn: r.category_en || r.category_name,
               resourceType: r.resource_type || 'digital_file',
-              priceType: r.price_type || 'free',
-              priceEn: r.price_en || 'Free',
-              priceVi: r.price_vi || 'Miễn phí',
+              priceType: priceType,
+              priceEn: priceEn,
+              priceVi: priceVi,
               discountPriceEn: discEn,
               discountPriceVi: discVi,
               grade: r.grade,
