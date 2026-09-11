@@ -95,7 +95,7 @@ export const HomePage: React.FC = () => {
         description={seoDesc}
         url="/"
         lang={language as 'vi' | 'en'}
-        image={profile.avatarUrl}
+        image={hero?.avatarUrl || profile?.avatarUrl}
         keywords={language === 'vi' 
           ? 'Thầy Nguyễn Trọng Huy Hoàng, Tiếng Anh Tiểu học, Dương Minh Châu Quận 10, EdTech, Gamification Tiếng Anh, Khóa học Anh văn trẻ em'
           : 'Teacher Nguyen Trong Huy Hoang, Primary English Teacher, Duong Minh Chau School, EdTech, Gamification, Young Learners English'}
