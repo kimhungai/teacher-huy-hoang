@@ -230,7 +230,7 @@ export const AdminResourcesPage: React.FC = () => {
                 <th className="px-4 py-3">Học Liệu</th>
                 <th className="px-4 py-3">Mức Giá / Học Liệu</th>
                 <th className="px-4 py-3 text-amber-600 dark:text-amber-400">Mức Giá KM / Học liệu</th>
-                <th className="px-4 py-3">Định Dạng / Khối</th>
+                <th className="px-4 py-3">Loại học liệu & Khối</th>
                 <th className="px-4 py-3">Lượt Tải</th>
                 <th className="px-4 py-3">Trạng Thái</th>
                 <th className="px-4 py-3 text-right">Thao Tác</th>
@@ -444,24 +444,48 @@ export const AdminResourcesPage: React.FC = () => {
                 />
               </div>
 
+              {/* MŨI TÊN 1: Khối Lớp / Độ Tuổi */}
               <div>
-                <label className="block font-extrabold text-slate-800 dark:text-slate-200 text-xs mb-1.5">Định Dạng / Khối Lớp (Tiếng Việt)</label>
+                <label className="block font-extrabold text-slate-800 dark:text-slate-200 text-xs mb-1.5">Khối Lớp / Độ Tuổi (Tiếng Việt)</label>
                 <input
                   type="text"
-                  value={editingResource.fileType || ''}
-                  onChange={(e) => setEditingResource({ ...editingResource, fileType: e.target.value })}
-                  placeholder="In bản cứng / Sách giấy"
+                  value={editingResource.grade || ''}
+                  onChange={(e) => setEditingResource({ ...editingResource, grade: e.target.value })}
+                  placeholder="Lớp 1 - 5 (6-11 tuổi)"
                   className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white"
                 />
               </div>
 
               <div>
-                <label className="block font-extrabold text-slate-800 dark:text-slate-200 text-xs mb-1.5">Định Dạng / Khối Lớp (Tiếng Anh)</label>
+                <label className="block font-extrabold text-slate-800 dark:text-slate-200 text-xs mb-1.5">Khối Lớp / Độ Tuổi (Tiếng Anh)</label>
+                <input
+                  type="text"
+                  value={editingResource.gradeEn || ''}
+                  onChange={(e) => setEditingResource({ ...editingResource, gradeEn: e.target.value })}
+                  placeholder="Grade 1 - 5"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white"
+                />
+              </div>
+
+              {/* MŨI TÊN 2: Loại học liệu / Định dạng */}
+              <div>
+                <label className="block font-extrabold text-slate-800 dark:text-slate-200 text-xs mb-1.5">Loại học liệu / Định dạng (Tiếng Việt)</label>
+                <input
+                  type="text"
+                  value={editingResource.fileType || ''}
+                  onChange={(e) => setEditingResource({ ...editingResource, fileType: e.target.value })}
+                  placeholder="File PDF / Phần mềm / Sách giấy"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block font-extrabold text-slate-800 dark:text-slate-200 text-xs mb-1.5">Loại học liệu / Định dạng (Tiếng Anh)</label>
                 <input
                   type="text"
                   value={editingResource.fileTypeEn || ''}
                   onChange={(e) => setEditingResource({ ...editingResource, fileTypeEn: e.target.value })}
-                  placeholder="Physical Print / Book"
+                  placeholder="PDF File / Software / Physical Book"
                   className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white"
                 />
               </div>
