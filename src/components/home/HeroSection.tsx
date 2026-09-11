@@ -97,7 +97,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ hero, profile }) => {
               <div className="relative bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-800">
                 <div className="aspect-[4/5] rounded-2xl overflow-hidden relative group">
                   <img
-                    src={hero?.avatarUrl || profile?.avatarUrl || DEFAULT_TEACHER_AVATAR}
+                    src={profile?.avatarUrl || hero?.avatarUrl || DEFAULT_TEACHER_AVATAR}
                     alt="Teacher Nguyen Trong Huy Hoang"
                     className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-500"
                   />

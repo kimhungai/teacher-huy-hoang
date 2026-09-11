@@ -82,7 +82,7 @@ export const AboutPage: React.FC = () => {
               <div className="relative bg-white dark:bg-slate-900 p-3.5 rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-800">
                 <div className="aspect-square rounded-2xl overflow-hidden relative group">
                   <img
-                    src={hero?.avatarUrl || profile?.avatarUrl || DEFAULT_TEACHER_AVATAR}
+                    src={profile?.avatarUrl || hero?.avatarUrl || DEFAULT_TEACHER_AVATAR}
                     alt="Teacher Nguyen Trong Huy Hoang"
                     loading="lazy"
                     decoding="async"

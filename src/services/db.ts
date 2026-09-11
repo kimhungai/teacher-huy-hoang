@@ -1499,7 +1499,7 @@ export const DB = {
     }
     const prof = getStorageItem('db_profile', INITIAL_PROFILE);
     let updated = false;
-    if (!prof.avatarUrl || prof.avatarUrl.includes('unsplash.com')) {
+    if (!prof.avatarUrl) {
       prof.avatarUrl = INITIAL_PROFILE.avatarUrl;
       updated = true;
     }
@@ -1546,7 +1546,7 @@ export const DB = {
     }
     const hero = getStorageItem('db_hero', INITIAL_HERO);
     let updated = false;
-    if (!hero.avatarUrl || hero.avatarUrl.includes('unsplash.com')) {
+    if (!hero.avatarUrl) {
       hero.avatarUrl = INITIAL_HERO.avatarUrl;
       updated = true;
     }
