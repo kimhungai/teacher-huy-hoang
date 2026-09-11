@@ -74,7 +74,7 @@ export function updateSEOMetaTags({
 
   const currentDomain = window.location.origin;
   const canonicalUrl = url ? (url.startsWith('http') ? url : `${currentDomain}${url}`) : window.location.href;
-  const defaultMetaImage = 'https://ik.imagekit.io/hkh/OK_0.jpg?updatedAt=1787823395930';
+  const defaultMetaImage = 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2';
   const metaImage = image ? (image.startsWith('http') ? image : `${currentDomain}${image}`) : defaultMetaImage;
 
   // 1. Update Document Title
