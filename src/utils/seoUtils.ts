@@ -14,6 +14,48 @@ export interface SEOProps {
   schema?: Record<string, any> | Array<Record<string, any>>;
 }
 
+/**
+ * Extracts the 1st sentence of a text string (e.g. bioVi)
+ */
+export function getFirstSentence(text?: string): string {
+  if (!text) return '';
+  const clean = text.trim().replace(/\s+/g, ' ');
+  const sentences = clean.split(/(?<=[.!?])\s+/);
+  if (sentences.length > 0) {
+    let first = sentences[0];
+    if (sentences.length > 1 && (first.endsWith('TP.HCM') || first.endsWith('TP.HCM.'))) {
+      first = first.trim();
+      if (!first.endsWith('.')) first += '.';
+      first = first + ' ' + sentences[1];
+    }
+    return first.trim();
+  }
+  return clean;
+}
+
+/**
+ * Requirement 2: Title format = "Họ và tên (Tiếng Việt)" + " — " + "Chức danh (Tiếng Anh)"
+ */
+export function buildSocialPreviewTitle(profile?: any): string {
+  const rawName = profile?.fullName?.trim() || 'Nguyễn Trọng Huy Hoàng';
+  const teacherName = rawName.startsWith('Thầy') ? rawName : `Thầy ${rawName}`;
+  const titleEn = profile?.titleEn?.trim() || 'Primary English Teacher & EdTech';
+  return `${teacherName} — ${titleEn}`;
+}
+
+/**
+ * Requirement 3: Description format = "Website chính thức của" + "Họ và tên (Tiếng Việt)" + "Chức danh (Tiếng Việt)" + " - " + 1 câu đầu tiên của "Nội Dung Tiểu Sử (Tiếng Việt)"
+ */
+export function buildSocialPreviewDescription(profile?: any): string {
+  const rawName = profile?.fullName?.trim() || 'Nguyễn Trọng Huy Hoàng';
+  const teacherName = rawName.startsWith('Thầy') ? rawName : `Thầy ${rawName}`;
+  const titleVi = profile?.titleVi?.trim() || 'Giáo viên Tiếng Anh Trường Tiểu học Dương Minh Châu, Quận 10';
+  const cleanTitleVi = titleVi.replace(/[-.]$/, '').trim();
+  const firstBioSentence = getFirstSentence(profile?.bioVi) || 'Với hơn 25 năm kinh nghiệm giảng dạy tiếng Anh tiểu học tại TP.HCM, tôi chuyên sâu về phương pháp Học theo dự án (PBL), học qua trò chơi và ứng dụng công nghệ giáo dục EdTech trong nhà trường.';
+  
+  return `Website chính thức của ${teacherName} - ${cleanTitleVi} - ${firstBioSentence}`;
+}
+
 export function updateSEOMetaTags({
   title,
   description,

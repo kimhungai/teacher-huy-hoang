@@ -13,6 +13,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { LoadingSkeleton } from '../components/common/LoadingSkeleton';
 
 import { SEO } from '../components/common/SEO';
+import { buildSocialPreviewTitle, buildSocialPreviewDescription } from '../utils/seoUtils';
 
 export const HomePage: React.FC = () => {
   const { language } = useLanguage();
@@ -80,13 +81,8 @@ export const HomePage: React.FC = () => {
     );
   }
 
-  const seoTitle = language === 'vi'
-    ? 'Thầy Nguyễn Trọng Huy Hoàng — Chuyên Gia Giáo Dục Tiếng Anh Tiểu Học & EdTech'
-    : 'Teacher Nguyen Trong Huy Hoang — Primary English & EdTech Specialist';
-
-  const seoDesc = language === 'vi'
-    ? 'Website chính thức của Thầy Nguyễn Trọng Huy Hoàng - Giáo viên Tiếng Anh Trường Tiểu học Dương Minh Châu, Quận 10. Chuyên ứng dụng EdTech, Gamification, khóa học và học liệu Tiếng Anh tiểu học.'
-    : 'Official website of Teacher Nguyen Trong Huy Hoang - Primary English Teacher at Duong Minh Chau School. Specializing in EdTech, Gamification, and young learner English courses & teaching resources.';
+  const seoTitle = buildSocialPreviewTitle(profile);
+  const seoDesc = buildSocialPreviewDescription(profile);
 
   return (
     <div className="space-y-12 sm:space-y-16">
@@ -95,15 +91,15 @@ export const HomePage: React.FC = () => {
         description={seoDesc}
         url="/"
         lang={language as 'vi' | 'en'}
-        image={hero?.avatarUrl || profile?.avatarUrl}
+        image={profile?.avatarUrl}
         keywords={language === 'vi' 
           ? 'Thầy Nguyễn Trọng Huy Hoàng, Tiếng Anh Tiểu học, Dương Minh Châu Quận 10, EdTech, Gamification Tiếng Anh, Khóa học Anh văn trẻ em'
           : 'Teacher Nguyen Trong Huy Hoang, Primary English Teacher, Duong Minh Chau School, EdTech, Gamification, Young Learners English'}
         schema={{
           '@type': 'Teacher',
-          'name': 'Nguyễn Trọng Huy Hoàng',
+          'name': profile.fullName || 'Nguyễn Trọng Huy Hoàng',
           'description': seoDesc,
-          'worksFor': 'Trường Tiểu học Dương Minh Châu'
+          'worksFor': profile.schoolVi || 'Trường Tiểu học Dương Minh Châu'
         }}
       />
       <HeroSection hero={hero} profile={profile} />
