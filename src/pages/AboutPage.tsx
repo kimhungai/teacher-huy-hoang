@@ -6,7 +6,7 @@ import { School, CheckCircle2, Heart, Sparkles, BookOpen } from 'lucide-react';
 
 import { SEO } from '../components/common/SEO';
 
-const DEFAULT_TEACHER_AVATAR = 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2';
+const DEFAULT_TEACHER_AVATAR = 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&h=630&q=80&fm=jpg';
 
 export const AboutPage: React.FC = () => {
   const { language } = useLanguage();
