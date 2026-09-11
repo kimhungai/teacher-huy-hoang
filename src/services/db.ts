@@ -991,7 +991,12 @@ const syncToSupabase = async (key: string, val: any) => {
           is_featured: r.isFeatured ?? false,
           is_published: r.isPublished !== false
         }));
-        await supabase.from('resources').upsert(rows, { onConflict: 'slug' });
+        const { error } = await supabase.from('resources').upsert(rows, { onConflict: 'slug' });
+        if (error) {
+          console.warn('Full resources upsert failed, retrying without optional schema columns:', error.message);
+          const coreRows = rows.map(({ file_type_en, specifications_en, specifications_vi, category_en, grade_en, ...core }: any) => core);
+          await supabase.from('resources').upsert(coreRows, { onConflict: 'slug' });
+        }
       }
     } else if (key === 'db_blog') {
       const list = val as BlogPost[];
@@ -1385,25 +1390,31 @@ export const DB = {
           data = res.data;
         }
         if (data && !error) {
+          const cachedProf = (() => {
+            try {
+              const p = localStorage.getItem('db_profile');
+              return p ? JSON.parse(p) : INITIAL_PROFILE;
+            } catch { return INITIAL_PROFILE; }
+          })();
           const prof: Profile = {
-            id: data.id || 'p1',
-            fullName: data.full_name || INITIAL_PROFILE.fullName,
-            fullNameEn: data.full_name_en || INITIAL_PROFILE.fullNameEn,
-            titleEn: data.title_en || INITIAL_PROFILE.titleEn,
-            titleVi: data.title_vi || INITIAL_PROFILE.titleVi,
-            schoolEn: data.school_en || INITIAL_PROFILE.schoolEn,
-            schoolVi: data.school_vi || INITIAL_PROFILE.schoolVi,
-            locationEn: data.location_en || INITIAL_PROFILE.locationEn,
-            locationVi: data.location_vi || INITIAL_PROFILE.locationVi,
-            adminEmail: data.admin_email || INITIAL_PROFILE.adminEmail,
-            brandMessageEn: data.brand_message_en || INITIAL_PROFILE.brandMessageEn,
-            brandMessageVi: data.brand_message_vi || INITIAL_PROFILE.brandMessageVi,
-            avatarUrl: data.avatar_url || INITIAL_PROFILE.avatarUrl,
-            bioEn: data.bio_en || INITIAL_PROFILE.bioEn,
-            bioVi: data.bio_vi || INITIAL_PROFILE.bioVi,
-            skills: data.skills || INITIAL_PROFILE.skills,
-            experienceYears: data.experience_years || 25,
-            happyStudentsCount: data.happy_students_count || 4500
+            id: data.id || cachedProf.id || 'p1',
+            fullName: data.full_name || cachedProf.fullName || INITIAL_PROFILE.fullName,
+            fullNameEn: data.full_name_en || cachedProf.fullNameEn || INITIAL_PROFILE.fullNameEn,
+            titleEn: data.title_en || cachedProf.titleEn || INITIAL_PROFILE.titleEn,
+            titleVi: data.title_vi || cachedProf.titleVi || INITIAL_PROFILE.titleVi,
+            schoolEn: data.school_en || cachedProf.schoolEn || INITIAL_PROFILE.schoolEn,
+            schoolVi: data.school_vi || cachedProf.schoolVi || INITIAL_PROFILE.schoolVi,
+            locationEn: data.location_en || cachedProf.locationEn || INITIAL_PROFILE.locationEn,
+            locationVi: data.location_vi || cachedProf.locationVi || INITIAL_PROFILE.locationVi,
+            adminEmail: data.admin_email || cachedProf.adminEmail || INITIAL_PROFILE.adminEmail,
+            brandMessageEn: data.brand_message_en || cachedProf.brandMessageEn || INITIAL_PROFILE.brandMessageEn,
+            brandMessageVi: data.brand_message_vi || cachedProf.brandMessageVi || INITIAL_PROFILE.brandMessageVi,
+            avatarUrl: data.avatar_url || cachedProf.avatarUrl || INITIAL_PROFILE.avatarUrl,
+            bioEn: data.bio_en || cachedProf.bioEn || INITIAL_PROFILE.bioEn,
+            bioVi: data.bio_vi || cachedProf.bioVi || INITIAL_PROFILE.bioVi,
+            skills: (data.skills && data.skills.length > 0) ? data.skills : (cachedProf.skills || INITIAL_PROFILE.skills),
+            experienceYears: data.experience_years || cachedProf.experienceYears || 25,
+            happyStudentsCount: data.happy_students_count || cachedProf.happyStudentsCount || 4500
           };
           localStorage.setItem('db_profile', JSON.stringify(prof));
           return prof;
@@ -1450,13 +1461,19 @@ export const DB = {
           data = res.data;
         }
         if (data && !error) {
+          const cachedHero = (() => {
+            try {
+              const h = localStorage.getItem('db_hero');
+              return h ? JSON.parse(h) : INITIAL_HERO;
+            } catch { return INITIAL_HERO; }
+          })();
           const hero: HeroSettings = {
-            headlineEn: data.headline_en || INITIAL_HERO.headlineEn,
-            headlineVi: data.headline_vi || INITIAL_HERO.headlineVi,
-            subtitleEn: data.subtitle_en || INITIAL_HERO.subtitleEn,
-            subtitleVi: data.subtitle_vi || INITIAL_HERO.subtitleVi,
-            avatarUrl: data.avatar_url || INITIAL_HERO.avatarUrl,
-            backgroundUrl: data.background_url || INITIAL_HERO.backgroundUrl
+            headlineEn: data.headline_en || cachedHero.headlineEn || INITIAL_HERO.headlineEn,
+            headlineVi: data.headline_vi || cachedHero.headlineVi || INITIAL_HERO.headlineVi,
+            subtitleEn: data.subtitle_en || cachedHero.subtitleEn || INITIAL_HERO.subtitleEn,
+            subtitleVi: data.subtitle_vi || cachedHero.subtitleVi || INITIAL_HERO.subtitleVi,
+            avatarUrl: data.avatar_url || cachedHero.avatarUrl || INITIAL_HERO.avatarUrl,
+            backgroundUrl: data.background_url || cachedHero.backgroundUrl || INITIAL_HERO.backgroundUrl
           };
           localStorage.setItem('db_hero', JSON.stringify(hero));
           return hero;
@@ -1587,35 +1604,52 @@ export const DB = {
       try {
         const { data, error } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
         if (data && !error && data.length > 0) {
-          const list: Project[] = data.map((p) => ({
-            id: p.id,
-            slug: p.slug,
-            titleEn: p.title_en,
-            titleVi: p.title_vi,
-            categoryName: p.category_name,
-            categoryEn: p.category_en || p.category_name,
-            grade: p.grade,
-            gradeEn: p.grade_en || p.grade,
-            year: p.year,
-            descriptionEn: p.description_en,
-            descriptionVi: p.description_vi,
-            objectivesEn: p.objectives_en || [],
-            objectivesVi: p.objectives_vi || [],
-            activitiesEn: p.activities_en || [],
-            activitiesVi: p.activities_vi || [],
-            methodsEn: p.methods_en || [],
-            methodsVi: p.methods_vi || [],
-            outcomesEn: p.outcomes_en || [],
-            outcomesVi: p.outcomes_vi || [],
-            thumbnailUrl: p.thumbnail_url || '',
-            galleryUrls: p.gallery_urls || [],
-            videoUrl: p.video_url || '',
-            attachments: p.attachments || [],
-            tags: p.tags || [],
-            isFeatured: p.is_featured !== false,
-            isPublished: p.is_published !== false,
-            createdAt: p.created_at ? p.created_at.split('T')[0] : new Date().toISOString().split('T')[0]
-          }));
+          const cachedProjects: Project[] = (() => {
+            try {
+              const p = localStorage.getItem('db_projects');
+              return p ? JSON.parse(p) : [];
+            } catch { return []; }
+          })();
+
+          const list: Project[] = data.map((p) => {
+            const cachedMatch = cachedProjects.find(x => x.id === p.id || x.slug === p.slug);
+            return {
+              id: p.id,
+              slug: p.slug,
+              titleEn: p.title_en || cachedMatch?.titleEn || '',
+              titleVi: p.title_vi || cachedMatch?.titleVi || '',
+              categoryName: p.category_name || cachedMatch?.categoryName || '',
+              categoryEn: p.category_en || cachedMatch?.categoryEn || p.category_name || '',
+              grade: p.grade || cachedMatch?.grade || '',
+              gradeEn: p.grade_en || cachedMatch?.gradeEn || p.grade || '',
+              year: p.year || cachedMatch?.year || '',
+              descriptionEn: p.description_en || cachedMatch?.descriptionEn || '',
+              descriptionVi: p.description_vi || cachedMatch?.descriptionVi || '',
+              objectivesEn: (p.objectives_en && p.objectives_en.length > 0) ? p.objectives_en : (cachedMatch?.objectivesEn || []),
+              objectivesVi: (p.objectives_vi && p.objectives_vi.length > 0) ? p.objectives_vi : (cachedMatch?.objectivesVi || []),
+              activitiesEn: (p.activities_en && p.activities_en.length > 0) ? p.activities_en : (cachedMatch?.activitiesEn || []),
+              activitiesVi: (p.activities_vi && p.activities_vi.length > 0) ? p.activities_vi : (cachedMatch?.activitiesVi || []),
+              methodsEn: (p.methods_en && p.methods_en.length > 0) ? p.methods_en : (cachedMatch?.methodsEn || []),
+              methodsVi: (p.methods_vi && p.methods_vi.length > 0) ? p.methods_vi : (cachedMatch?.methodsVi || []),
+              outcomesEn: (p.outcomes_en && p.outcomes_en.length > 0) ? p.outcomes_en : (cachedMatch?.outcomesEn || []),
+              outcomesVi: (p.outcomes_vi && p.outcomes_vi.length > 0) ? p.outcomes_vi : (cachedMatch?.outcomesVi || []),
+              thumbnailUrl: p.thumbnail_url || cachedMatch?.thumbnailUrl || '',
+              galleryUrls: (p.gallery_urls && p.gallery_urls.length > 0) ? p.gallery_urls : (cachedMatch?.galleryUrls || []),
+              videoUrl: p.video_url || cachedMatch?.videoUrl || '',
+              attachments: (p.attachments && p.attachments.length > 0) ? p.attachments : (cachedMatch?.attachments || []),
+              tags: (p.tags && p.tags.length > 0) ? p.tags : (cachedMatch?.tags || []),
+              isFeatured: p.is_featured !== false,
+              isPublished: p.is_published !== false,
+              createdAt: p.created_at ? p.created_at.split('T')[0] : (cachedMatch?.createdAt || new Date().toISOString().split('T')[0])
+            };
+          });
+
+          cachedProjects.forEach(cached => {
+            if (!list.some(x => x.id === cached.id || x.slug === cached.slug)) {
+              list.push(cached);
+            }
+          });
+
           localStorage.setItem('db_projects', JSON.stringify(list));
           return list;
         }
@@ -1742,36 +1776,44 @@ export const DB = {
             return {
               id: c.id,
               slug: c.slug,
-              titleEn: c.title_en,
-              titleVi: c.title_vi,
-              categoryName: c.category_name,
-              categoryEn: c.category_en || c.category_name,
+              titleEn: c.title_en || cachedMatch?.titleEn || '',
+              titleVi: c.title_vi || cachedMatch?.titleVi || '',
+              categoryName: c.category_name || cachedMatch?.categoryName || '',
+              categoryEn: c.category_en || cachedMatch?.categoryEn || c.category_name || '',
               priceType: priceType,
               priceEn: priceEn,
               priceVi: priceVi,
               discountPriceEn: discEn,
               discountPriceVi: discVi,
-              gradeLevel: c.grade_level,
-              gradeLevelEn: c.grade_level_en || c.grade_level,
-              durationEn: c.duration_en,
-              durationVi: c.duration_vi,
-              scheduleEn: c.schedule_en,
-              scheduleVi: c.schedule_vi,
-              descriptionEn: c.description_en,
-              descriptionVi: c.description_vi,
-              objectivesEn: c.objectives_en || [],
-              objectivesVi: c.objectives_vi || [],
-              curriculumEn: c.curriculum_en || [],
-              curriculumVi: c.curriculum_vi || [],
-              thumbnailUrl: c.thumbnail_url || '',
-              galleryUrls: c.gallery_urls || [],
-              videoUrl: c.video_url || '',
-              registrationFormUrl: c.registration_form_url || '',
+              gradeLevel: c.grade_level || cachedMatch?.gradeLevel || '',
+              gradeLevelEn: c.grade_level_en || cachedMatch?.gradeLevelEn || c.grade_level || '',
+              durationEn: c.duration_en || cachedMatch?.durationEn || '',
+              durationVi: c.duration_vi || cachedMatch?.durationVi || '',
+              scheduleEn: c.schedule_en || cachedMatch?.scheduleEn || '',
+              scheduleVi: c.schedule_vi || cachedMatch?.scheduleVi || '',
+              descriptionEn: c.description_en || cachedMatch?.descriptionEn || '',
+              descriptionVi: c.description_vi || cachedMatch?.descriptionVi || '',
+              objectivesEn: (c.objectives_en && c.objectives_en.length > 0) ? c.objectives_en : (cachedMatch?.objectivesEn || []),
+              objectivesVi: (c.objectives_vi && c.objectives_vi.length > 0) ? c.objectives_vi : (cachedMatch?.objectivesVi || []),
+              curriculumEn: (c.curriculum_en && c.curriculum_en.length > 0) ? c.curriculum_en : (cachedMatch?.curriculumEn || []),
+              curriculumVi: (c.curriculum_vi && c.curriculum_vi.length > 0) ? c.curriculum_vi : (cachedMatch?.curriculumVi || []),
+              thumbnailUrl: c.thumbnail_url || cachedMatch?.thumbnailUrl || '',
+              galleryUrls: (c.gallery_urls && c.gallery_urls.length > 0) ? c.gallery_urls : (cachedMatch?.galleryUrls || []),
+              videoUrl: c.video_url || cachedMatch?.videoUrl || '',
+              registrationFormUrl: c.registration_form_url || cachedMatch?.registrationFormUrl || '',
               isFeatured: c.is_featured !== false,
               isPublished: c.is_published !== false,
-              createdAt: c.created_at ? c.created_at.split('T')[0] : new Date().toISOString().split('T')[0]
+              createdAt: c.created_at ? c.created_at.split('T')[0] : (cachedMatch?.createdAt || new Date().toISOString().split('T')[0])
             };
           });
+
+          // Merge any locally added courses that are not in Supabase yet
+          cachedCourses.forEach(cached => {
+            if (!list.some(x => x.id === cached.id || x.slug === cached.slug)) {
+              list.push(cached);
+            }
+          });
+
           localStorage.setItem('db_courses', JSON.stringify(list));
           return list;
         }
@@ -1936,24 +1978,41 @@ export const DB = {
       try {
         const { data, error } = await supabase.from('student_works').select('*').order('created_at', { ascending: false });
         if (data && !error && data.length > 0) {
-          const list: StudentWork[] = data.map((sw) => ({
-            id: sw.id,
-            titleEn: sw.title_en,
-            titleVi: sw.title_vi,
-            category: sw.category || 'Classroom Work',
-            grade: sw.grade || 'Primary',
-            studentName: sw.student_name || '',
-            descriptionEn: sw.description_en || '',
-            descriptionVi: sw.description_vi || '',
-            objectiveEn: sw.objective_en || '',
-            objectiveVi: sw.objective_vi || '',
-            privacyMode: sw.privacy_mode || 'public',
-            mediaType: sw.media_type || 'image',
-            imageUrl: sw.image_url,
-            mediaUrl: sw.image_url,
-            isPublished: sw.is_published !== false,
-            createdAt: sw.created_at ? sw.created_at.split('T')[0] : new Date().toISOString().split('T')[0]
-          }));
+          const cachedStudentWorks: StudentWork[] = (() => {
+            try {
+              const sw = localStorage.getItem('db_student_works');
+              return sw ? JSON.parse(sw) : [];
+            } catch { return []; }
+          })();
+
+          const list: StudentWork[] = data.map((sw) => {
+            const cachedMatch = cachedStudentWorks.find(x => x.id === sw.id);
+            return {
+              id: sw.id,
+              titleEn: sw.title_en || cachedMatch?.titleEn || '',
+              titleVi: sw.title_vi || cachedMatch?.titleVi || '',
+              category: sw.category || cachedMatch?.category || 'Classroom Work',
+              grade: sw.grade || cachedMatch?.grade || 'Primary',
+              studentName: sw.student_name || cachedMatch?.studentName || '',
+              descriptionEn: sw.description_en || cachedMatch?.descriptionEn || '',
+              descriptionVi: sw.description_vi || cachedMatch?.descriptionVi || '',
+              objectiveEn: sw.objective_en || cachedMatch?.objectiveEn || '',
+              objectiveVi: sw.objective_vi || cachedMatch?.objectiveVi || '',
+              privacyMode: sw.privacy_mode || cachedMatch?.privacyMode || 'public',
+              mediaType: sw.media_type || cachedMatch?.mediaType || 'image',
+              imageUrl: sw.image_url || cachedMatch?.imageUrl || '',
+              mediaUrl: sw.image_url || cachedMatch?.mediaUrl || '',
+              isPublished: sw.is_published !== false,
+              createdAt: sw.created_at ? sw.created_at.split('T')[0] : (cachedMatch?.createdAt || new Date().toISOString().split('T')[0])
+            };
+          });
+
+          cachedStudentWorks.forEach(cached => {
+            if (!list.some(x => x.id === cached.id)) {
+              list.push(cached);
+            }
+          });
+
           localStorage.setItem('db_student_works', JSON.stringify(list));
           return list;
         }
@@ -1994,7 +2053,7 @@ export const DB = {
         if (data && !error && data.length > 0) {
           const cachedResources: TeachingResource[] = (() => {
             try {
-              const r = localStorage.getItem('db_resources_v3');
+              const r = localStorage.getItem('db_resources_v3') || localStorage.getItem('db_resources');
               return r ? JSON.parse(r) : [];
             } catch { return []; }
           })();
@@ -2015,38 +2074,54 @@ export const DB = {
               ? r.discount_price_en
               : (cachedMatch?.discountPriceEn || '');
 
+            const fileType = (cachedMatch?.fileType && cachedMatch.fileType !== 'PDF' && (!r.file_type || r.file_type === 'PDF'))
+              ? cachedMatch.fileType
+              : (r.file_type || cachedMatch?.fileType || 'PDF');
+
+            const fileTypeEn = (cachedMatch?.fileTypeEn && cachedMatch.fileTypeEn !== 'PDF' && (!r.file_type_en || r.file_type_en === 'PDF'))
+              ? cachedMatch.fileTypeEn
+              : (r.file_type_en || cachedMatch?.fileTypeEn || cachedMatch?.fileType || r.file_type || 'PDF');
+
             return {
               id: r.id,
               slug: r.slug || r.id,
-              titleEn: r.title_en,
-              titleVi: r.title_vi,
-              descriptionEn: r.description_en,
-              descriptionVi: r.description_vi,
-              categoryName: r.category_name,
-              categoryEn: r.category_en || r.category_name,
-              resourceType: r.resource_type || 'digital_file',
+              titleEn: r.title_en || cachedMatch?.titleEn || '',
+              titleVi: r.title_vi || cachedMatch?.titleVi || '',
+              descriptionEn: r.description_en || cachedMatch?.descriptionEn || '',
+              descriptionVi: r.description_vi || cachedMatch?.descriptionVi || '',
+              categoryName: r.category_name || cachedMatch?.categoryName || '',
+              categoryEn: r.category_en || cachedMatch?.categoryEn || r.category_name || '',
+              resourceType: r.resource_type || cachedMatch?.resourceType || 'digital_file',
               priceType: priceType,
               priceEn: priceEn,
               priceVi: priceVi,
               discountPriceEn: discEn,
               discountPriceVi: discVi,
-              grade: r.grade,
-              gradeEn: r.grade_en || r.grade,
-              fileType: r.file_type || 'PDF',
-              fileTypeEn: r.file_type_en || r.file_type,
-              fileUrl: r.file_url || '',
-              previewUrl: r.preview_url || '',
-              galleryUrls: r.gallery_urls || [],
-              videoUrl: r.video_url || '',
-              downloadCount: r.download_count || 0,
-              specificationsEn: r.specifications_en || [],
-              specificationsVi: r.specifications_vi || [],
-              tags: r.tags || [],
+              grade: r.grade || cachedMatch?.grade || '',
+              gradeEn: r.grade_en || cachedMatch?.gradeEn || r.grade || '',
+              fileType: fileType,
+              fileTypeEn: fileTypeEn,
+              fileUrl: r.file_url || cachedMatch?.fileUrl || '',
+              previewUrl: r.preview_url || cachedMatch?.previewUrl || '',
+              galleryUrls: (r.gallery_urls && r.gallery_urls.length > 0) ? r.gallery_urls : (cachedMatch?.galleryUrls || []),
+              videoUrl: r.video_url || cachedMatch?.videoUrl || '',
+              downloadCount: r.download_count || cachedMatch?.downloadCount || 0,
+              specificationsEn: (r.specifications_en && r.specifications_en.length > 0) ? r.specifications_en : (cachedMatch?.specificationsEn || []),
+              specificationsVi: (r.specifications_vi && r.specifications_vi.length > 0) ? r.specifications_vi : (cachedMatch?.specificationsVi || []),
+              tags: (r.tags && r.tags.length > 0) ? r.tags : (cachedMatch?.tags || []),
               isFeatured: r.is_featured !== false,
               isPublished: r.is_published !== false,
-              createdAt: r.created_at ? r.created_at.split('T')[0] : new Date().toISOString().split('T')[0]
+              createdAt: r.created_at ? r.created_at.split('T')[0] : (cachedMatch?.createdAt || new Date().toISOString().split('T')[0])
             };
           });
+
+          // Merge any locally added resources that are not in Supabase yet
+          cachedResources.forEach(cached => {
+            if (!list.some(x => x.id === cached.id || x.slug === cached.slug)) {
+              list.push(cached);
+            }
+          });
+
           localStorage.setItem('db_resources_v3', JSON.stringify(list));
           localStorage.setItem('db_resources', JSON.stringify(list));
           return list;
@@ -2242,29 +2317,46 @@ export const DB = {
       try {
         const { data, error } = await supabase.from('blog_posts').select('*').order('created_at', { ascending: false });
         if (data && !error && data.length > 0) {
-          const list: BlogPost[] = data.map((b) => ({
-            id: b.id,
-            slug: b.slug,
-            titleEn: b.title_en,
-            titleVi: b.title_vi,
-            excerptEn: b.excerpt_en,
-            excerptVi: b.excerpt_vi,
-            contentEn: b.content_en,
-            contentVi: b.content_vi,
-            featuredImage: b.featured_image || '',
-            galleryUrls: b.gallery_urls || [],
-            videoUrl: b.video_url || '',
-            categoryName: b.category_name,
-            categoryEn: b.category_en || b.category_name,
-            tags: b.tags || [],
-            author: b.author || 'Nguyễn Trọng Huy Hoàng',
-            readingTimeEn: b.reading_time_en || '5 min read',
-            readingTimeVi: b.reading_time_vi || '5 phút đọc',
-            status: b.status || 'published',
-            isFeatured: b.is_featured !== false,
-            publishedAt: b.published_at ? b.published_at.split('T')[0] : new Date().toISOString().split('T')[0],
-            createdAt: b.created_at ? b.created_at.split('T')[0] : new Date().toISOString().split('T')[0]
-          }));
+          const cachedBlog: BlogPost[] = (() => {
+            try {
+              const b = localStorage.getItem('db_blog');
+              return b ? JSON.parse(b) : [];
+            } catch { return []; }
+          })();
+
+          const list: BlogPost[] = data.map((b) => {
+            const cachedMatch = cachedBlog.find(x => x.id === b.id || x.slug === b.slug);
+            return {
+              id: b.id,
+              slug: b.slug,
+              titleEn: b.title_en || cachedMatch?.titleEn || '',
+              titleVi: b.title_vi || cachedMatch?.titleVi || '',
+              excerptEn: b.excerpt_en || cachedMatch?.excerptEn || '',
+              excerptVi: b.excerpt_vi || cachedMatch?.excerptVi || '',
+              contentEn: b.content_en || cachedMatch?.contentEn || '',
+              contentVi: b.content_vi || cachedMatch?.contentVi || '',
+              featuredImage: b.featured_image || cachedMatch?.featuredImage || '',
+              galleryUrls: (b.gallery_urls && b.gallery_urls.length > 0) ? b.gallery_urls : (cachedMatch?.galleryUrls || []),
+              videoUrl: b.video_url || cachedMatch?.videoUrl || '',
+              categoryName: b.category_name || cachedMatch?.categoryName || '',
+              categoryEn: b.category_en || cachedMatch?.categoryEn || b.category_name || '',
+              tags: (b.tags && b.tags.length > 0) ? b.tags : (cachedMatch?.tags || []),
+              author: b.author || cachedMatch?.author || 'Nguyễn Trọng Huy Hoàng',
+              readingTimeEn: b.reading_time_en || cachedMatch?.readingTimeEn || '5 min read',
+              readingTimeVi: b.reading_time_vi || cachedMatch?.readingTimeVi || '5 phút đọc',
+              status: b.status || cachedMatch?.status || 'published',
+              isFeatured: b.is_featured !== false,
+              publishedAt: b.published_at ? b.published_at.split('T')[0] : (cachedMatch?.publishedAt || new Date().toISOString().split('T')[0]),
+              createdAt: b.created_at ? b.created_at.split('T')[0] : (cachedMatch?.createdAt || new Date().toISOString().split('T')[0])
+            };
+          });
+
+          cachedBlog.forEach(cached => {
+            if (!list.some(x => x.id === cached.id || x.slug === cached.slug)) {
+              list.push(cached);
+            }
+          });
+
           localStorage.setItem('db_blog', JSON.stringify(list));
           return list;
         }
@@ -2341,20 +2433,37 @@ export const DB = {
       try {
         const { data, error } = await supabase.from('achievements').select('*').order('created_at', { ascending: false });
         if (data && !error && data.length > 0) {
-          const list: Achievement[] = data.map((a, idx) => ({
-            id: a.id,
-            titleEn: a.title_en,
-            titleVi: a.title_vi,
-            organizationEn: a.organization_en,
-            organizationVi: a.organization_vi,
-            date: a.date,
-            category: a.category,
-            certificateUrl: a.certificate_url || '',
-            galleryUrls: a.gallery_urls || [],
-            descriptionEn: a.description_en || '',
-            descriptionVi: a.description_vi || '',
-            orderIndex: a.order_index ?? (idx + 1)
-          }));
+          const cachedAchievements: Achievement[] = (() => {
+            try {
+              const a = localStorage.getItem('db_achievements');
+              return a ? JSON.parse(a) : [];
+            } catch { return []; }
+          })();
+
+          const list: Achievement[] = data.map((a, idx) => {
+            const cachedMatch = cachedAchievements.find(x => x.id === a.id);
+            return {
+              id: a.id,
+              titleEn: a.title_en || cachedMatch?.titleEn || '',
+              titleVi: a.title_vi || cachedMatch?.titleVi || '',
+              organizationEn: a.organization_en || cachedMatch?.organizationEn || '',
+              organizationVi: a.organization_vi || cachedMatch?.organizationVi || '',
+              date: a.date || cachedMatch?.date || '',
+              category: a.category || cachedMatch?.category || '',
+              certificateUrl: a.certificate_url || cachedMatch?.certificateUrl || '',
+              galleryUrls: (a.gallery_urls && a.gallery_urls.length > 0) ? a.gallery_urls : (cachedMatch?.galleryUrls || []),
+              descriptionEn: a.description_en || cachedMatch?.descriptionEn || '',
+              descriptionVi: a.description_vi || cachedMatch?.descriptionVi || '',
+              orderIndex: a.order_index ?? (cachedMatch?.orderIndex ?? (idx + 1))
+            };
+          });
+
+          cachedAchievements.forEach(cached => {
+            if (!list.some(x => x.id === cached.id)) {
+              list.push(cached);
+            }
+          });
+
           localStorage.setItem('db_achievements', JSON.stringify(list));
           return list.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
         }
@@ -2438,22 +2547,39 @@ export const DB = {
       try {
         const { data, error } = await supabase.from('gallery_items').select('*').order('created_at', { ascending: false });
         if (data && !error && data.length > 0) {
-          const list: GalleryItem[] = data.map((g, idx) => ({
-            id: g.id,
-            titleEn: g.title_en,
-            titleVi: g.title_vi,
-            category: g.category,
-            categoryEn: g.category_en || g.category,
-            mediaType: g.media_type || 'image',
-            mediaUrl: g.media_url,
-            galleryUrls: g.gallery_urls || [],
-            thumbnailUrl: g.thumbnail_url || '',
-            descriptionEn: g.description_en || '',
-            descriptionVi: g.description_vi || '',
-            isPublished: g.is_published !== false,
-            orderIndex: g.order_index ?? (idx + 1),
-            createdAt: g.created_at ? g.created_at.split('T')[0] : new Date().toISOString().split('T')[0]
-          }));
+          const cachedGallery: GalleryItem[] = (() => {
+            try {
+              const g = localStorage.getItem('db_gallery');
+              return g ? JSON.parse(g) : [];
+            } catch { return []; }
+          })();
+
+          const list: GalleryItem[] = data.map((g, idx) => {
+            const cachedMatch = cachedGallery.find(x => x.id === g.id);
+            return {
+              id: g.id,
+              titleEn: g.title_en || cachedMatch?.titleEn || '',
+              titleVi: g.title_vi || cachedMatch?.titleVi || '',
+              category: g.category || cachedMatch?.category || '',
+              categoryEn: g.category_en || cachedMatch?.categoryEn || g.category || '',
+              mediaType: g.media_type || cachedMatch?.mediaType || 'image',
+              mediaUrl: g.media_url || cachedMatch?.mediaUrl || '',
+              galleryUrls: (g.gallery_urls && g.gallery_urls.length > 0) ? g.gallery_urls : (cachedMatch?.galleryUrls || []),
+              thumbnailUrl: g.thumbnail_url || cachedMatch?.thumbnailUrl || '',
+              descriptionEn: g.description_en || cachedMatch?.descriptionEn || '',
+              descriptionVi: g.description_vi || cachedMatch?.descriptionVi || '',
+              isPublished: g.is_published !== false,
+              orderIndex: g.order_index ?? (cachedMatch?.orderIndex ?? (idx + 1)),
+              createdAt: g.created_at ? g.created_at.split('T')[0] : (cachedMatch?.createdAt || new Date().toISOString().split('T')[0])
+            };
+          });
+
+          cachedGallery.forEach(cached => {
+            if (!list.some(x => x.id === cached.id)) {
+              list.push(cached);
+            }
+          });
+
           localStorage.setItem('db_gallery', JSON.stringify(list));
           return list.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
         }
