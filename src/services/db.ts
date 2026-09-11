@@ -847,7 +847,7 @@ const syncToSupabase = async (key: string, val: any) => {
   try {
     if (key === 'db_profile') {
       const p = val as Profile;
-      await supabase.from('profiles').upsert({
+      const payload = {
         id: PROFILE_ROW_ID,
         full_name: p.fullName,
         full_name_en: p.fullNameEn || p.fullName,
@@ -858,16 +858,28 @@ const syncToSupabase = async (key: string, val: any) => {
         location_en: p.locationEn,
         location_vi: p.locationVi,
         admin_email: p.adminEmail,
+        phone: p.phone || '',
         brand_message_en: p.brandMessageEn,
         brand_message_vi: p.brandMessageVi,
         avatar_url: p.avatarUrl,
         bio_en: p.bioEn,
         bio_vi: p.bioVi,
         skills: p.skills || [],
-        experience_years: p.experienceYears || 25,
-        happy_students_count: p.happyStudentsCount || 4500,
+        philosophy_text_vi: p.philosophyTextVi || '',
+        philosophy_text_en: p.philosophyTextEn || '',
+        education_history: p.educationHistory || [],
+        experience_years: p.experienceYears ?? 25,
+        completed_projects_count: p.completedProjectsCount ?? 15,
+        teaching_resources_count: p.teachingResourcesCount ?? 50,
+        happy_students_count: p.happyStudentsCount ?? 4500,
         updated_at: new Date().toISOString()
-      }, { onConflict: 'id' });
+      };
+      const { error } = await supabase.from('profiles').upsert(payload, { onConflict: 'id' });
+      if (error) {
+        console.warn('Full profile upsert failed, retrying with core columns:', error.message);
+        const { philosophy_text_vi, philosophy_text_en, education_history, phone, completed_projects_count, teaching_resources_count, ...corePayload } = payload;
+        await supabase.from('profiles').upsert(corePayload, { onConflict: 'id' });
+      }
     } else if (key === 'db_hero') {
       const h = val as HeroSettings;
       await supabase.from('hero_settings').upsert({
@@ -1412,14 +1424,20 @@ export const DB = {
             locationEn: data.location_en || cachedProf.locationEn || INITIAL_PROFILE.locationEn,
             locationVi: data.location_vi || cachedProf.locationVi || INITIAL_PROFILE.locationVi,
             adminEmail: data.admin_email || cachedProf.adminEmail || INITIAL_PROFILE.adminEmail,
+            phone: data.phone || cachedProf.phone || INITIAL_PROFILE.phone || '0987654321',
             brandMessageEn: data.brand_message_en || cachedProf.brandMessageEn || INITIAL_PROFILE.brandMessageEn,
             brandMessageVi: data.brand_message_vi || cachedProf.brandMessageVi || INITIAL_PROFILE.brandMessageVi,
             avatarUrl: data.avatar_url || cachedProf.avatarUrl || INITIAL_PROFILE.avatarUrl,
             bioEn: data.bio_en || cachedProf.bioEn || INITIAL_PROFILE.bioEn,
             bioVi: data.bio_vi || cachedProf.bioVi || INITIAL_PROFILE.bioVi,
             skills: (data.skills && data.skills.length > 0) ? data.skills : (cachedProf.skills || INITIAL_PROFILE.skills),
-            experienceYears: data.experience_years || cachedProf.experienceYears || 25,
-            happyStudentsCount: data.happy_students_count || cachedProf.happyStudentsCount || 4500
+            philosophyTextVi: data.philosophy_text_vi || cachedProf.philosophyTextVi || INITIAL_PROFILE.philosophyTextVi,
+            philosophyTextEn: data.philosophy_text_en || cachedProf.philosophyTextEn || INITIAL_PROFILE.philosophyTextEn,
+            educationHistory: (data.education_history && data.education_history.length > 0) ? data.education_history : (cachedProf.educationHistory || INITIAL_PROFILE.educationHistory),
+            experienceYears: data.experience_years ?? (cachedProf.experienceYears ?? INITIAL_PROFILE.experienceYears),
+            completedProjectsCount: data.completed_projects_count ?? (cachedProf.completedProjectsCount ?? INITIAL_PROFILE.completedProjectsCount),
+            teachingResourcesCount: data.teaching_resources_count ?? (cachedProf.teachingResourcesCount ?? INITIAL_PROFILE.teachingResourcesCount),
+            happyStudentsCount: data.happy_students_count ?? (cachedProf.happyStudentsCount ?? INITIAL_PROFILE.happyStudentsCount)
           };
           localStorage.setItem('db_profile', JSON.stringify(prof));
           return prof;
@@ -1432,14 +1450,6 @@ export const DB = {
     let updated = false;
     if (!prof.avatarUrl || prof.avatarUrl.includes('unsplash.com')) {
       prof.avatarUrl = INITIAL_PROFILE.avatarUrl;
-      updated = true;
-    }
-    if (prof.experienceYears !== 25) {
-      prof.experienceYears = 25;
-      updated = true;
-    }
-    if (!prof.happyStudentsCount || prof.happyStudentsCount === 800) {
-      prof.happyStudentsCount = 4500;
       updated = true;
     }
     if (updated) {
