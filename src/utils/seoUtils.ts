@@ -49,7 +49,7 @@ export function buildSocialPreviewTitle(profile?: any): string {
 export function buildSocialPreviewDescription(profile?: any): string {
   const rawName = profile?.fullName?.trim() || 'Nguyễn Trọng Huy Hoàng';
   const teacherName = rawName.startsWith('Thầy') ? rawName : `Thầy ${rawName}`;
-  const titleVi = profile?.titleVi?.trim() || 'Giáo viên Tiếng Anh Trường Tiểu học Dương Minh Châu, Quận 10';
+  const titleVi = profile?.titleVi?.trim() || 'Giáo viên Tiếng Anh | Giáo dục Tiểu học';
   const cleanTitleVi = titleVi.replace(/[-.]$/, '').trim();
   const firstBioSentence = getFirstSentence(profile?.bioVi) || 'Với hơn 25 năm kinh nghiệm giảng dạy tiếng Anh tiểu học tại TP.HCM, tôi chuyên sâu về phương pháp Học theo dự án (PBL), học qua trò chơi và ứng dụng công nghệ giáo dục EdTech trong nhà trường.';
   
