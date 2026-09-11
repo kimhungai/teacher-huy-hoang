@@ -956,7 +956,12 @@ const syncToSupabase = async (key: string, val: any) => {
           is_featured: c.isFeatured !== false,
           is_published: c.isPublished !== false
         }));
-        await supabase.from('courses').upsert(rows, { onConflict: 'slug' });
+        const { error } = await supabase.from('courses').upsert(rows, { onConflict: 'slug' });
+        if (error) {
+          console.warn('Full courses upsert failed, retrying without optional schema columns:', error.message);
+          const coreRows = rows.map(({ discount_price_en, discount_price_vi, grade_level_en, category_en, ...core }: any) => core);
+          await supabase.from('courses').upsert(coreRows, { onConflict: 'slug' });
+        }
       }
     } else if (key === 'db_resources_v3' || key === 'db_resources') {
       const list = val as TeachingResource[];
@@ -1759,19 +1764,38 @@ export const DB = {
 
           const list: Course[] = data.map((c) => {
             const cachedMatch = cachedCourses.find(x => x.id === c.id || x.slug === c.slug);
-            const priceType = (c.price_type && c.price_type !== '') ? c.price_type : (cachedMatch?.priceType || 'free');
-            const priceVi = (c.price_vi !== null && c.price_vi !== undefined && c.price_vi !== '')
-              ? c.price_vi
-              : (cachedMatch?.priceVi || (priceType === 'paid' ? 'Có phí' : 'Miễn phí'));
-            const priceEn = (c.price_en !== null && c.price_en !== undefined && c.price_en !== '')
-              ? c.price_en
-              : (cachedMatch?.priceEn || (priceType === 'paid' ? 'Paid' : 'Free'));
+
+            const priceType = (cachedMatch?.priceType && cachedMatch.priceType !== 'free' && c.price_type === 'free')
+              ? cachedMatch.priceType
+              : ((c.price_type && c.price_type !== '') ? c.price_type : (cachedMatch?.priceType || 'free'));
+
+            const priceVi = (cachedMatch?.priceVi && cachedMatch.priceVi !== 'Miễn phí' && cachedMatch.priceVi !== 'Free' && (c.price_vi === 'Miễn phí' || !c.price_vi))
+              ? cachedMatch.priceVi
+              : ((c.price_vi !== null && c.price_vi !== undefined && c.price_vi !== '')
+                  ? c.price_vi
+                  : (cachedMatch?.priceVi || (priceType === 'paid' ? 'Có phí' : 'Miễn phí')));
+
+            const priceEn = (cachedMatch?.priceEn && cachedMatch.priceEn !== 'Free' && (c.price_en === 'Free' || !c.price_en))
+              ? cachedMatch.priceEn
+              : ((c.price_en !== null && c.price_en !== undefined && c.price_en !== '')
+                  ? c.price_en
+                  : (cachedMatch?.priceEn || (priceType === 'paid' ? 'Paid' : 'Free')));
+
             const discVi = (c.discount_price_vi !== null && c.discount_price_vi !== undefined && c.discount_price_vi !== '')
               ? c.discount_price_vi
               : (cachedMatch?.discountPriceVi || '');
+
             const discEn = (c.discount_price_en !== null && c.discount_price_en !== undefined && c.discount_price_en !== '')
               ? c.discount_price_en
               : (cachedMatch?.discountPriceEn || '');
+
+            const gradeLevel = (cachedMatch?.gradeLevel && cachedMatch.gradeLevel !== c.grade_level)
+              ? cachedMatch.gradeLevel
+              : (c.grade_level || cachedMatch?.gradeLevel || '');
+
+            const gradeLevelEn = (cachedMatch?.gradeLevelEn && cachedMatch.gradeLevelEn !== c.grade_level_en)
+              ? cachedMatch.gradeLevelEn
+              : (c.grade_level_en || cachedMatch?.gradeLevelEn || gradeLevel);
 
             return {
               id: c.id,
@@ -1785,8 +1809,8 @@ export const DB = {
               priceVi: priceVi,
               discountPriceEn: discEn,
               discountPriceVi: discVi,
-              gradeLevel: c.grade_level || cachedMatch?.gradeLevel || '',
-              gradeLevelEn: c.grade_level_en || cachedMatch?.gradeLevelEn || c.grade_level || '',
+              gradeLevel: gradeLevel,
+              gradeLevelEn: gradeLevelEn,
               durationEn: c.duration_en || cachedMatch?.durationEn || '',
               durationVi: c.duration_vi || cachedMatch?.durationVi || '',
               scheduleEn: c.schedule_en || cachedMatch?.scheduleEn || '',
