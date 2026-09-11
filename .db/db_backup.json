@@ -457,6 +457,8 @@
       "priceType": "paid",
       "priceEn": "600.000 VNĐ / Khóa",
       "priceVi": "600.000 VNĐ / Khóa",
+      "discountPriceVi": "499.000 VNĐ / Khóa",
+      "discountPriceEn": "499.000 VND / Course",
       "gradeLevel": "Grade 3 - 5",
       "gradeLevelEn": "Grade 3 - 5",
       "durationEn": "10 Sessions (5 Weeks)",
@@ -482,58 +484,11 @@
         "Tuần 2: Đóng vai Mua sắm & Gọi món ăn"
       ],
       "thumbnailUrl": "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=800",
-      "galleryUrls": [],
+      "galleryUrls": [
+        "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=800"
+      ],
       "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      "registrationFormUrl": "",
       "isFeatured": false,
-      "isPublished": true,
-      "createdAt": "2026-09-02"
-    },
-    {
-      "id": "2e40efae-e3f7-41a5-ad50-38a708e6be1f",
-      "slug": "khoa-luyen-van-pham-sinh-dong",
-      "titleEn": "Dynamic Grammar & Sentence Building",
-      "titleVi": "Khóa Luyện Văn Phạm & Cấu Trúc Câu Sinh Động",
-      "categoryName": "Luyện văn phạm",
-      "categoryEn": "Luyện văn phạm",
-      "priceType": "paid",
-      "priceEn": "450.000 VNĐ / Khóa",
-      "priceVi": "450.000 VNĐ / Khóa",
-      "gradeLevel": "Grade 3 - 5 (8-11 tuổi)",
-      "gradeLevelEn": "Grade 3 - 5 (8-11 tuổi)",
-      "durationEn": "12 Sessions (6 Weeks)",
-      "durationVi": "12 Buổi (6 Tuần)",
-      "scheduleEn": "Mon & Wed Evening (6:00 - 7:30 PM)",
-      "scheduleVi": "Tối Thứ 2 & Thứ 4 (18:00 - 19:30)",
-      "descriptionEn": "Transform boring grammar rules into clear visual maps, sentence puzzles, and interactive quizzes.",
-      "descriptionVi": "Biến ngữ pháp khô khan thành sơ đồ tư duy trực quan, trò chơi ghép câu và quiz tương tác chuẩn thi tiểu học.",
-      "objectivesEn": [
-        "Master Present Simple, Present Continuous, and Past Tense.",
-        "Construct complete, grammatically accurate English sentences.",
-        "Score high in school semester English exams."
-      ],
-      "objectivesVi": [
-        "Nắm vững Thì Hiện tại đơn, Hiện tại tiếp diễn và Quá quá đơn.",
-        "Viết câu tiếng Anh đúng ngữ pháp và diễn đạt ý tưởng hoàn chỉnh.",
-        "Đạt điểm cao trong các bài kiểm tra tiếng Anh định kỳ tại trường."
-      ],
-      "curriculumEn": [
-        "Module 1: Nouns, Verbs & Adjectives Building Blocks",
-        "Module 2: Tenses Mastery (Present & Past)",
-        "Module 3: Prepositions & Question Words (Wh-questions)",
-        "Module 4: Writing Short English Essays & Peer Correction"
-      ],
-      "curriculumVi": [
-        "Chương 1: Phân loại Danh từ, Động từ & Tính từ trực quan",
-        "Chương 2: Làm chủ các thì ngữ pháp cốt lõi khối 3-4-5",
-        "Chương 3: Giới từ chỉ nơi chốn & Cấu trúc câu hỏi Wh-words",
-        "Chương 4: Thực hành viết đoạn văn ngắn & Nhận xét nhóm"
-      ],
-      "thumbnailUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=800",
-      "galleryUrls": [],
-      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      "registrationFormUrl": "",
-      "isFeatured": true,
       "isPublished": true,
       "createdAt": "2026-09-02"
     },
@@ -547,6 +502,8 @@
       "priceType": "free",
       "priceEn": "Free",
       "priceVi": "Miễn phí",
+      "discountPriceEn": "",
+      "discountPriceVi": "",
       "gradeLevel": "Grade 1 - 3 (6-9 tuổi)",
       "gradeLevelEn": "Grade 1 - 3 (6-9 tuổi)",
       "durationEn": "8 Sessions (4 Weeks)",
@@ -603,6 +560,8 @@
       "priceType": "free",
       "priceEn": "Free",
       "priceVi": "Miễn phí",
+      "discountPriceEn": "",
+      "discountPriceVi": "",
       "gradeLevel": "Grade 1 - 3 (6-9 tuổi)",
       "gradeLevelEn": "Grade 1 - 3 (6-9 tuổi)",
       "durationEn": "8 Sessions (4 Weeks)",
@@ -650,6 +609,56 @@
       "createdAt": "2026-09-02"
     },
     {
+      "id": "2e40efae-e3f7-41a5-ad50-38a708e6be1f",
+      "slug": "khoa-luyen-van-pham-sinh-dong",
+      "titleEn": "Dynamic Grammar & Sentence Building",
+      "titleVi": "Khóa Luyện Văn Phạm & Cấu Trúc Câu Sinh Động",
+      "categoryName": "Luyện văn phạm",
+      "categoryEn": "Luyện văn phạm",
+      "priceType": "paid",
+      "priceEn": "450.000 VNĐ / Khóa",
+      "priceVi": "450.000 VNĐ / Khóa",
+      "discountPriceEn": "",
+      "discountPriceVi": "",
+      "gradeLevel": "Grade 3 - 5 (8-11 tuổi)",
+      "gradeLevelEn": "Grade 3 - 5 (8-11 tuổi)",
+      "durationEn": "12 Sessions (6 Weeks)",
+      "durationVi": "12 Buổi (6 Tuần)",
+      "scheduleEn": "Mon & Wed Evening (6:00 - 7:30 PM)",
+      "scheduleVi": "Tối Thứ 2 & Thứ 4 (18:00 - 19:30)",
+      "descriptionEn": "Transform boring grammar rules into clear visual maps, sentence puzzles, and interactive quizzes.",
+      "descriptionVi": "Biến ngữ pháp khô khan thành sơ đồ tư duy trực quan, trò chơi ghép câu và quiz tương tác chuẩn thi tiểu học.",
+      "objectivesEn": [
+        "Master Present Simple, Present Continuous, and Past Tense.",
+        "Construct complete, grammatically accurate English sentences.",
+        "Score high in school semester English exams."
+      ],
+      "objectivesVi": [
+        "Nắm vững Thì Hiện tại đơn, Hiện tại tiếp diễn và Quá quá đơn.",
+        "Viết câu tiếng Anh đúng ngữ pháp và diễn đạt ý tưởng hoàn chỉnh.",
+        "Đạt điểm cao trong các bài kiểm tra tiếng Anh định kỳ tại trường."
+      ],
+      "curriculumEn": [
+        "Module 1: Nouns, Verbs & Adjectives Building Blocks",
+        "Module 2: Tenses Mastery (Present & Past)",
+        "Module 3: Prepositions & Question Words (Wh-questions)",
+        "Module 4: Writing Short English Essays & Peer Correction"
+      ],
+      "curriculumVi": [
+        "Chương 1: Phân loại Danh từ, Động từ & Tính từ trực quan",
+        "Chương 2: Làm chủ các thì ngữ pháp cốt lõi khối 3-4-5",
+        "Chương 3: Giới từ chỉ nơi chốn & Cấu trúc câu hỏi Wh-words",
+        "Chương 4: Thực hành viết đoạn văn ngắn & Nhận xét nhóm"
+      ],
+      "thumbnailUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=800",
+      "galleryUrls": [],
+      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "registrationFormUrl": "",
+      "isFeatured": true,
+      "isPublished": true,
+      "createdAt": "2026-09-02"
+    },
+    {
       "id": "750cdd00-7bbe-4116-81e3-3c0b0f1502a0",
       "slug": "khoa-luyen-phan-xa-game-tuong-tac",
       "titleEn": "Gamified English Fluency & Speed Quiz",
@@ -659,6 +668,8 @@
       "priceType": "free",
       "priceEn": "Free",
       "priceVi": "Miễn phí",
+      "discountPriceEn": "",
+      "discountPriceVi": "",
       "gradeLevel": "Grade 2 - 5",
       "gradeLevelEn": "Grade 2 - 5",
       "durationEn": "6 Sessions (3 Weeks)",

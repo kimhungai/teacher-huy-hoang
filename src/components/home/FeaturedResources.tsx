@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, ArrowRight, Download, FileText } from 'lucide-react';
+import { BookOpen, ArrowRight, Download, FileText, Gift, CreditCard, Sparkles } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import type { TeachingResource } from '../../types';
 import { Badge } from '../common/Badge';
@@ -42,23 +42,47 @@ export const FeaturedResources: React.FC<{ resources: TeachingResource[] }> = ({
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featured.map((item) => (
-            <div
-              key={item.id}
-              className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between text-left"
-            >
-              <div>
-                <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 mb-4 relative">
-                  <img
-                    src={item.previewUrl || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=600'}
-                    alt={language === 'vi' ? item.titleVi : item.titleEn}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-2 left-2 flex gap-1">
-                    <Badge variant="amber">{item.fileType}</Badge>
-                    <Badge variant="sky">{item.grade}</Badge>
+          {featured.map((item) => {
+            const discountPrice = language === 'vi' ? item.discountPriceVi : item.discountPriceEn;
+            const hasDiscount = item.priceType === 'paid' && Boolean(discountPrice && discountPrice.trim());
+
+            return (
+              <div
+                key={item.id}
+                className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between text-left"
+              >
+                <div>
+                  <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 mb-4 relative">
+                    <img
+                      src={item.previewUrl || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=600'}
+                      alt={language === 'vi' ? item.titleVi : item.titleEn}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-2 left-2 flex gap-1 z-10">
+                      <Badge variant="amber">{item.fileType}</Badge>
+                      <Badge variant="sky">{item.grade}</Badge>
+                    </div>
+
+                    {/* Price Tag Badge */}
+                    <div className="absolute bottom-2 left-2 z-10">
+                      {item.priceType === 'free' ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500 text-white text-[10px] font-bold shadow-md">
+                          <Gift className="w-3 h-3" />
+                          {t('resource.free')}
+                        </span>
+                      ) : hasDiscount ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-rose-600 to-amber-500 text-white text-[10px] font-black shadow-lg">
+                          <Sparkles className="w-3 h-3 text-yellow-200 animate-spin" />
+                          {discountPrice}
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500 text-white text-[10px] font-bold shadow-md">
+                          <CreditCard className="w-3 h-3" />
+                          {language === 'vi' ? item.priceVi : item.priceEn}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
 
                 <div className="space-y-2">
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-2">
@@ -84,7 +108,8 @@ export const FeaturedResources: React.FC<{ resources: TeachingResource[] }> = ({
                 </button>
               </div>
             </div>
-          ))}
+          );
+        })}
         </div>
       </div>
     </section>
