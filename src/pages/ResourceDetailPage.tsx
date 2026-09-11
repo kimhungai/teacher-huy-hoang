@@ -35,7 +35,7 @@ export const ResourceDetailPage: React.FC = () => {
 
   const [resource, setResource] = useState<TeachingResource | null>(() => {
     try {
-      const cached = localStorage.getItem('db_resources');
+      const cached = localStorage.getItem('db_resources_v3') || localStorage.getItem('db_resources');
       if (cached && slug) {
         const list: TeachingResource[] = JSON.parse(cached);
         return list.find(r => r.slug === slug || r.id === slug) || null;
@@ -46,7 +46,7 @@ export const ResourceDetailPage: React.FC = () => {
 
   const [relatedResources, setRelatedResources] = useState<TeachingResource[]>(() => {
     try {
-      const cached = localStorage.getItem('db_resources');
+      const cached = localStorage.getItem('db_resources_v3') || localStorage.getItem('db_resources');
       if (cached && slug) {
         const list: TeachingResource[] = JSON.parse(cached);
         const target = list.find(r => r.slug === slug || r.id === slug);
@@ -62,7 +62,7 @@ export const ResourceDetailPage: React.FC = () => {
 
   const [loading, setLoading] = useState(() => {
     try {
-      const cached = localStorage.getItem('db_resources');
+      const cached = localStorage.getItem('db_resources_v3') || localStorage.getItem('db_resources');
       if (cached && slug) {
         const list: TeachingResource[] = JSON.parse(cached);
         return !list.some(r => r.slug === slug || r.id === slug);

@@ -13,14 +13,14 @@ export const ResourcesPage: React.FC = () => {
   const { t, language } = useLanguage();
   const [resources, setResources] = useState<TeachingResource[]>(() => {
     try {
-      const cached = localStorage.getItem('db_resources');
+      const cached = localStorage.getItem('db_resources_v3') || localStorage.getItem('db_resources');
       if (cached) return JSON.parse(cached);
     } catch {}
     return [];
   });
   const [loading, setLoading] = useState(() => {
     try {
-      const cached = localStorage.getItem('db_resources');
+      const cached = localStorage.getItem('db_resources_v3') || localStorage.getItem('db_resources');
       if (cached) return JSON.parse(cached).length === 0;
     } catch {}
     return true;

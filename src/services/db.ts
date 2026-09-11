@@ -802,7 +802,7 @@ const syncToDisk = () => {
         db_teaching: getStorageItem('db_teaching', INITIAL_TEACHING_APPROACHES),
         db_projects: getStorageItem('db_projects', INITIAL_PROJECTS),
         db_courses: getStorageItem('db_courses', INITIAL_COURSES),
-        db_resources: getStorageItem('db_resources', INITIAL_RESOURCES),
+        db_resources: getStorageItem('db_resources_v3', INITIAL_RESOURCES),
         db_blog: getStorageItem('db_blog', INITIAL_BLOG_POSTS),
         db_achievements: getStorageItem('db_achievements', INITIAL_ACHIEVEMENTS),
         db_gallery: getStorageItem('db_gallery', INITIAL_GALLERY)
@@ -1185,6 +1185,11 @@ const syncToSupabase = async (key: string, val: any) => {
 
 const setStorageItem = <T>(key: string, val: T): void => {
   localStorage.setItem(key, JSON.stringify(val));
+  if (key === 'db_resources_v3') {
+    localStorage.setItem('db_resources', JSON.stringify(val));
+  } else if (key === 'db_resources') {
+    localStorage.setItem('db_resources_v3', JSON.stringify(val));
+  }
   syncToDisk();
   syncToSupabase(key, val);
 };
@@ -2043,6 +2048,7 @@ export const DB = {
             };
           });
           localStorage.setItem('db_resources_v3', JSON.stringify(list));
+          localStorage.setItem('db_resources', JSON.stringify(list));
           return list;
         }
       } catch (err) {
