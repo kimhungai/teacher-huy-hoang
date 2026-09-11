@@ -1211,6 +1211,18 @@ const setStorageItem = <T>(key: string, val: T): void => {
     localStorage.setItem('db_resources', JSON.stringify(val));
   } else if (key === 'db_resources') {
     localStorage.setItem('db_resources_v3', JSON.stringify(val));
+  } else if (key === 'db_blog') {
+    localStorage.setItem('db_posts', JSON.stringify(val));
+  } else if (key === 'db_posts') {
+    localStorage.setItem('db_blog', JSON.stringify(val));
+  } else if (key === 'db_teaching') {
+    localStorage.setItem('db_teaching_approaches', JSON.stringify(val));
+  } else if (key === 'db_teaching_approaches') {
+    localStorage.setItem('db_teaching', JSON.stringify(val));
+  } else if (key === 'db_settings') {
+    localStorage.setItem('db_site_settings', JSON.stringify(val));
+  } else if (key === 'db_site_settings') {
+    localStorage.setItem('db_settings', JSON.stringify(val));
   }
   syncToDisk();
   syncToSupabase(key, val);
@@ -1410,34 +1422,34 @@ export const DB = {
           const cachedProf = (() => {
             try {
               const p = localStorage.getItem('db_profile');
-              return p ? JSON.parse(p) : INITIAL_PROFILE;
-            } catch { return INITIAL_PROFILE; }
+              return p ? JSON.parse(p) : null;
+            } catch { return null; }
           })();
           const prof: Profile = {
-            id: data.id || cachedProf.id || 'p1',
-            fullName: data.full_name || cachedProf.fullName || INITIAL_PROFILE.fullName,
-            fullNameEn: data.full_name_en || cachedProf.fullNameEn || INITIAL_PROFILE.fullNameEn,
-            titleEn: data.title_en || cachedProf.titleEn || INITIAL_PROFILE.titleEn,
-            titleVi: data.title_vi || cachedProf.titleVi || INITIAL_PROFILE.titleVi,
-            schoolEn: data.school_en || cachedProf.schoolEn || INITIAL_PROFILE.schoolEn,
-            schoolVi: data.school_vi || cachedProf.schoolVi || INITIAL_PROFILE.schoolVi,
-            locationEn: data.location_en || cachedProf.locationEn || INITIAL_PROFILE.locationEn,
-            locationVi: data.location_vi || cachedProf.locationVi || INITIAL_PROFILE.locationVi,
-            adminEmail: data.admin_email || cachedProf.adminEmail || INITIAL_PROFILE.adminEmail,
-            phone: data.phone || cachedProf.phone || INITIAL_PROFILE.phone || '0987654321',
-            brandMessageEn: data.brand_message_en || cachedProf.brandMessageEn || INITIAL_PROFILE.brandMessageEn,
-            brandMessageVi: data.brand_message_vi || cachedProf.brandMessageVi || INITIAL_PROFILE.brandMessageVi,
-            avatarUrl: data.avatar_url || cachedProf.avatarUrl || INITIAL_PROFILE.avatarUrl,
-            bioEn: data.bio_en || cachedProf.bioEn || INITIAL_PROFILE.bioEn,
-            bioVi: data.bio_vi || cachedProf.bioVi || INITIAL_PROFILE.bioVi,
-            skills: (data.skills && data.skills.length > 0) ? data.skills : (cachedProf.skills || INITIAL_PROFILE.skills),
-            philosophyTextVi: data.philosophy_text_vi || cachedProf.philosophyTextVi || INITIAL_PROFILE.philosophyTextVi,
-            philosophyTextEn: data.philosophy_text_en || cachedProf.philosophyTextEn || INITIAL_PROFILE.philosophyTextEn,
-            educationHistory: (data.education_history && data.education_history.length > 0) ? data.education_history : (cachedProf.educationHistory || INITIAL_PROFILE.educationHistory),
-            experienceYears: data.experience_years ?? (cachedProf.experienceYears ?? INITIAL_PROFILE.experienceYears),
-            completedProjectsCount: data.completed_projects_count ?? (cachedProf.completedProjectsCount ?? INITIAL_PROFILE.completedProjectsCount),
-            teachingResourcesCount: data.teaching_resources_count ?? (cachedProf.teachingResourcesCount ?? INITIAL_PROFILE.teachingResourcesCount),
-            happyStudentsCount: data.happy_students_count ?? (cachedProf.happyStudentsCount ?? INITIAL_PROFILE.happyStudentsCount)
+            id: cachedProf?.id || data.id || 'p1',
+            fullName: cachedProf?.fullName || data.full_name || INITIAL_PROFILE.fullName,
+            fullNameEn: cachedProf?.fullNameEn || data.full_name_en || INITIAL_PROFILE.fullNameEn,
+            titleEn: cachedProf?.titleEn || data.title_en || INITIAL_PROFILE.titleEn,
+            titleVi: cachedProf?.titleVi || data.title_vi || INITIAL_PROFILE.titleVi,
+            schoolEn: cachedProf?.schoolEn || data.school_en || INITIAL_PROFILE.schoolEn,
+            schoolVi: cachedProf?.schoolVi || data.school_vi || INITIAL_PROFILE.schoolVi,
+            locationEn: cachedProf?.locationEn || data.location_en || INITIAL_PROFILE.locationEn,
+            locationVi: cachedProf?.locationVi || data.location_vi || INITIAL_PROFILE.locationVi,
+            adminEmail: cachedProf?.adminEmail || data.admin_email || INITIAL_PROFILE.adminEmail,
+            phone: cachedProf?.phone || data.phone || INITIAL_PROFILE.phone || '0987654321',
+            brandMessageEn: cachedProf?.brandMessageEn || data.brand_message_en || INITIAL_PROFILE.brandMessageEn,
+            brandMessageVi: cachedProf?.brandMessageVi || data.brand_message_vi || INITIAL_PROFILE.brandMessageVi,
+            avatarUrl: cachedProf?.avatarUrl || data.avatar_url || INITIAL_PROFILE.avatarUrl,
+            bioEn: cachedProf?.bioEn || data.bio_en || INITIAL_PROFILE.bioEn,
+            bioVi: cachedProf?.bioVi || data.bio_vi || INITIAL_PROFILE.bioVi,
+            skills: (cachedProf?.skills && cachedProf.skills.length > 0) ? cachedProf.skills : ((data.skills && data.skills.length > 0) ? data.skills : INITIAL_PROFILE.skills),
+            philosophyTextVi: cachedProf?.philosophyTextVi || data.philosophy_text_vi || INITIAL_PROFILE.philosophyTextVi,
+            philosophyTextEn: cachedProf?.philosophyTextEn || data.philosophy_text_en || INITIAL_PROFILE.philosophyTextEn,
+            educationHistory: (cachedProf?.educationHistory && cachedProf.educationHistory.length > 0) ? cachedProf.educationHistory : ((data.education_history && data.education_history.length > 0) ? data.education_history : INITIAL_PROFILE.educationHistory),
+            experienceYears: cachedProf?.experienceYears ?? (data.experience_years ?? INITIAL_PROFILE.experienceYears),
+            completedProjectsCount: cachedProf?.completedProjectsCount ?? (data.completed_projects_count ?? INITIAL_PROFILE.completedProjectsCount),
+            teachingResourcesCount: cachedProf?.teachingResourcesCount ?? (data.teaching_resources_count ?? INITIAL_PROFILE.teachingResourcesCount),
+            happyStudentsCount: cachedProf?.happyStudentsCount ?? (data.happy_students_count ?? INITIAL_PROFILE.happyStudentsCount)
           };
           localStorage.setItem('db_profile', JSON.stringify(prof));
           return prof;
@@ -1479,16 +1491,16 @@ export const DB = {
           const cachedHero = (() => {
             try {
               const h = localStorage.getItem('db_hero');
-              return h ? JSON.parse(h) : INITIAL_HERO;
-            } catch { return INITIAL_HERO; }
+              return h ? JSON.parse(h) : null;
+            } catch { return null; }
           })();
           const hero: HeroSettings = {
-            headlineEn: data.headline_en || cachedHero.headlineEn || INITIAL_HERO.headlineEn,
-            headlineVi: data.headline_vi || cachedHero.headlineVi || INITIAL_HERO.headlineVi,
-            subtitleEn: data.subtitle_en || cachedHero.subtitleEn || INITIAL_HERO.subtitleEn,
-            subtitleVi: data.subtitle_vi || cachedHero.subtitleVi || INITIAL_HERO.subtitleVi,
-            avatarUrl: data.avatar_url || cachedHero.avatarUrl || INITIAL_HERO.avatarUrl,
-            backgroundUrl: data.background_url || cachedHero.backgroundUrl || INITIAL_HERO.backgroundUrl
+            headlineEn: cachedHero?.headlineEn || data.headline_en || INITIAL_HERO.headlineEn,
+            headlineVi: cachedHero?.headlineVi || data.headline_vi || INITIAL_HERO.headlineVi,
+            subtitleEn: cachedHero?.subtitleEn || data.subtitle_en || INITIAL_HERO.subtitleEn,
+            subtitleVi: cachedHero?.subtitleVi || data.subtitle_vi || INITIAL_HERO.subtitleVi,
+            avatarUrl: cachedHero?.avatarUrl || data.avatar_url || INITIAL_HERO.avatarUrl,
+            backgroundUrl: cachedHero?.backgroundUrl || data.background_url || INITIAL_HERO.backgroundUrl
           };
           localStorage.setItem('db_hero', JSON.stringify(hero));
           return hero;
@@ -1647,32 +1659,32 @@ export const DB = {
             const cachedMatch = cachedProjects.find(x => x.id === p.id || x.slug === p.slug);
             return {
               id: p.id,
-              slug: p.slug,
-              titleEn: p.title_en || cachedMatch?.titleEn || '',
-              titleVi: p.title_vi || cachedMatch?.titleVi || '',
-              categoryName: p.category_name || cachedMatch?.categoryName || '',
-              categoryEn: p.category_en || cachedMatch?.categoryEn || p.category_name || '',
-              grade: p.grade || cachedMatch?.grade || '',
-              gradeEn: p.grade_en || cachedMatch?.gradeEn || p.grade || '',
-              year: p.year || cachedMatch?.year || '',
-              descriptionEn: p.description_en || cachedMatch?.descriptionEn || '',
-              descriptionVi: p.description_vi || cachedMatch?.descriptionVi || '',
-              objectivesEn: (p.objectives_en && p.objectives_en.length > 0) ? p.objectives_en : (cachedMatch?.objectivesEn || []),
-              objectivesVi: (p.objectives_vi && p.objectives_vi.length > 0) ? p.objectives_vi : (cachedMatch?.objectivesVi || []),
-              activitiesEn: (p.activities_en && p.activities_en.length > 0) ? p.activities_en : (cachedMatch?.activitiesEn || []),
-              activitiesVi: (p.activities_vi && p.activities_vi.length > 0) ? p.activities_vi : (cachedMatch?.activitiesVi || []),
-              methodsEn: (p.methods_en && p.methods_en.length > 0) ? p.methods_en : (cachedMatch?.methodsEn || []),
-              methodsVi: (p.methods_vi && p.methods_vi.length > 0) ? p.methods_vi : (cachedMatch?.methodsVi || []),
-              outcomesEn: (p.outcomes_en && p.outcomes_en.length > 0) ? p.outcomes_en : (cachedMatch?.outcomesEn || []),
-              outcomesVi: (p.outcomes_vi && p.outcomes_vi.length > 0) ? p.outcomes_vi : (cachedMatch?.outcomesVi || []),
-              thumbnailUrl: p.thumbnail_url || cachedMatch?.thumbnailUrl || '',
-              galleryUrls: (p.gallery_urls && p.gallery_urls.length > 0) ? p.gallery_urls : (cachedMatch?.galleryUrls || []),
-              videoUrl: p.video_url || cachedMatch?.videoUrl || '',
-              attachments: (p.attachments && p.attachments.length > 0) ? p.attachments : (cachedMatch?.attachments || []),
-              tags: (p.tags && p.tags.length > 0) ? p.tags : (cachedMatch?.tags || []),
-              isFeatured: p.is_featured !== false,
-              isPublished: p.is_published !== false,
-              createdAt: p.created_at ? p.created_at.split('T')[0] : (cachedMatch?.createdAt || new Date().toISOString().split('T')[0])
+              slug: cachedMatch?.slug || p.slug,
+              titleEn: cachedMatch?.titleEn || p.title_en || '',
+              titleVi: cachedMatch?.titleVi || p.title_vi || '',
+              categoryName: cachedMatch?.categoryName || p.category_name || '',
+              categoryEn: cachedMatch?.categoryEn || p.category_en || p.category_name || '',
+              grade: cachedMatch?.grade || p.grade || '',
+              gradeEn: cachedMatch?.gradeEn || p.grade_en || p.grade || '',
+              year: cachedMatch?.year || p.year || '',
+              descriptionEn: cachedMatch?.descriptionEn || p.description_en || '',
+              descriptionVi: cachedMatch?.descriptionVi || p.description_vi || '',
+              objectivesEn: (cachedMatch?.objectivesEn && cachedMatch.objectivesEn.length > 0) ? cachedMatch.objectivesEn : ((p.objectives_en && p.objectives_en.length > 0) ? p.objectives_en : []),
+              objectivesVi: (cachedMatch?.objectivesVi && cachedMatch.objectivesVi.length > 0) ? cachedMatch.objectivesVi : ((p.objectives_vi && p.objectives_vi.length > 0) ? p.objectives_vi : []),
+              activitiesEn: (cachedMatch?.activitiesEn && cachedMatch.activitiesEn.length > 0) ? cachedMatch.activitiesEn : ((p.activities_en && p.activities_en.length > 0) ? p.activities_en : []),
+              activitiesVi: (cachedMatch?.activitiesVi && cachedMatch.activitiesVi.length > 0) ? cachedMatch.activitiesVi : ((p.activities_vi && p.activities_vi.length > 0) ? p.activities_vi : []),
+              methodsEn: (cachedMatch?.methodsEn && cachedMatch.methodsEn.length > 0) ? cachedMatch.methodsEn : ((p.methods_en && p.methods_en.length > 0) ? p.methods_en : []),
+              methodsVi: (cachedMatch?.methodsVi && cachedMatch.methodsVi.length > 0) ? cachedMatch.methodsVi : ((p.methods_vi && p.methods_vi.length > 0) ? p.methods_vi : []),
+              outcomesEn: (cachedMatch?.outcomesEn && cachedMatch.outcomesEn.length > 0) ? cachedMatch.outcomesEn : ((p.outcomes_en && p.outcomes_en.length > 0) ? p.outcomes_en : []),
+              outcomesVi: (cachedMatch?.outcomesVi && cachedMatch.outcomesVi.length > 0) ? cachedMatch.outcomesVi : ((p.outcomes_vi && p.outcomes_vi.length > 0) ? p.outcomes_vi : []),
+              thumbnailUrl: cachedMatch?.thumbnailUrl || p.thumbnail_url || '',
+              galleryUrls: (cachedMatch?.galleryUrls && cachedMatch.galleryUrls.length > 0) ? cachedMatch.galleryUrls : ((p.gallery_urls && p.gallery_urls.length > 0) ? p.gallery_urls : []),
+              videoUrl: cachedMatch?.videoUrl || p.video_url || '',
+              attachments: (cachedMatch?.attachments && cachedMatch.attachments.length > 0) ? cachedMatch.attachments : ((p.attachments && p.attachments.length > 0) ? p.attachments : []),
+              tags: (cachedMatch?.tags && cachedMatch.tags.length > 0) ? cachedMatch.tags : ((p.tags && p.tags.length > 0) ? p.tags : []),
+              isFeatured: cachedMatch?.isFeatured ?? (p.is_featured !== false),
+              isPublished: cachedMatch?.isPublished ?? (p.is_published !== false),
+              createdAt: cachedMatch?.createdAt || (p.created_at ? p.created_at.split('T')[0] : new Date().toISOString().split('T')[0])
             };
           });
 
@@ -1792,45 +1804,21 @@ export const DB = {
           const list: Course[] = data.map((c) => {
             const cachedMatch = cachedCourses.find(x => x.id === c.id || x.slug === c.slug);
 
-            const priceType = (cachedMatch?.priceType && cachedMatch.priceType !== 'free' && c.price_type === 'free')
-              ? cachedMatch.priceType
-              : ((c.price_type && c.price_type !== '') ? c.price_type : (cachedMatch?.priceType || 'free'));
-
-            const priceVi = (cachedMatch?.priceVi && cachedMatch.priceVi !== 'Miễn phí' && cachedMatch.priceVi !== 'Free' && (c.price_vi === 'Miễn phí' || !c.price_vi))
-              ? cachedMatch.priceVi
-              : ((c.price_vi !== null && c.price_vi !== undefined && c.price_vi !== '')
-                  ? c.price_vi
-                  : (cachedMatch?.priceVi || (priceType === 'paid' ? 'Có phí' : 'Miễn phí')));
-
-            const priceEn = (cachedMatch?.priceEn && cachedMatch.priceEn !== 'Free' && (c.price_en === 'Free' || !c.price_en))
-              ? cachedMatch.priceEn
-              : ((c.price_en !== null && c.price_en !== undefined && c.price_en !== '')
-                  ? c.price_en
-                  : (cachedMatch?.priceEn || (priceType === 'paid' ? 'Paid' : 'Free')));
-
-            const discVi = (c.discount_price_vi !== null && c.discount_price_vi !== undefined && c.discount_price_vi !== '')
-              ? c.discount_price_vi
-              : (cachedMatch?.discountPriceVi || '');
-
-            const discEn = (c.discount_price_en !== null && c.discount_price_en !== undefined && c.discount_price_en !== '')
-              ? c.discount_price_en
-              : (cachedMatch?.discountPriceEn || '');
-
-            const gradeLevel = (cachedMatch?.gradeLevel && cachedMatch.gradeLevel !== c.grade_level)
-              ? cachedMatch.gradeLevel
-              : (c.grade_level || cachedMatch?.gradeLevel || '');
-
-            const gradeLevelEn = (cachedMatch?.gradeLevelEn && cachedMatch.gradeLevelEn !== c.grade_level_en)
-              ? cachedMatch.gradeLevelEn
-              : (c.grade_level_en || cachedMatch?.gradeLevelEn || gradeLevel);
+            const priceType = cachedMatch?.priceType || (c.price_type || 'free');
+            const priceVi = cachedMatch?.priceVi || c.price_vi || (priceType === 'paid' ? 'Có phí' : 'Miễn phí');
+            const priceEn = cachedMatch?.priceEn || c.price_en || (priceType === 'paid' ? 'Paid' : 'Free');
+            const discVi = cachedMatch?.discountPriceVi !== undefined ? cachedMatch.discountPriceVi : (c.discount_price_vi || '');
+            const discEn = cachedMatch?.discountPriceEn !== undefined ? cachedMatch.discountPriceEn : (c.discount_price_en || '');
+            const gradeLevel = cachedMatch?.gradeLevel || c.grade_level || '';
+            const gradeLevelEn = cachedMatch?.gradeLevelEn || c.grade_level_en || gradeLevel;
 
             return {
               id: c.id,
-              slug: c.slug,
-              titleEn: c.title_en || cachedMatch?.titleEn || '',
-              titleVi: c.title_vi || cachedMatch?.titleVi || '',
-              categoryName: c.category_name || cachedMatch?.categoryName || '',
-              categoryEn: c.category_en || cachedMatch?.categoryEn || c.category_name || '',
+              slug: cachedMatch?.slug || c.slug,
+              titleEn: cachedMatch?.titleEn || c.title_en || '',
+              titleVi: cachedMatch?.titleVi || c.title_vi || '',
+              categoryName: cachedMatch?.categoryName || c.category_name || '',
+              categoryEn: cachedMatch?.categoryEn || c.category_en || c.category_name || '',
               priceType: priceType,
               priceEn: priceEn,
               priceVi: priceVi,
@@ -1838,23 +1826,23 @@ export const DB = {
               discountPriceVi: discVi,
               gradeLevel: gradeLevel,
               gradeLevelEn: gradeLevelEn,
-              durationEn: c.duration_en || cachedMatch?.durationEn || '',
-              durationVi: c.duration_vi || cachedMatch?.durationVi || '',
-              scheduleEn: c.schedule_en || cachedMatch?.scheduleEn || '',
-              scheduleVi: c.schedule_vi || cachedMatch?.scheduleVi || '',
-              descriptionEn: c.description_en || cachedMatch?.descriptionEn || '',
-              descriptionVi: c.description_vi || cachedMatch?.descriptionVi || '',
-              objectivesEn: (c.objectives_en && c.objectives_en.length > 0) ? c.objectives_en : (cachedMatch?.objectivesEn || []),
-              objectivesVi: (c.objectives_vi && c.objectives_vi.length > 0) ? c.objectives_vi : (cachedMatch?.objectivesVi || []),
-              curriculumEn: (c.curriculum_en && c.curriculum_en.length > 0) ? c.curriculum_en : (cachedMatch?.curriculumEn || []),
-              curriculumVi: (c.curriculum_vi && c.curriculum_vi.length > 0) ? c.curriculum_vi : (cachedMatch?.curriculumVi || []),
-              thumbnailUrl: c.thumbnail_url || cachedMatch?.thumbnailUrl || '',
-              galleryUrls: (c.gallery_urls && c.gallery_urls.length > 0) ? c.gallery_urls : (cachedMatch?.galleryUrls || []),
-              videoUrl: c.video_url || cachedMatch?.videoUrl || '',
-              registrationFormUrl: c.registration_form_url || cachedMatch?.registrationFormUrl || '',
-              isFeatured: c.is_featured !== false,
-              isPublished: c.is_published !== false,
-              createdAt: c.created_at ? c.created_at.split('T')[0] : (cachedMatch?.createdAt || new Date().toISOString().split('T')[0])
+              durationEn: cachedMatch?.durationEn || c.duration_en || '',
+              durationVi: cachedMatch?.durationVi || c.duration_vi || '',
+              scheduleEn: cachedMatch?.scheduleEn || c.schedule_en || '',
+              scheduleVi: cachedMatch?.scheduleVi || c.schedule_vi || '',
+              descriptionEn: cachedMatch?.descriptionEn || c.description_en || '',
+              descriptionVi: cachedMatch?.descriptionVi || c.description_vi || '',
+              objectivesEn: (cachedMatch?.objectivesEn && cachedMatch.objectivesEn.length > 0) ? cachedMatch.objectivesEn : ((c.objectives_en && c.objectives_en.length > 0) ? c.objectives_en : []),
+              objectivesVi: (cachedMatch?.objectivesVi && cachedMatch.objectivesVi.length > 0) ? cachedMatch.objectivesVi : ((c.objectives_vi && c.objectives_vi.length > 0) ? c.objectives_vi : []),
+              curriculumEn: (cachedMatch?.curriculumEn && cachedMatch.curriculumEn.length > 0) ? cachedMatch.curriculumEn : ((c.curriculum_en && c.curriculum_en.length > 0) ? c.curriculum_en : []),
+              curriculumVi: (cachedMatch?.curriculumVi && cachedMatch.curriculumVi.length > 0) ? cachedMatch.curriculumVi : ((c.curriculum_vi && c.curriculum_vi.length > 0) ? c.curriculum_vi : []),
+              thumbnailUrl: cachedMatch?.thumbnailUrl || c.thumbnail_url || '',
+              galleryUrls: (cachedMatch?.galleryUrls && cachedMatch.galleryUrls.length > 0) ? cachedMatch.galleryUrls : ((c.gallery_urls && c.gallery_urls.length > 0) ? c.gallery_urls : []),
+              videoUrl: cachedMatch?.videoUrl || c.video_url || '',
+              registrationFormUrl: cachedMatch?.registrationFormUrl || c.registration_form_url || '',
+              isFeatured: cachedMatch?.isFeatured ?? (c.is_featured !== false),
+              isPublished: cachedMatch?.isPublished ?? (c.is_published !== false),
+              createdAt: cachedMatch?.createdAt || (c.created_at ? c.created_at.split('T')[0] : new Date().toISOString().split('T')[0])
             };
           });
 
@@ -2040,21 +2028,21 @@ export const DB = {
             const cachedMatch = cachedStudentWorks.find(x => x.id === sw.id);
             return {
               id: sw.id,
-              titleEn: sw.title_en || cachedMatch?.titleEn || '',
-              titleVi: sw.title_vi || cachedMatch?.titleVi || '',
-              category: sw.category || cachedMatch?.category || 'Classroom Work',
-              grade: sw.grade || cachedMatch?.grade || 'Primary',
-              studentName: sw.student_name || cachedMatch?.studentName || '',
-              descriptionEn: sw.description_en || cachedMatch?.descriptionEn || '',
-              descriptionVi: sw.description_vi || cachedMatch?.descriptionVi || '',
-              objectiveEn: sw.objective_en || cachedMatch?.objectiveEn || '',
-              objectiveVi: sw.objective_vi || cachedMatch?.objectiveVi || '',
-              privacyMode: sw.privacy_mode || cachedMatch?.privacyMode || 'public',
-              mediaType: sw.media_type || cachedMatch?.mediaType || 'image',
-              imageUrl: sw.image_url || cachedMatch?.imageUrl || '',
-              mediaUrl: sw.image_url || cachedMatch?.mediaUrl || '',
-              isPublished: sw.is_published !== false,
-              createdAt: sw.created_at ? sw.created_at.split('T')[0] : (cachedMatch?.createdAt || new Date().toISOString().split('T')[0])
+              titleEn: cachedMatch?.titleEn || sw.title_en || '',
+              titleVi: cachedMatch?.titleVi || sw.title_vi || '',
+              category: cachedMatch?.category || sw.category || 'Classroom Work',
+              grade: cachedMatch?.grade || sw.grade || 'Primary',
+              studentName: cachedMatch?.studentName || sw.student_name || '',
+              descriptionEn: cachedMatch?.descriptionEn || sw.description_en || '',
+              descriptionVi: cachedMatch?.descriptionVi || sw.description_vi || '',
+              objectiveEn: cachedMatch?.objectiveEn || sw.objective_en || '',
+              objectiveVi: cachedMatch?.objectiveVi || sw.objective_vi || '',
+              privacyMode: cachedMatch?.privacyMode || sw.privacy_mode || 'public',
+              mediaType: cachedMatch?.mediaType || sw.media_type || 'image',
+              imageUrl: cachedMatch?.imageUrl || sw.image_url || '',
+              mediaUrl: cachedMatch?.mediaUrl || sw.image_url || '',
+              isPublished: cachedMatch?.isPublished ?? (sw.is_published !== false),
+              createdAt: cachedMatch?.createdAt || (sw.created_at ? sw.created_at.split('T')[0] : new Date().toISOString().split('T')[0])
             };
           });
 
@@ -2111,58 +2099,44 @@ export const DB = {
 
           const list: TeachingResource[] = data.map((r) => {
             const cachedMatch = cachedResources.find(x => x.id === r.id || x.slug === r.slug);
-            const priceType = (r.price_type && r.price_type !== '') ? r.price_type : (cachedMatch?.priceType || 'free');
-            const priceVi = (r.price_vi !== null && r.price_vi !== undefined && r.price_vi !== '')
-              ? r.price_vi
-              : (cachedMatch?.priceVi || (priceType === 'paid' ? 'Có phí' : 'Miễn phí'));
-            const priceEn = (r.price_en !== null && r.price_en !== undefined && r.price_en !== '')
-              ? r.price_en
-              : (cachedMatch?.priceEn || (priceType === 'paid' ? 'Paid' : 'Free'));
-            const discVi = (r.discount_price_vi !== null && r.discount_price_vi !== undefined && r.discount_price_vi !== '')
-              ? r.discount_price_vi
-              : (cachedMatch?.discountPriceVi || '');
-            const discEn = (r.discount_price_en !== null && r.discount_price_en !== undefined && r.discount_price_en !== '')
-              ? r.discount_price_en
-              : (cachedMatch?.discountPriceEn || '');
-
-            const fileType = (cachedMatch?.fileType && cachedMatch.fileType !== 'PDF' && (!r.file_type || r.file_type === 'PDF'))
-              ? cachedMatch.fileType
-              : (r.file_type || cachedMatch?.fileType || 'PDF');
-
-            const fileTypeEn = (cachedMatch?.fileTypeEn && cachedMatch.fileTypeEn !== 'PDF' && (!r.file_type_en || r.file_type_en === 'PDF'))
-              ? cachedMatch.fileTypeEn
-              : (r.file_type_en || cachedMatch?.fileTypeEn || cachedMatch?.fileType || r.file_type || 'PDF');
+            const priceType = cachedMatch?.priceType || (r.price_type || 'free');
+            const priceVi = cachedMatch?.priceVi || r.price_vi || (priceType === 'paid' ? 'Có phí' : 'Miễn phí');
+            const priceEn = cachedMatch?.priceEn || r.price_en || (priceType === 'paid' ? 'Paid' : 'Free');
+            const discVi = cachedMatch?.discountPriceVi !== undefined ? cachedMatch.discountPriceVi : (r.discount_price_vi || '');
+            const discEn = cachedMatch?.discountPriceEn !== undefined ? cachedMatch.discountPriceEn : (r.discount_price_en || '');
+            const fileType = cachedMatch?.fileType || r.file_type || 'PDF';
+            const fileTypeEn = cachedMatch?.fileTypeEn || r.file_type_en || fileType;
 
             return {
               id: r.id,
-              slug: r.slug || r.id,
-              titleEn: r.title_en || cachedMatch?.titleEn || '',
-              titleVi: r.title_vi || cachedMatch?.titleVi || '',
-              descriptionEn: r.description_en || cachedMatch?.descriptionEn || '',
-              descriptionVi: r.description_vi || cachedMatch?.descriptionVi || '',
-              categoryName: r.category_name || cachedMatch?.categoryName || '',
-              categoryEn: r.category_en || cachedMatch?.categoryEn || r.category_name || '',
-              resourceType: r.resource_type || cachedMatch?.resourceType || 'digital_file',
+              slug: cachedMatch?.slug || r.slug || r.id,
+              titleEn: cachedMatch?.titleEn || r.title_en || '',
+              titleVi: cachedMatch?.titleVi || r.title_vi || '',
+              descriptionEn: cachedMatch?.descriptionEn || r.description_en || '',
+              descriptionVi: cachedMatch?.descriptionVi || r.description_vi || '',
+              categoryName: cachedMatch?.categoryName || r.category_name || '',
+              categoryEn: cachedMatch?.categoryEn || r.category_en || r.category_name || '',
+              resourceType: cachedMatch?.resourceType || r.resource_type || 'digital_file',
               priceType: priceType,
               priceEn: priceEn,
               priceVi: priceVi,
               discountPriceEn: discEn,
               discountPriceVi: discVi,
-              grade: r.grade || cachedMatch?.grade || '',
-              gradeEn: r.grade_en || cachedMatch?.gradeEn || r.grade || '',
+              grade: cachedMatch?.grade || r.grade || '',
+              gradeEn: cachedMatch?.gradeEn || r.grade_en || r.grade || '',
               fileType: fileType,
               fileTypeEn: fileTypeEn,
-              fileUrl: r.file_url || cachedMatch?.fileUrl || '',
-              previewUrl: r.preview_url || cachedMatch?.previewUrl || '',
-              galleryUrls: (r.gallery_urls && r.gallery_urls.length > 0) ? r.gallery_urls : (cachedMatch?.galleryUrls || []),
-              videoUrl: r.video_url || cachedMatch?.videoUrl || '',
-              downloadCount: r.download_count || cachedMatch?.downloadCount || 0,
-              specificationsEn: (r.specifications_en && r.specifications_en.length > 0) ? r.specifications_en : (cachedMatch?.specificationsEn || []),
-              specificationsVi: (r.specifications_vi && r.specifications_vi.length > 0) ? r.specifications_vi : (cachedMatch?.specificationsVi || []),
-              tags: (r.tags && r.tags.length > 0) ? r.tags : (cachedMatch?.tags || []),
-              isFeatured: r.is_featured !== false,
-              isPublished: r.is_published !== false,
-              createdAt: r.created_at ? r.created_at.split('T')[0] : (cachedMatch?.createdAt || new Date().toISOString().split('T')[0])
+              fileUrl: cachedMatch?.fileUrl || r.file_url || '',
+              previewUrl: cachedMatch?.previewUrl || r.preview_url || '',
+              galleryUrls: (cachedMatch?.galleryUrls && cachedMatch.galleryUrls.length > 0) ? cachedMatch.galleryUrls : ((r.gallery_urls && r.gallery_urls.length > 0) ? r.gallery_urls : []),
+              videoUrl: cachedMatch?.videoUrl || r.video_url || '',
+              downloadCount: cachedMatch?.downloadCount ?? (r.download_count || 0),
+              specificationsEn: (cachedMatch?.specificationsEn && cachedMatch.specificationsEn.length > 0) ? cachedMatch.specificationsEn : ((r.specifications_en && r.specifications_en.length > 0) ? r.specifications_en : []),
+              specificationsVi: (cachedMatch?.specificationsVi && cachedMatch.specificationsVi.length > 0) ? cachedMatch.specificationsVi : ((r.specifications_vi && r.specifications_vi.length > 0) ? r.specifications_vi : []),
+              tags: (cachedMatch?.tags && cachedMatch.tags.length > 0) ? cachedMatch.tags : ((r.tags && r.tags.length > 0) ? r.tags : []),
+              isFeatured: cachedMatch?.isFeatured ?? (r.is_featured !== false),
+              isPublished: cachedMatch?.isPublished ?? (r.is_published !== false),
+              createdAt: cachedMatch?.createdAt || (r.created_at ? r.created_at.split('T')[0] : new Date().toISOString().split('T')[0])
             };
           });
 
@@ -2379,26 +2353,26 @@ export const DB = {
             const cachedMatch = cachedBlog.find(x => x.id === b.id || x.slug === b.slug);
             return {
               id: b.id,
-              slug: b.slug,
-              titleEn: b.title_en || cachedMatch?.titleEn || '',
-              titleVi: b.title_vi || cachedMatch?.titleVi || '',
-              excerptEn: b.excerpt_en || cachedMatch?.excerptEn || '',
-              excerptVi: b.excerpt_vi || cachedMatch?.excerptVi || '',
-              contentEn: b.content_en || cachedMatch?.contentEn || '',
-              contentVi: b.content_vi || cachedMatch?.contentVi || '',
-              featuredImage: b.featured_image || cachedMatch?.featuredImage || '',
-              galleryUrls: (b.gallery_urls && b.gallery_urls.length > 0) ? b.gallery_urls : (cachedMatch?.galleryUrls || []),
-              videoUrl: b.video_url || cachedMatch?.videoUrl || '',
-              categoryName: b.category_name || cachedMatch?.categoryName || '',
-              categoryEn: b.category_en || cachedMatch?.categoryEn || b.category_name || '',
-              tags: (b.tags && b.tags.length > 0) ? b.tags : (cachedMatch?.tags || []),
-              author: b.author || cachedMatch?.author || 'Nguyễn Trọng Huy Hoàng',
-              readingTimeEn: b.reading_time_en || cachedMatch?.readingTimeEn || '5 min read',
-              readingTimeVi: b.reading_time_vi || cachedMatch?.readingTimeVi || '5 phút đọc',
-              status: b.status || cachedMatch?.status || 'published',
-              isFeatured: b.is_featured !== false,
-              publishedAt: b.published_at ? b.published_at.split('T')[0] : (cachedMatch?.publishedAt || new Date().toISOString().split('T')[0]),
-              createdAt: b.created_at ? b.created_at.split('T')[0] : (cachedMatch?.createdAt || new Date().toISOString().split('T')[0])
+              slug: cachedMatch?.slug || b.slug,
+              titleEn: cachedMatch?.titleEn || b.title_en || '',
+              titleVi: cachedMatch?.titleVi || b.title_vi || '',
+              excerptEn: cachedMatch?.excerptEn || b.excerpt_en || '',
+              excerptVi: cachedMatch?.excerptVi || b.excerpt_vi || '',
+              contentEn: cachedMatch?.contentEn || b.content_en || '',
+              contentVi: cachedMatch?.contentVi || b.content_vi || '',
+              featuredImage: cachedMatch?.featuredImage || b.featured_image || '',
+              galleryUrls: (cachedMatch?.galleryUrls && cachedMatch.galleryUrls.length > 0) ? cachedMatch.galleryUrls : ((b.gallery_urls && b.gallery_urls.length > 0) ? b.gallery_urls : []),
+              videoUrl: cachedMatch?.videoUrl || b.video_url || '',
+              categoryName: cachedMatch?.categoryName || b.category_name || '',
+              categoryEn: cachedMatch?.categoryEn || b.category_en || b.category_name || '',
+              tags: (cachedMatch?.tags && cachedMatch.tags.length > 0) ? cachedMatch.tags : ((b.tags && b.tags.length > 0) ? b.tags : []),
+              author: cachedMatch?.author || b.author || 'Nguyễn Trọng Huy Hoàng',
+              readingTimeEn: cachedMatch?.readingTimeEn || b.reading_time_en || '5 min read',
+              readingTimeVi: cachedMatch?.readingTimeVi || b.reading_time_vi || '5 phút đọc',
+              status: cachedMatch?.status || b.status || 'published',
+              isFeatured: cachedMatch?.isFeatured ?? (b.is_featured !== false),
+              publishedAt: cachedMatch?.publishedAt || (b.published_at ? b.published_at.split('T')[0] : new Date().toISOString().split('T')[0]),
+              createdAt: cachedMatch?.createdAt || (b.created_at ? b.created_at.split('T')[0] : new Date().toISOString().split('T')[0])
             };
           });
 
@@ -2495,17 +2469,17 @@ export const DB = {
             const cachedMatch = cachedAchievements.find(x => x.id === a.id);
             return {
               id: a.id,
-              titleEn: a.title_en || cachedMatch?.titleEn || '',
-              titleVi: a.title_vi || cachedMatch?.titleVi || '',
-              organizationEn: a.organization_en || cachedMatch?.organizationEn || '',
-              organizationVi: a.organization_vi || cachedMatch?.organizationVi || '',
-              date: a.date || cachedMatch?.date || '',
-              category: a.category || cachedMatch?.category || '',
-              certificateUrl: a.certificate_url || cachedMatch?.certificateUrl || '',
-              galleryUrls: (a.gallery_urls && a.gallery_urls.length > 0) ? a.gallery_urls : (cachedMatch?.galleryUrls || []),
-              descriptionEn: a.description_en || cachedMatch?.descriptionEn || '',
-              descriptionVi: a.description_vi || cachedMatch?.descriptionVi || '',
-              orderIndex: a.order_index ?? (cachedMatch?.orderIndex ?? (idx + 1))
+              titleEn: cachedMatch?.titleEn || a.title_en || '',
+              titleVi: cachedMatch?.titleVi || a.title_vi || '',
+              organizationEn: cachedMatch?.organizationEn || a.organization_en || '',
+              organizationVi: cachedMatch?.organizationVi || a.organization_vi || '',
+              date: cachedMatch?.date || a.date || '',
+              category: cachedMatch?.category || a.category || '',
+              certificateUrl: cachedMatch?.certificateUrl || a.certificate_url || '',
+              galleryUrls: (cachedMatch?.galleryUrls && cachedMatch.galleryUrls.length > 0) ? cachedMatch.galleryUrls : ((a.gallery_urls && a.gallery_urls.length > 0) ? a.gallery_urls : []),
+              descriptionEn: cachedMatch?.descriptionEn || a.description_en || '',
+              descriptionVi: cachedMatch?.descriptionVi || a.description_vi || '',
+              orderIndex: cachedMatch?.orderIndex ?? (a.order_index ?? (idx + 1))
             };
           });
 
@@ -2609,19 +2583,19 @@ export const DB = {
             const cachedMatch = cachedGallery.find(x => x.id === g.id);
             return {
               id: g.id,
-              titleEn: g.title_en || cachedMatch?.titleEn || '',
-              titleVi: g.title_vi || cachedMatch?.titleVi || '',
-              category: g.category || cachedMatch?.category || '',
-              categoryEn: g.category_en || cachedMatch?.categoryEn || g.category || '',
-              mediaType: g.media_type || cachedMatch?.mediaType || 'image',
-              mediaUrl: g.media_url || cachedMatch?.mediaUrl || '',
-              galleryUrls: (g.gallery_urls && g.gallery_urls.length > 0) ? g.gallery_urls : (cachedMatch?.galleryUrls || []),
-              thumbnailUrl: g.thumbnail_url || cachedMatch?.thumbnailUrl || '',
-              descriptionEn: g.description_en || cachedMatch?.descriptionEn || '',
-              descriptionVi: g.description_vi || cachedMatch?.descriptionVi || '',
-              isPublished: g.is_published !== false,
-              orderIndex: g.order_index ?? (cachedMatch?.orderIndex ?? (idx + 1)),
-              createdAt: g.created_at ? g.created_at.split('T')[0] : (cachedMatch?.createdAt || new Date().toISOString().split('T')[0])
+              titleEn: cachedMatch?.titleEn || g.title_en || '',
+              titleVi: cachedMatch?.titleVi || g.title_vi || '',
+              category: cachedMatch?.category || g.category || '',
+              categoryEn: cachedMatch?.categoryEn || g.category_en || g.category || '',
+              mediaType: cachedMatch?.mediaType || g.media_type || 'image',
+              mediaUrl: cachedMatch?.mediaUrl || g.media_url || '',
+              galleryUrls: (cachedMatch?.galleryUrls && cachedMatch.galleryUrls.length > 0) ? cachedMatch.galleryUrls : ((g.gallery_urls && g.gallery_urls.length > 0) ? g.gallery_urls : []),
+              thumbnailUrl: cachedMatch?.thumbnailUrl || g.thumbnail_url || '',
+              descriptionEn: cachedMatch?.descriptionEn || g.description_en || '',
+              descriptionVi: cachedMatch?.descriptionVi || g.description_vi || '',
+              isPublished: cachedMatch?.isPublished ?? (g.is_published !== false),
+              orderIndex: cachedMatch?.orderIndex ?? (g.order_index ?? (idx + 1)),
+              createdAt: cachedMatch?.createdAt || (g.created_at ? g.created_at.split('T')[0] : new Date().toISOString().split('T')[0])
             };
           });
 
