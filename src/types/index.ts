@@ -272,6 +272,11 @@ export interface AdminAccount {
   name?: string;
   role: 'client_admin';
   createdAt: string;
+  _type?: string;
+  bankName?: string;
+  bankAccountNo?: string;
+  bankAccountHolder?: string;
+  bankCode?: string;
 }
 
 export interface SiteSettings {

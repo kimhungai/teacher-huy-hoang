@@ -1160,7 +1160,7 @@ const syncToSupabase = async (key: string, val: any) => {
       const s = val as SiteSettings;
       let targetId = SETTINGS_ROW_ID;
       try {
-        const existing = await supabase.from('site_settings').select('id').limit(1).maybeSingle();
+        const existing = await supabase.from('site_settings').select('id').order('updated_at', { ascending: false }).limit(1).maybeSingle();
         if (existing?.data?.id) {
           targetId = existing.data.id;
         }
@@ -1168,7 +1168,17 @@ const syncToSupabase = async (key: string, val: any) => {
         console.warn('Could not query existing settings id:', e);
       }
 
-      await supabase.from('site_settings').upsert({
+      const rawAccounts = Array.isArray(s.clientAdminAccounts) ? [...s.clientAdminAccounts] : [];
+      const cleanAccounts = rawAccounts.filter((a: any) => a && a._type !== 'bank_info_meta');
+      cleanAccounts.push({
+        _type: 'bank_info_meta',
+        bankName: s.bankName || '',
+        bankAccountNo: s.bankAccountNo || '',
+        bankAccountHolder: s.bankAccountHolder || '',
+        bankCode: s.bankCode || ''
+      } as any);
+
+      const payload = {
         id: targetId,
         site_title_en: s.siteTitleEn || '',
         site_title_vi: s.siteTitleVi || '',
@@ -1190,19 +1200,22 @@ const syncToSupabase = async (key: string, val: any) => {
         linkedin_url: s.linkedinUrl || '',
         footer_text_en: s.footerTextEn || '',
         footer_text_vi: s.footerTextVi || '',
-        client_admin_accounts: s.clientAdminAccounts || [],
+        client_admin_accounts: cleanAccounts,
         enable_email_notification: s.enableEmailNotification,
         email_provider: s.emailProvider || '',
         emailjs_service_id: s.emailjsServiceId || '',
         emailjs_template_id_customer: s.emailjsTemplateIdCustomer || '',
         emailjs_template_id_admin: s.emailjsTemplateIdAdmin || '',
         emailjs_public_key: s.emailjsPublicKey || '',
-        bank_name: s.bankName || '',
-        bank_account_no: s.bankAccountNo || '',
-        bank_account_holder: s.bankAccountHolder || '',
-        bank_code: s.bankCode || '',
         updated_at: new Date().toISOString()
-      }, { onConflict: 'id' });
+      };
+
+      const { error } = await supabase.from('site_settings').upsert(payload, { onConflict: 'id' });
+      if (error) {
+        console.error('Full site_settings upsert error:', error.message);
+        const { emailjs_service_id, emailjs_template_id_customer, emailjs_template_id_admin, emailjs_public_key, email_provider, ...corePayload } = payload;
+        await supabase.from('site_settings').upsert(corePayload, { onConflict: 'id' });
+      }
     } else if (key === 'db_course_regs') {
       const list = val as CourseRegistration[];
       if (list && list.length > 0) {
@@ -3678,62 +3691,67 @@ export const DB = {
         let { data, error } = await supabase
           .from('site_settings')
           .select('*')
-          .eq('id', SETTINGS_ROW_ID)
+          .order('updated_at', { ascending: false })
+          .limit(1)
           .maybeSingle();
 
         if (!data || error) {
           const res = await supabase
             .from('site_settings')
             .select('*')
-            .order('updated_at', { ascending: false })
-            .limit(1)
+            .eq('id', SETTINGS_ROW_ID)
             .maybeSingle();
           data = res.data;
         }
 
         if (data) {
-          const localSettings = getStorageItem('db_settings', INITIAL_SITE_SETTINGS);
-          const cloudAccounts = Array.isArray(data.client_admin_accounts) && data.client_admin_accounts.length > 0
+          const rawAccounts = Array.isArray(data.client_admin_accounts) && data.client_admin_accounts.length > 0
             ? data.client_admin_accounts
             : null;
-          const localAccounts = Array.isArray(localSettings.clientAdminAccounts) && localSettings.clientAdminAccounts.length > 0
-            ? localSettings.clientAdminAccounts
+
+          let bankMeta: any = null;
+          if (rawAccounts) {
+            bankMeta = rawAccounts.find((a: any) => a && a._type === 'bank_info_meta');
+          }
+
+          const cloudAccounts = rawAccounts
+            ? rawAccounts.filter((a: any) => a && a._type !== 'bank_info_meta')
             : null;
 
           const s: SiteSettings = {
-            siteTitleEn: data.site_title_en || localSettings.siteTitleEn || INITIAL_SITE_SETTINGS.siteTitleEn,
-            siteTitleVi: data.site_title_vi || localSettings.siteTitleVi || INITIAL_SITE_SETTINGS.siteTitleVi,
-            logoText: data.logo_text || localSettings.logoText || INITIAL_SITE_SETTINGS.logoText,
-            logoUrl: data.logo_url || localSettings.logoUrl || INITIAL_SITE_SETTINGS.logoUrl,
-            faviconUrl: data.favicon_url || localSettings.faviconUrl || INITIAL_SITE_SETTINGS.faviconUrl,
-            primaryColor: data.primary_color || localSettings.primaryColor || INITIAL_SITE_SETTINGS.primaryColor,
-            secondaryColor: data.secondary_color || localSettings.secondaryColor || INITIAL_SITE_SETTINGS.secondaryColor,
-            contactEmail: data.contact_email || localSettings.contactEmail || INITIAL_SITE_SETTINGS.contactEmail,
-            contactPhone: data.contact_phone || localSettings.contactPhone || INITIAL_SITE_SETTINGS.contactPhone,
-            websiteUrl: data.website_url || localSettings.websiteUrl || INITIAL_SITE_SETTINGS.websiteUrl,
-            notificationEmail: data.notification_email || localSettings.notificationEmail || INITIAL_SITE_SETTINGS.notificationEmail,
-            defaultLanguage: data.default_language || localSettings.defaultLanguage || INITIAL_SITE_SETTINGS.defaultLanguage,
-            defaultTheme: data.default_theme || localSettings.defaultTheme || INITIAL_SITE_SETTINGS.defaultTheme,
-            facebookUrl: data.facebook_url || localSettings.facebookUrl || INITIAL_SITE_SETTINGS.facebookUrl,
-            youtubeUrl: data.youtube_url || localSettings.youtubeUrl || INITIAL_SITE_SETTINGS.youtubeUrl,
-            tiktokUrl: data.tiktok_url || localSettings.tiktokUrl || INITIAL_SITE_SETTINGS.tiktokUrl,
-            instagramUrl: data.instagram_url || localSettings.instagramUrl || INITIAL_SITE_SETTINGS.instagramUrl,
-            linkedinUrl: data.linkedin_url || localSettings.linkedinUrl || INITIAL_SITE_SETTINGS.linkedinUrl,
-            footerTextEn: data.footer_text_en || localSettings.footerTextEn || INITIAL_SITE_SETTINGS.footerTextEn,
-            footerTextVi: data.footer_text_vi || localSettings.footerTextVi || INITIAL_SITE_SETTINGS.footerTextVi,
-            clientAdminAccounts: cloudAccounts || localAccounts || INITIAL_SITE_SETTINGS.clientAdminAccounts,
-            enableEmailNotification: data.enable_email_notification !== undefined ? (data.enable_email_notification !== false) : (localSettings.enableEmailNotification !== undefined ? localSettings.enableEmailNotification : true),
-            emailProvider: data.email_provider || localSettings.emailProvider || INITIAL_SITE_SETTINGS.emailProvider,
-            emailjsServiceId: data.emailjs_service_id || localSettings.emailjsServiceId || '',
-            emailjsTemplateIdCustomer: data.emailjs_template_id_customer || localSettings.emailjsTemplateIdCustomer || '',
-            emailjsTemplateIdAdmin: data.emailjs_template_id_admin || localSettings.emailjsTemplateIdAdmin || '',
-            emailjsPublicKey: data.emailjs_public_key || localSettings.emailjsPublicKey || '',
-            bankName: data.bank_name || localSettings.bankName || INITIAL_SITE_SETTINGS.bankName,
-            bankAccountNo: data.bank_account_no || localSettings.bankAccountNo || INITIAL_SITE_SETTINGS.bankAccountNo,
-            bankAccountHolder: data.bank_account_holder || localSettings.bankAccountHolder || INITIAL_SITE_SETTINGS.bankAccountHolder,
-            bankCode: data.bank_code || localSettings.bankCode || INITIAL_SITE_SETTINGS.bankCode,
-            adminPassword: localSettings.adminPassword || INITIAL_SITE_SETTINGS.adminPassword,
-            superAdminPassword: localSettings.superAdminPassword || INITIAL_SITE_SETTINGS.superAdminPassword
+            siteTitleEn: data.site_title_en || INITIAL_SITE_SETTINGS.siteTitleEn,
+            siteTitleVi: data.site_title_vi || INITIAL_SITE_SETTINGS.siteTitleVi,
+            logoText: data.logo_text || INITIAL_SITE_SETTINGS.logoText,
+            logoUrl: data.logo_url || INITIAL_SITE_SETTINGS.logoUrl,
+            faviconUrl: data.favicon_url || INITIAL_SITE_SETTINGS.faviconUrl,
+            primaryColor: data.primary_color || INITIAL_SITE_SETTINGS.primaryColor,
+            secondaryColor: data.secondary_color || INITIAL_SITE_SETTINGS.secondaryColor,
+            contactEmail: data.contact_email || INITIAL_SITE_SETTINGS.contactEmail,
+            contactPhone: data.contact_phone || INITIAL_SITE_SETTINGS.contactPhone,
+            websiteUrl: data.website_url || INITIAL_SITE_SETTINGS.websiteUrl,
+            notificationEmail: data.notification_email || INITIAL_SITE_SETTINGS.notificationEmail,
+            defaultLanguage: data.default_language || INITIAL_SITE_SETTINGS.defaultLanguage,
+            defaultTheme: data.default_theme || INITIAL_SITE_SETTINGS.defaultTheme,
+            facebookUrl: data.facebook_url || INITIAL_SITE_SETTINGS.facebookUrl,
+            youtubeUrl: data.youtube_url || INITIAL_SITE_SETTINGS.youtubeUrl,
+            tiktokUrl: data.tiktok_url || INITIAL_SITE_SETTINGS.tiktokUrl,
+            instagramUrl: data.instagram_url || INITIAL_SITE_SETTINGS.instagramUrl,
+            linkedinUrl: data.linkedin_url || INITIAL_SITE_SETTINGS.linkedinUrl,
+            footerTextEn: data.footer_text_en || INITIAL_SITE_SETTINGS.footerTextEn,
+            footerTextVi: data.footer_text_vi || INITIAL_SITE_SETTINGS.footerTextVi,
+            clientAdminAccounts: (cloudAccounts && cloudAccounts.length > 0) ? cloudAccounts : INITIAL_SITE_SETTINGS.clientAdminAccounts,
+            enableEmailNotification: data.enable_email_notification !== undefined ? (data.enable_email_notification !== false) : true,
+            emailProvider: data.email_provider || INITIAL_SITE_SETTINGS.emailProvider,
+            emailjsServiceId: data.emailjs_service_id || '',
+            emailjsTemplateIdCustomer: data.emailjs_template_id_customer || '',
+            emailjsTemplateIdAdmin: data.emailjs_template_id_admin || '',
+            emailjsPublicKey: data.emailjs_public_key || '',
+            bankName: bankMeta?.bankName || data.bank_name || INITIAL_SITE_SETTINGS.bankName,
+            bankAccountNo: bankMeta?.bankAccountNo || data.bank_account_no || INITIAL_SITE_SETTINGS.bankAccountNo,
+            bankAccountHolder: bankMeta?.bankAccountHolder || data.bank_account_holder || INITIAL_SITE_SETTINGS.bankAccountHolder,
+            bankCode: bankMeta?.bankCode || data.bank_code || INITIAL_SITE_SETTINGS.bankCode,
+            adminPassword: INITIAL_SITE_SETTINGS.adminPassword,
+            superAdminPassword: INITIAL_SITE_SETTINGS.superAdminPassword
           };
           localStorage.setItem('db_settings', JSON.stringify(s));
           applyPrimaryColor(s.primaryColor);
