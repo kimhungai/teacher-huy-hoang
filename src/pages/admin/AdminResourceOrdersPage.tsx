@@ -66,8 +66,8 @@ export const AdminResourceOrdersPage: React.FC = () => {
     // CSV Rows
     const rows = orders.map((o, index) => {
       const targetRes = resources.find(r => r.id === o.resourceId || r.titleVi === o.resourceTitle || r.titleEn === o.resourceTitle);
-      const priceOrig = o.resourcePrice || targetRes?.priceVi || '';
-      const priceDisc = o.discountPrice || '';
+      const priceOrig = o.resourcePrice || targetRes?.priceVi || targetRes?.priceEn || '';
+      const priceDisc = (o.discountPrice && o.discountPrice.trim() !== '') ? o.discountPrice : (targetRes?.discountPriceVi || targetRes?.discountPriceEn || '');
 
       let statusText: string = o.status;
       if (o.status === 'new') statusText = 'Mới đăng ký';
@@ -166,15 +166,15 @@ export const AdminResourceOrdersPage: React.FC = () => {
                 .filter(o => o.status !== 'cancelled')
                 .reduce((sum, o) => {
                   const targetRes = resources.find(r => r.id === o.resourceId || r.titleVi === o.resourceTitle || r.titleEn === o.resourceTitle);
+                  const priceOrig = o.resourcePrice || targetRes?.priceVi || targetRes?.priceEn || '';
+                  const priceDisc = (o.discountPrice && o.discountPrice.trim() !== '') ? o.discountPrice : (targetRes?.discountPriceVi || targetRes?.discountPriceEn || '');
 
-                  // Công thức (Requirement 9):
-                  // Nếu đơn hàng có Giá KM lưu tại ngày đăng ký -> Lấy Giá KM.
-                  // Nếu đơn hàng KHÔNG có Giá KM -> Lấy Giá thông thường (o.resourcePrice hoặc targetRes.priceVi).
-                  const effectivePriceStr = (o.discountPrice && o.discountPrice.trim() !== '')
-                    ? o.discountPrice
-                    : (o.resourcePrice && o.resourcePrice.trim() !== '')
-                      ? o.resourcePrice
-                      : (targetRes?.priceVi || targetRes?.priceEn || '');
+                  // Công thức:
+                  // Nếu đơn hàng có Giá KM (hoặc Học liệu có Giá KM) -> Lấy Giá KM.
+                  // Nếu không có Giá KM -> Lấy Giá thông thường.
+                  const effectivePriceStr = (priceDisc && priceDisc.trim() !== '')
+                    ? priceDisc
+                    : priceOrig;
 
                   const num = parseInt(effectivePriceStr.replace(/[^0-9]/g, ''), 10) || 0;
                   return sum + num;
@@ -212,6 +212,9 @@ export const AdminResourceOrdersPage: React.FC = () => {
               ) : (
                 orders.map((o) => {
                   const targetRes = resources.find(r => r.id === o.resourceId || r.titleVi === o.resourceTitle || r.titleEn === o.resourceTitle);
+                  const priceOrig = o.resourcePrice || targetRes?.priceVi || targetRes?.priceEn || '';
+                  const priceDisc = (o.discountPrice && o.discountPrice.trim() !== '') ? o.discountPrice : (targetRes?.discountPriceVi || targetRes?.discountPriceEn || '');
+
                   return (
                     <tr key={o.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
                       <td className="px-4 py-3">
@@ -227,24 +230,14 @@ export const AdminResourceOrdersPage: React.FC = () => {
                       </td>
                       {/* Cột Mức Giá / Học Liệu (Giá thông thường lưu tại thời điểm đăng ký) */}
                       <td className="px-4 py-3">
-                        {o.resourcePrice ? (
-                          o.resourcePrice.includes('Miễn phí') || o.resourcePrice.includes('Free') ? (
+                        {priceOrig ? (
+                          priceOrig.includes('Miễn phí') || priceOrig.includes('Free') ? (
                             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 font-bold text-[11px]">
-                              <Gift className="w-3 h-3" /> {o.resourcePrice}
+                              <Gift className="w-3 h-3" /> {priceOrig}
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400 font-bold text-[11px]">
-                              <CreditCard className="w-3 h-3" /> {o.resourcePrice}
-                            </span>
-                          )
-                        ) : targetRes ? (
-                          targetRes.priceType === 'free' ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 font-bold text-[11px]">
-                              <Gift className="w-3 h-3" /> Miễn phí
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400 font-bold text-[11px]">
-                              <CreditCard className="w-3 h-3" /> {targetRes.priceVi}
+                              <CreditCard className="w-3 h-3" /> {priceOrig}
                             </span>
                           )
                         ) : (
@@ -253,17 +246,17 @@ export const AdminResourceOrdersPage: React.FC = () => {
                           </span>
                         )}
                       </td>
-                      {/* Cột Mức Giá KM / Học liệu (Arrow 7 - Giá KM lưu đúng tại ngày đăng ký) */}
+                      {/* Cột Mức Giá KM / Học liệu (Giá KM lưu tại thời điểm đăng ký hoặc fallback promo price) */}
                       <td className="px-4 py-3 font-bold text-rose-600 dark:text-rose-400">
-                        {o.discountPrice && o.discountPrice.trim() !== '' ? (
+                        {priceDisc && priceDisc.trim() !== '' ? (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-extrabold text-[11px] border border-rose-500/20">
-                            🔥 {o.discountPrice}
+                            🔥 {priceDisc}
                           </span>
                         ) : (
                           <span className="text-slate-400 font-normal">—</span>
                         )}
                       </td>
-                      {/* Cột Ngày Đăng Ký (Arrow 8) */}
+                      {/* Cột Ngày Đăng Ký */}
                       <td className="px-4 py-3 font-semibold text-slate-700 dark:text-slate-300">
                         <div className="flex items-center gap-1 text-[11px]">
                           <Calendar className="w-3.5 h-3.5 text-sky-500 shrink-0" />

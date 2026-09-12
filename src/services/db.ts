@@ -2947,22 +2947,60 @@ export const DB = {
 
   // RESOURCE ORDERS & REQUESTS
   async getResourceOrders(): Promise<ResourceOrder[]> {
+    const cachedOrders: ResourceOrder[] = (() => {
+      try {
+        const c = localStorage.getItem('db_resource_orders_v2');
+        return c ? JSON.parse(c) : [];
+      } catch { return []; }
+    })();
+
+    const resourcesList = getStorageItem<TeachingResource[]>('db_resources_v3', INITIAL_RESOURCES);
+
     if (isSupabaseConfigured && supabase) {
       try {
         const { data, error } = await supabase.from('resource_orders').select('*').order('created_at', { ascending: false });
         if (data && !error && data.length > 0) {
-          const list: ResourceOrder[] = data.map((ro) => ({
-            id: ro.id,
-            resourceId: ro.resource_id || '',
-            resourceTitle: ro.resource_title,
-            fullName: ro.full_name,
-            phone: ro.phone,
-            email: ro.email,
-            address: ro.address || '',
-            note: ro.note || '',
-            status: ro.status || 'new',
-            createdAt: ro.created_at ? new Date(ro.created_at).toLocaleString() : new Date().toLocaleString()
-          }));
+          const list: ResourceOrder[] = data.map((ro) => {
+            const cachedMatch = cachedOrders.find(x => x.id === ro.id || (x.email === ro.email && x.fullName === ro.full_name));
+            const targetRes = resourcesList.find(r => r.id === (ro.resource_id || cachedMatch?.resourceId) || r.titleVi === (ro.resource_title || cachedMatch?.resourceTitle) || r.titleEn === (ro.resource_title || cachedMatch?.resourceTitle));
+
+            const resourcePrice = ro.resource_price || cachedMatch?.resourcePrice || (targetRes ? (targetRes.priceType === 'free' ? 'Miễn phí' : (targetRes.priceVi || targetRes.priceEn || '')) : '');
+            const discountPrice = (ro.discount_price !== undefined && ro.discount_price !== null && ro.discount_price !== '')
+              ? ro.discount_price
+              : (cachedMatch?.discountPrice !== undefined && cachedMatch.discountPrice !== ''
+                  ? cachedMatch.discountPrice
+                  : (targetRes?.discountPriceVi || targetRes?.discountPriceEn || ''));
+
+            return {
+              id: ro.id,
+              resourceId: ro.resource_id || cachedMatch?.resourceId || '',
+              resourceTitle: ro.resource_title || cachedMatch?.resourceTitle || '',
+              fullName: ro.full_name || cachedMatch?.fullName || '',
+              phone: ro.phone || cachedMatch?.phone || '',
+              email: ro.email || cachedMatch?.email || '',
+              address: ro.address || cachedMatch?.address || '',
+              note: ro.note || cachedMatch?.note || '',
+              resourcePrice: resourcePrice,
+              discountPrice: discountPrice,
+              status: ro.status || cachedMatch?.status || 'new',
+              createdAt: ro.created_at ? new Date(ro.created_at).toLocaleString() : (cachedMatch?.createdAt || new Date().toLocaleString())
+            };
+          });
+
+          // Merge any local order not yet in Supabase
+          cachedOrders.forEach(cached => {
+            if (!list.some(x => x.id === cached.id || (x.email === cached.email && x.fullName === cached.fullName && x.createdAt === cached.createdAt))) {
+              const targetRes = resourcesList.find(r => r.id === cached.resourceId || r.titleVi === cached.resourceTitle || r.titleEn === cached.resourceTitle);
+              const resourcePrice = cached.resourcePrice || (targetRes ? (targetRes.priceType === 'free' ? 'Miễn phí' : (targetRes.priceVi || targetRes.priceEn || '')) : '');
+              const discountPrice = (cached.discountPrice !== undefined && cached.discountPrice !== '') ? cached.discountPrice : (targetRes?.discountPriceVi || targetRes?.discountPriceEn || '');
+              list.push({
+                ...cached,
+                resourcePrice,
+                discountPrice
+              });
+            }
+          });
+
           localStorage.setItem('db_resource_orders_v2', JSON.stringify(list));
           return list;
         }
@@ -2970,19 +3008,61 @@ export const DB = {
         console.error('Failed to load resource orders from Supabase:', err);
       }
     }
-    return getStorageItem('db_resource_orders_v2', INITIAL_RESOURCE_ORDERS);
+
+    const rawList = getStorageItem<ResourceOrder[]>('db_resource_orders_v2', INITIAL_RESOURCE_ORDERS);
+    return rawList.map(ro => {
+      const targetRes = resourcesList.find(r => r.id === ro.resourceId || r.titleVi === ro.resourceTitle || r.titleEn === ro.resourceTitle);
+      const resourcePrice = ro.resourcePrice || (targetRes ? (targetRes.priceType === 'free' ? 'Miễn phí' : (targetRes.priceVi || targetRes.priceEn || '')) : '');
+      const discountPrice = (ro.discountPrice !== undefined && ro.discountPrice !== '') ? ro.discountPrice : (targetRes?.discountPriceVi || targetRes?.discountPriceEn || '');
+      return {
+        ...ro,
+        resourcePrice,
+        discountPrice
+      };
+    });
   },
 
   async createResourceOrder(order: Omit<ResourceOrder, 'id' | 'status' | 'createdAt'>): Promise<ResourceOrder> {
     const list = await this.getResourceOrders();
+    const resourcesList = await this.getResources();
+    const targetRes = resourcesList.find(r => r.id === order.resourceId || r.titleVi === order.resourceTitle || r.titleEn === order.resourceTitle);
+
+    const resourcePrice = order.resourcePrice || (targetRes ? (targetRes.priceType === 'free' ? 'Miễn phí' : (targetRes.priceVi || targetRes.priceEn || '')) : '');
+    const discountPrice = (order.discountPrice !== undefined && order.discountPrice !== '')
+      ? order.discountPrice
+      : (targetRes?.discountPriceVi || targetRes?.discountPriceEn || '');
+
     const newOrder: ResourceOrder = {
       ...order,
       id: 'ro_' + Date.now(),
+      resourcePrice,
+      discountPrice,
       status: 'new',
       createdAt: new Date().toLocaleString()
     };
     list.unshift(newOrder);
     setStorageItem('db_resource_orders_v2', list);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('resource_orders').insert([{
+          id: generateUUID(),
+          resource_id: order.resourceId || null,
+          resource_title: order.resourceTitle,
+          full_name: order.fullName,
+          phone: order.phone,
+          email: order.email,
+          address: order.address,
+          note: order.note,
+          resource_price: resourcePrice,
+          discount_price: discountPrice,
+          status: 'new'
+        }]);
+      } catch (err) {
+        console.error('Failed to insert resource order to Supabase:', err);
+      }
+    }
+
     return newOrder;
   },
 
