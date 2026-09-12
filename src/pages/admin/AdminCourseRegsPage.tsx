@@ -66,8 +66,8 @@ export const AdminCourseRegsPage: React.FC = () => {
     // CSV Rows
     const rows = regs.map((r, index) => {
       const targetCourse = courses.find(c => c.id === r.courseId || c.titleVi === r.courseTitle || c.titleEn === r.courseTitle);
-      const priceOrig = r.coursePrice || targetCourse?.priceVi || '';
-      const priceDisc = r.discountPrice || '';
+      const priceOrig = r.coursePrice || targetCourse?.priceVi || targetCourse?.priceEn || '';
+      const priceDisc = (r.discountPrice && r.discountPrice.trim() !== '') ? r.discountPrice : (targetCourse?.discountPriceVi || targetCourse?.discountPriceEn || '');
 
       let statusText: string = r.status;
       if (r.status === 'new') statusText = 'Mới đăng ký';
@@ -166,14 +166,12 @@ export const AdminCourseRegsPage: React.FC = () => {
                 .filter(r => r.status !== 'cancelled')
                 .reduce((sum, r) => {
                   const targetCourse = courses.find(c => c.id === r.courseId || c.titleVi === r.courseTitle || c.titleEn === r.courseTitle);
+                  const priceOrig = r.coursePrice || targetCourse?.priceVi || targetCourse?.priceEn || '';
+                  const priceDisc = (r.discountPrice && r.discountPrice.trim() !== '') ? r.discountPrice : (targetCourse?.discountPriceVi || targetCourse?.discountPriceEn || '');
 
-                  // Nếu đơn hàng lưu Giá KM tại ngày đăng ký -> Lấy Giá KM.
-                  // Nếu đơn hàng KHÔNG có Giá KM -> Lấy Giá thông thường (r.coursePrice hoặc targetCourse.priceVi).
-                  const effectivePriceStr = (r.discountPrice && r.discountPrice.trim() !== '')
-                    ? r.discountPrice
-                    : (r.coursePrice && r.coursePrice.trim() !== '')
-                      ? r.coursePrice
-                      : (targetCourse?.priceVi || targetCourse?.priceEn || '');
+                  const effectivePriceStr = (priceDisc && priceDisc.trim() !== '')
+                    ? priceDisc
+                    : priceOrig;
 
                   const num = parseInt(effectivePriceStr.replace(/[^0-9]/g, ''), 10) || 0;
                   return sum + num;
@@ -211,6 +209,9 @@ export const AdminCourseRegsPage: React.FC = () => {
               ) : (
                 regs.map((r) => {
                   const targetCourse = courses.find(c => c.id === r.courseId || c.titleVi === r.courseTitle || c.titleEn === r.courseTitle);
+                  const priceOrig = r.coursePrice || targetCourse?.priceVi || targetCourse?.priceEn || '';
+                  const priceDisc = (r.discountPrice && r.discountPrice.trim() !== '') ? r.discountPrice : (targetCourse?.discountPriceVi || targetCourse?.discountPriceEn || '');
+
                   return (
                     <tr key={r.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
                       <td className="px-4 py-3">
@@ -225,26 +226,16 @@ export const AdminCourseRegsPage: React.FC = () => {
                       <td className="px-4 py-3 font-semibold text-slate-900 dark:text-white">
                         {r.courseTitle}
                       </td>
-                      {/* Cột Mức Giá / Khóa Học (Giá thông thường tại thời điểm đăng ký) */}
+                      {/* Cột Mức Giá / Khóa Học */}
                       <td className="px-4 py-3">
-                        {r.coursePrice ? (
-                          r.coursePrice.includes('Miễn phí') || r.coursePrice.includes('Free') ? (
+                        {priceOrig ? (
+                          priceOrig.includes('Miễn phí') || priceOrig.includes('Free') ? (
                             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 font-bold text-[11px]">
-                              <Gift className="w-3 h-3" /> {r.coursePrice}
+                              <Gift className="w-3 h-3" /> {priceOrig}
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400 font-bold text-[11px]">
-                              <CreditCard className="w-3 h-3" /> {r.coursePrice}
-                            </span>
-                          )
-                        ) : targetCourse ? (
-                          targetCourse.priceType === 'free' ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 font-bold text-[11px]">
-                              <Gift className="w-3 h-3" /> Miễn phí (Free)
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400 font-bold text-[11px]">
-                              <CreditCard className="w-3 h-3" /> {targetCourse.priceVi}
+                              <CreditCard className="w-3 h-3" /> {priceOrig}
                             </span>
                           )
                         ) : (
@@ -253,11 +244,11 @@ export const AdminCourseRegsPage: React.FC = () => {
                           </span>
                         )}
                       </td>
-                      {/* Cột Mức Giá KM / Khóa Học (Giá KM lưu đúng tại ngày đăng ký) */}
+                      {/* Cột Mức Giá KM / Khóa Học */}
                       <td className="px-4 py-3 font-bold text-rose-600 dark:text-rose-400">
-                        {r.discountPrice && r.discountPrice.trim() !== '' ? (
+                        {priceDisc && priceDisc.trim() !== '' ? (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-extrabold text-[11px] border border-rose-500/20">
-                            🔥 {r.discountPrice}
+                            🔥 {priceDisc}
                           </span>
                         ) : (
                           <span className="text-slate-400 font-normal">—</span>

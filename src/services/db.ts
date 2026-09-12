@@ -1227,16 +1227,23 @@ const syncToSupabase = async (key: string, val: any) => {
       const list = val as CourseRegistration[];
       if (list && list.length > 0) {
         const item = list[0];
-        await supabase.from('course_registrations').insert({
+        const row = {
           course_title: item.courseTitle,
           full_name: item.fullName,
           phone: item.phone,
           email: item.email,
           grade_level: item.gradeLevel,
           note: item.note || '',
+          course_price: item.coursePrice || '',
+          discount_price: item.discountPrice || '',
           status: item.status || 'new',
           created_at: new Date().toISOString()
-        });
+        };
+        const { error } = await supabase.from('course_registrations').insert(row);
+        if (error && (error.message?.includes('course_price') || error.message?.includes('discount_price') || error.code === 'PGRST204')) {
+          const { course_price, discount_price, ...cleanRow } = row;
+          await supabase.from('course_registrations').insert(cleanRow);
+        }
       }
     } else if (key === 'db_resource_orders_v2' || key === 'db_resource_orders') {
       const list = val as ResourceOrder[];
@@ -2387,22 +2394,60 @@ export const DB = {
 
   // COURSE REGISTRATIONS
   async getCourseRegistrations(): Promise<CourseRegistration[]> {
+    const cachedRegs: CourseRegistration[] = (() => {
+      try {
+        const c = localStorage.getItem('db_course_regs');
+        return c ? JSON.parse(c) : [];
+      } catch { return []; }
+    })();
+
+    const coursesList = getStorageItem<Course[]>('db_courses', INITIAL_COURSES);
+
     if (isSupabaseConfigured && supabase) {
       try {
         const { data, error } = await supabase.from('course_registrations').select('*').order('created_at', { ascending: false });
         if (data && !error && data.length > 0) {
-          const list: CourseRegistration[] = data.map((r) => ({
-            id: r.id,
-            courseId: r.course_id || '',
-            courseTitle: r.course_title,
-            fullName: r.full_name,
-            phone: r.phone,
-            email: r.email,
-            gradeLevel: r.grade_level,
-            note: r.note || '',
-            status: r.status || 'new',
-            createdAt: r.created_at ? new Date(r.created_at).toLocaleString() : new Date().toLocaleString()
-          }));
+          const list: CourseRegistration[] = data.map((r) => {
+            const cachedMatch = cachedRegs.find(x => x.id === r.id || (x.email === r.email && x.fullName === r.full_name));
+            const targetCourse = coursesList.find(c => c.id === (r.course_id || cachedMatch?.courseId) || c.titleVi === (r.course_title || cachedMatch?.courseTitle) || c.titleEn === (r.course_title || cachedMatch?.courseTitle));
+
+            const coursePrice = r.course_price || cachedMatch?.coursePrice || targetCourse?.priceVi || targetCourse?.priceEn || '';
+            const discountPrice = (r.discount_price !== undefined && r.discount_price !== null && r.discount_price !== '')
+              ? r.discount_price
+              : (cachedMatch?.discountPrice !== undefined && cachedMatch.discountPrice !== ''
+                  ? cachedMatch.discountPrice
+                  : (targetCourse?.discountPriceVi || targetCourse?.discountPriceEn || ''));
+
+            return {
+              id: r.id,
+              courseId: r.course_id || cachedMatch?.courseId || '',
+              courseTitle: r.course_title || cachedMatch?.courseTitle || '',
+              fullName: r.full_name || cachedMatch?.fullName || '',
+              phone: r.phone || cachedMatch?.phone || '',
+              email: r.email || cachedMatch?.email || '',
+              gradeLevel: r.grade_level || cachedMatch?.gradeLevel || '',
+              note: r.note || cachedMatch?.note || '',
+              coursePrice: coursePrice,
+              discountPrice: discountPrice,
+              status: r.status || cachedMatch?.status || 'new',
+              createdAt: r.created_at ? new Date(r.created_at).toLocaleString() : (cachedMatch?.createdAt || new Date().toLocaleString())
+            };
+          });
+
+          // Merge any local registration not yet in Supabase
+          cachedRegs.forEach(cached => {
+            if (!list.some(x => x.id === cached.id || (x.email === cached.email && x.fullName === cached.fullName && x.createdAt === cached.createdAt))) {
+              const targetCourse = coursesList.find(c => c.id === cached.courseId || c.titleVi === cached.courseTitle || c.titleEn === cached.courseTitle);
+              const coursePrice = cached.coursePrice || targetCourse?.priceVi || targetCourse?.priceEn || '';
+              const discountPrice = (cached.discountPrice !== undefined && cached.discountPrice !== '') ? cached.discountPrice : (targetCourse?.discountPriceVi || targetCourse?.discountPriceEn || '');
+              list.push({
+                ...cached,
+                coursePrice,
+                discountPrice
+              });
+            }
+          });
+
           localStorage.setItem('db_course_regs', JSON.stringify(list));
           return list;
         }
@@ -2410,19 +2455,42 @@ export const DB = {
         console.error('Failed to load course registrations from Supabase:', err);
       }
     }
-    return getStorageItem('db_course_regs', INITIAL_COURSE_REGS);
+
+    const rawList = getStorageItem<CourseRegistration[]>('db_course_regs', INITIAL_COURSE_REGS);
+    return rawList.map(r => {
+      const targetCourse = coursesList.find(c => c.id === r.courseId || c.titleVi === r.courseTitle || c.titleEn === r.courseTitle);
+      const coursePrice = r.coursePrice || targetCourse?.priceVi || targetCourse?.priceEn || '';
+      const discountPrice = (r.discountPrice !== undefined && r.discountPrice !== '') ? r.discountPrice : (targetCourse?.discountPriceVi || targetCourse?.discountPriceEn || '');
+      return {
+        ...r,
+        coursePrice,
+        discountPrice
+      };
+    });
   },
 
   async createCourseRegistration(reg: Omit<CourseRegistration, 'id' | 'status' | 'createdAt'>): Promise<CourseRegistration> {
     const list = await this.getCourseRegistrations();
+    const coursesList = await this.getCourses();
+    const targetCourse = coursesList.find(c => c.id === reg.courseId || c.titleVi === reg.courseTitle || c.titleEn === reg.courseTitle);
+
+    const coursePrice = reg.coursePrice || targetCourse?.priceVi || targetCourse?.priceEn || '';
+    const discountPrice = (reg.discountPrice !== undefined && reg.discountPrice !== '')
+      ? reg.discountPrice
+      : (targetCourse?.discountPriceVi || targetCourse?.discountPriceEn || '');
+
     const newReg: CourseRegistration = {
       ...reg,
       id: 'reg_' + Date.now(),
+      coursePrice,
+      discountPrice,
       status: 'new',
       createdAt: new Date().toLocaleString()
     };
     list.unshift(newReg);
     setStorageItem('db_course_regs', list);
+    syncToDisk();
+    syncToSupabase('db_course_regs', list);
     return newReg;
   },
 
