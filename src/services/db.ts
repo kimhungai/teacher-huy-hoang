@@ -838,6 +838,17 @@ const isValidUUID = (str?: string): boolean => {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
 };
 
+const generateUUID = (): string => {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+};
+
 const SETTINGS_ROW_ID = '00000000-0000-0000-0000-000000000001';
 const PROFILE_ROW_ID  = '00000000-0000-0000-0000-000000000002';
 const HERO_ROW_ID     = '00000000-0000-0000-0000-000000000003';
@@ -1591,6 +1602,13 @@ export const DB = {
             };
           });
 
+          // Keep local non-UUID items that haven't been synced to DB yet (if any)
+          cachedApproaches.forEach(cached => {
+            if (!isValidUUID(cached.id) && !list.some(x => x.titleVi === cached.titleVi)) {
+              list.push(cached);
+            }
+          });
+
           // Sort strictly by orderIndex ascending
           list.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
 
@@ -1615,32 +1633,33 @@ export const DB = {
   async saveTeachingApproach(item: TeachingApproach): Promise<TeachingApproach[]> {
     const list = getStorageItem('db_teaching', INITIAL_TEACHING_APPROACHES);
     const index = list.findIndex(x => x.id === item.id);
+    let itemToSave: TeachingApproach;
+
     if (index >= 0) {
       list[index] = item;
+      itemToSave = item;
     } else {
-      const newId = (isSupabaseConfigured && supabase && isValidUUID(item.id)) ? item.id : 'ta_' + Date.now();
-      list.push({ ...item, id: newId, orderIndex: item.orderIndex ?? (list.length + 1) });
+      const newId = isValidUUID(item.id) ? item.id : generateUUID();
+      itemToSave = { ...item, id: newId, orderIndex: item.orderIndex ?? (list.length + 1) };
+      list.push(itemToSave);
     }
     setStorageItem('db_teaching', list);
 
     if (isSupabaseConfigured && supabase) {
-      const targetItem = index >= 0 ? list[index] : list[list.length - 1];
       const row = {
-        ...(isValidUUID(targetItem.id) ? { id: targetItem.id } : {}),
-        title_en: targetItem.titleEn || '',
-        title_vi: targetItem.titleVi || '',
-        description_en: targetItem.descriptionEn || '',
-        description_vi: targetItem.descriptionVi || '',
-        icon: targetItem.icon || 'Sparkles',
-        image_url: targetItem.imageUrl || '',
-        order_index: targetItem.orderIndex ?? list.length,
+        id: itemToSave.id,
+        title_en: itemToSave.titleEn || '',
+        title_vi: itemToSave.titleVi || '',
+        description_en: itemToSave.descriptionEn || '',
+        description_vi: itemToSave.descriptionVi || '',
+        icon: itemToSave.icon || 'Sparkles',
+        image_url: itemToSave.imageUrl || '',
+        order_index: itemToSave.orderIndex ?? list.length,
         updated_at: new Date().toISOString()
       };
-      const { data, error } = await supabase.from('teaching_approaches').upsert(row).select('*').single();
-      if (data && !error) {
-        targetItem.id = data.id;
-        targetItem.orderIndex = data.order_index ?? targetItem.orderIndex;
-        setStorageItem('db_teaching', list);
+      const { error } = await supabase.from('teaching_approaches').upsert(row);
+      if (error) {
+        console.error('Failed to save teaching approach to Supabase:', error);
       }
     }
 
@@ -1651,9 +1670,10 @@ export const DB = {
     const list = await this.getTeachingApproaches();
     const target = list.find(x => x.id === id);
     if (target) {
+      const newUuid = generateUUID();
       const copy: TeachingApproach = {
         ...target,
-        id: 'ta_' + Date.now(),
+        id: newUuid,
         titleVi: target.titleVi + ' (Bản sao)',
         titleEn: (target.titleEn || target.titleVi) + ' (Copy)',
         orderIndex: list.length + 1
@@ -1663,6 +1683,7 @@ export const DB = {
 
       if (isSupabaseConfigured && supabase) {
         const row = {
+          id: newUuid,
           title_en: copy.titleEn || '',
           title_vi: copy.titleVi || '',
           description_en: copy.descriptionEn || '',
@@ -1672,11 +1693,9 @@ export const DB = {
           order_index: copy.orderIndex,
           updated_at: new Date().toISOString()
         };
-        const { data, error } = await supabase.from('teaching_approaches').upsert(row).select('*').single();
-        if (data && !error) {
-          copy.id = data.id;
-          copy.orderIndex = data.order_index ?? copy.orderIndex;
-          setStorageItem('db_teaching', list);
+        const { error } = await supabase.from('teaching_approaches').upsert(row);
+        if (error) {
+          console.error('Failed to duplicate teaching approach to Supabase:', error);
         }
       }
     }
@@ -1700,32 +1719,28 @@ export const DB = {
 
     list.forEach((item, idx) => {
       item.orderIndex = idx + 1;
+      if (!isValidUUID(item.id)) {
+        item.id = generateUUID();
+      }
     });
 
     setStorageItem('db_teaching', list);
 
     if (isSupabaseConfigured && supabase) {
-      const rows = list.map((ap, i) => ({
-        ...(isValidUUID(ap.id) ? { id: ap.id } : {}),
+      const rows = list.map((ap) => ({
+        id: ap.id,
         title_en: ap.titleEn || '',
         title_vi: ap.titleVi || '',
         description_en: ap.descriptionEn || '',
         description_vi: ap.descriptionVi || '',
         icon: ap.icon || 'Sparkles',
         image_url: ap.imageUrl || '',
-        order_index: ap.orderIndex ?? (i + 1),
+        order_index: ap.orderIndex,
         updated_at: new Date().toISOString()
       }));
-      const { data, error } = await supabase.from('teaching_approaches').upsert(rows).select('*');
-      if (data && !error && data.length > 0) {
-        data.forEach(dbRow => {
-          const match = list.find(x => x.id === dbRow.id || (x.titleVi === dbRow.title_vi));
-          if (match) {
-            match.id = dbRow.id;
-            match.orderIndex = dbRow.order_index;
-          }
-        });
-        setStorageItem('db_teaching', list);
+      const { error } = await supabase.from('teaching_approaches').upsert(rows);
+      if (error) {
+        console.error('Failed to reorder teaching approaches in Supabase:', error);
       }
     }
 
