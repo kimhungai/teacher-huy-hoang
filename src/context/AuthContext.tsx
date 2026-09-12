@@ -124,7 +124,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // 2. Client Admin (dynamic client accounts or default/primary admin password)
     const clientAccounts = settings?.clientAdminAccounts || [];
     const matchedClient = clientAccounts.find(
-      acc => acc.email.toLowerCase().trim() === normalizedEmail && acc.password === inputPass
+      acc => acc && acc.email && typeof acc.email === 'string' && acc.email.toLowerCase().trim() === normalizedEmail && acc.password === inputPass
     );
 
     const primaryContactEmail = (settings?.contactEmail || CLIENT_ADMIN_EMAIL).toLowerCase().trim();

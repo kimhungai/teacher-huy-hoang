@@ -12,7 +12,8 @@ import type {
   GalleryItem,
   ContactMessage,
   MediaFile,
-  SiteSettings
+  SiteSettings,
+  AdminAccount
 } from '../types';
 import { applyPrimaryColor } from '../utils/themeUtils';
 import initialDiskDb from '../data/db_backup.json';
@@ -1168,8 +1169,34 @@ const syncToSupabase = async (key: string, val: any) => {
         console.warn('Could not query existing settings id:', e);
       }
 
-      const rawAccounts = Array.isArray(s.clientAdminAccounts) ? [...s.clientAdminAccounts] : [];
-      const cleanAccounts = rawAccounts.filter((a: any) => a && a._type !== 'bank_info_meta' && a._type !== 'site_extra_meta');
+      const DEFAULT_CLIENT_ACC: AdminAccount = {
+        id: 'ca_default',
+        email: s.contactEmail || 'teacherhuyhoang@gmail.com',
+        password: s.adminPassword || 'Admin@123',
+        name: 'Tài khoản bàn giao Khách hàng',
+        role: 'client_admin',
+        createdAt: '2026-01-01'
+      };
+
+      const rawAccounts = Array.isArray(s.clientAdminAccounts) && s.clientAdminAccounts.length > 0
+        ? [...s.clientAdminAccounts]
+        : [DEFAULT_CLIENT_ACC];
+
+      const cleanAccounts = rawAccounts
+        .filter((a: any) => a && a._type !== 'bank_info_meta' && a._type !== 'site_extra_meta')
+        .map((a: any) => ({
+          id: a.id || 'ca_' + Date.now(),
+          email: a.email || s.contactEmail || 'teacherhuyhoang@gmail.com',
+          password: a.password || s.adminPassword || 'Admin@123',
+          name: a.name || DEFAULT_CLIENT_ACC.name,
+          role: 'client_admin',
+          createdAt: a.createdAt || '2026-01-01'
+        }));
+
+      if (cleanAccounts.length === 0) {
+        (cleanAccounts as any[]).push(DEFAULT_CLIENT_ACC);
+      }
+
       cleanAccounts.push({
         _type: 'site_extra_meta',
         bankName: s.bankName || '',
@@ -3725,9 +3752,31 @@ export const DB = {
             extraMeta = rawAccounts.find((a: any) => a && (a._type === 'site_extra_meta' || a._type === 'bank_info_meta'));
           }
 
-          const cloudAccounts = rawAccounts
+          const DEFAULT_CLIENT_ACC: AdminAccount = {
+            id: 'ca_default',
+            email: data.contact_email || INITIAL_SITE_SETTINGS.contactEmail || 'teacherhuyhoang@gmail.com',
+            password: data.admin_password || INITIAL_SITE_SETTINGS.adminPassword || 'Admin@123',
+            name: 'Tài khoản bàn giao Khách hàng',
+            role: 'client_admin',
+            createdAt: '2026-01-01'
+          };
+
+          const filteredAccounts = rawAccounts
             ? rawAccounts.filter((a: any) => a && a._type !== 'bank_info_meta' && a._type !== 'site_extra_meta')
-            : null;
+            : [];
+
+          const cloudAccounts: AdminAccount[] = filteredAccounts.map((acc: any) => ({
+            id: acc.id || 'ca_default',
+            email: acc.email || data.contact_email || 'teacherhuyhoang@gmail.com',
+            password: acc.password || data.admin_password || 'Admin@123',
+            name: acc.name || DEFAULT_CLIENT_ACC.name,
+            role: 'client_admin',
+            createdAt: acc.createdAt || '2026-01-01'
+          }));
+
+          if (cloudAccounts.length === 0) {
+            cloudAccounts.push(DEFAULT_CLIENT_ACC);
+          }
 
           const s: SiteSettings = {
             siteTitleEn: data.site_title_en || INITIAL_SITE_SETTINGS.siteTitleEn,
