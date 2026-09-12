@@ -76,14 +76,6 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://teacherhuyhoang.vercel.app/achievements" />
   </url>
   <url>
-    <loc>https://teacherhuyhoang.vercel.app/student-works</loc>
-    <lastmod>2026-09-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="vi" href="https://teacherhuyhoang.vercel.app/student-works" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://teacherhuyhoang.vercel.app/student-works" />
-  </url>
-  <url>
     <loc>https://teacherhuyhoang.vercel.app/contact</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>monthly</changefreq>

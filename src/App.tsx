@@ -16,7 +16,6 @@ import { ProjectsPage } from './pages/ProjectsPage';
 import { ProjectDetailPage } from './pages/ProjectDetailPage';
 import { CoursesPage } from './pages/CoursesPage';
 import { CourseDetailPage } from './pages/CourseDetailPage';
-import { StudentWorksPage } from './pages/StudentWorksPage';
 import { ResourcesPage } from './pages/ResourcesPage';
 import { ResourceDetailPage } from './pages/ResourceDetailPage';
 import { BlogPage } from './pages/BlogPage';
@@ -35,7 +34,6 @@ import { AdminTeachingPage } from './pages/admin/AdminTeachingPage';
 import { AdminProjectsPage } from './pages/admin/AdminProjectsPage';
 import { AdminCoursesPage } from './pages/admin/AdminCoursesPage';
 import { AdminCourseRegsPage } from './pages/admin/AdminCourseRegsPage';
-import { AdminStudentWorksPage } from './pages/admin/AdminStudentWorksPage';
 import { AdminResourcesPage } from './pages/admin/AdminResourcesPage';
 import { AdminResourceOrdersPage } from './pages/admin/AdminResourceOrdersPage';
 import { AdminBlogPage } from './pages/admin/AdminBlogPage';
@@ -152,14 +150,6 @@ export const App: React.FC = () => {
                 }
               />
               <Route
-                path="/student-works"
-                element={
-                  <PublicLayout>
-                    <StudentWorksPage />
-                  </PublicLayout>
-                }
-              />
-              <Route
                 path="/resources"
                 element={
                   <PublicLayout>
@@ -229,7 +219,6 @@ export const App: React.FC = () => {
                 <Route path="projects" element={<AdminProjectsPage />} />
                 <Route path="courses" element={<AdminCoursesPage />} />
                 <Route path="course-registrations" element={<AdminCourseRegsPage />} />
-                <Route path="student-works" element={<AdminStudentWorksPage />} />
                 <Route path="resources" element={<AdminResourcesPage />} />
                 <Route path="resource-orders" element={<AdminResourceOrdersPage />} />
                 <Route path="blog" element={<AdminBlogPage />} />

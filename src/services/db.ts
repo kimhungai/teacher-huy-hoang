@@ -5,7 +5,6 @@ import type {
   Project,
   Course,
   CourseRegistration,
-  StudentWork,
   TeachingResource,
   ResourceOrder,
   BlogPost,
@@ -1127,25 +1126,6 @@ const syncToSupabase = async (key: string, val: any) => {
         }));
         await supabase.from('gallery_items').upsert(rows);
       }
-    } else if (key === 'db_student_works') {
-      const list = val as StudentWork[];
-      if (list && Array.isArray(list)) {
-        const rows = list.map(sw => ({
-          ...(isValidUUID(sw.id) ? { id: sw.id } : {}),
-          title_en: sw.titleEn || '',
-          title_vi: sw.titleVi || '',
-          student_name: sw.studentName || '',
-          description_en: sw.descriptionEn || '',
-          description_vi: sw.descriptionVi || '',
-          objective_en: sw.objectiveEn || '',
-          objective_vi: sw.objectiveVi || '',
-          image_url: sw.imageUrl || sw.mediaUrl || '',
-          privacy_mode: sw.privacyMode || 'public',
-          is_published: sw.isPublished !== false,
-          updated_at: new Date().toISOString()
-        }));
-        await supabase.from('student_works').upsert(rows);
-      }
     } else if (key === 'db_media') {
       const list = val as MediaFile[];
       if (list && Array.isArray(list)) {
@@ -1374,17 +1354,6 @@ export const DB = {
         }
       } catch (err) {
         console.error('Course Registrations Sync Error:', err);
-      }
-
-      // 7. Student Works
-      try {
-        const studentWorks = await this.getStudentWorks();
-        if (studentWorks && studentWorks.length > 0) {
-          await syncToSupabase('db_student_works', studentWorks);
-          totalSynced += studentWorks.length;
-        }
-      } catch (err) {
-        console.error('Student Works Sync Error:', err);
       }
 
       // 8. Resources
@@ -2513,79 +2482,6 @@ export const DB = {
     setStorageItem('db_course_regs', list);
     if (isSupabaseConfigured && supabase && isValidUUID(id)) {
       await supabase.from('course_registrations').delete().eq('id', id);
-    }
-    return list;
-  },
-
-  // STUDENT WORKS
-  async getStudentWorks(): Promise<StudentWork[]> {
-    if (isSupabaseConfigured && supabase) {
-      try {
-        const { data, error } = await supabase.from('student_works').select('*').order('created_at', { ascending: false });
-        if (data && !error && data.length > 0) {
-          const cachedStudentWorks: StudentWork[] = (() => {
-            try {
-              const sw = localStorage.getItem('db_student_works');
-              return sw ? JSON.parse(sw) : [];
-            } catch { return []; }
-          })();
-
-          const list: StudentWork[] = data.map((sw) => {
-            const cachedMatch = cachedStudentWorks.find(x => x.id === sw.id);
-            return {
-              id: sw.id,
-              titleEn: cachedMatch?.titleEn || sw.title_en || '',
-              titleVi: cachedMatch?.titleVi || sw.title_vi || '',
-              category: cachedMatch?.category || sw.category || 'Classroom Work',
-              grade: cachedMatch?.grade || sw.grade || 'Primary',
-              studentName: cachedMatch?.studentName || sw.student_name || '',
-              descriptionEn: cachedMatch?.descriptionEn || sw.description_en || '',
-              descriptionVi: cachedMatch?.descriptionVi || sw.description_vi || '',
-              objectiveEn: cachedMatch?.objectiveEn || sw.objective_en || '',
-              objectiveVi: cachedMatch?.objectiveVi || sw.objective_vi || '',
-              privacyMode: cachedMatch?.privacyMode || sw.privacy_mode || 'public',
-              mediaType: cachedMatch?.mediaType || sw.media_type || 'image',
-              imageUrl: cachedMatch?.imageUrl || sw.image_url || '',
-              mediaUrl: cachedMatch?.mediaUrl || sw.image_url || '',
-              isPublished: cachedMatch?.isPublished ?? (sw.is_published !== false),
-              createdAt: cachedMatch?.createdAt || (sw.created_at ? sw.created_at.split('T')[0] : new Date().toISOString().split('T')[0])
-            };
-          });
-
-          cachedStudentWorks.forEach(cached => {
-            if (!list.some(x => x.id === cached.id)) {
-              list.push(cached);
-            }
-          });
-
-          localStorage.setItem('db_student_works', JSON.stringify(list));
-          return list;
-        }
-      } catch (err) {
-        console.error('Failed to load student works from Supabase:', err);
-      }
-    }
-    return getStorageItem<StudentWork[]>('db_student_works', []);
-  },
-
-  async saveStudentWork(sw: StudentWork): Promise<StudentWork[]> {
-    const list = getStorageItem<StudentWork[]>('db_student_works', []);
-    const index = list.findIndex(x => x.id === sw.id);
-    if (index >= 0) {
-      list[index] = sw;
-    } else {
-      list.unshift({ ...sw, id: 'sw_' + Date.now() });
-    }
-    setStorageItem('db_student_works', list);
-    return list;
-  },
-
-  async deleteStudentWork(id: string): Promise<StudentWork[]> {
-    let list = getStorageItem<StudentWork[]>('db_student_works', []);
-    list = list.filter(x => x.id !== id);
-    setStorageItem('db_student_works', list);
-    if (isSupabaseConfigured && supabase && isValidUUID(id)) {
-      await supabase.from('student_works').delete().eq('id', id);
     }
     return list;
   },

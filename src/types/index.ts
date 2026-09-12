@@ -136,25 +136,6 @@ export interface CourseRegistration {
   createdAt: string;
 }
 
-export interface StudentWork {
-  id: string;
-  titleEn: string;
-  titleVi: string;
-  category: string;
-  grade: string;
-  studentName?: string;
-  descriptionEn: string;
-  descriptionVi: string;
-  privacyMode: 'public' | 'private' | 'anonymous' | 'group';
-  mediaType?: 'image' | 'video';
-  mediaUrl?: string;
-  imageUrl?: string;
-  objectiveEn?: string;
-  objectiveVi?: string;
-  isPublished?: boolean;
-  createdAt: string;
-}
-
 export interface TeachingResource {
   id: string;
   slug: string;
