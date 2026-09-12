@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { DB } from '../../services/db';
 import type { BlogPost } from '../../types';
-import { Plus, Edit2, Trash2, Copy, Calendar, Clock, Film, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit2, Trash2, Copy, Calendar, Clock, Film, Image as ImageIcon, ArrowUp, ArrowDown } from 'lucide-react';
 import { Modal } from '../../components/common/Modal';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import { Toast } from '../../components/common/Toast';
@@ -23,6 +23,12 @@ export const AdminBlogPage: React.FC = () => {
 
   const loadData = () => {
     DB.getBlogPosts().then(setPosts);
+  };
+
+  const handleReorder = async (id: string, direction: 'up' | 'down') => {
+    const updated = await DB.reorderBlogPosts(id, direction);
+    setPosts(updated);
+    setToast({ msg: 'Đã cập nhật thứ tự ưu tiên hiển thị!', type: 'success' });
   };
 
   const handleOpenAdd = () => {
@@ -171,6 +177,7 @@ export const AdminBlogPage: React.FC = () => {
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 dark:bg-slate-950 text-slate-500 border-b border-slate-200 dark:border-slate-800">
               <tr>
+                <th className="p-4">STT & Thứ tự</th>
                 <th className="p-4">Ảnh</th>
                 <th className="p-4">Tiêu đề bài viết</th>
                 <th className="p-4">Chuyên mục</th>
@@ -181,8 +188,31 @@ export const AdminBlogPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-              {posts.map((item) => (
+              {posts.map((item, idx) => (
                 <tr key={item.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
+                  <td className="p-4 font-bold text-slate-400">
+                    <div className="flex items-center gap-2">
+                      <span>{idx + 1}</span>
+                      <div className="flex flex-col">
+                        <button
+                          onClick={() => handleReorder(item.id, 'up')}
+                          disabled={idx === 0}
+                          className="text-slate-400 hover:text-sky-500 disabled:opacity-30 cursor-pointer"
+                          title="Di chuyển lên"
+                        >
+                          <ArrowUp className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleReorder(item.id, 'down')}
+                          disabled={idx === posts.length - 1}
+                          className="text-slate-400 hover:text-sky-500 disabled:opacity-30 cursor-pointer"
+                          title="Di chuyển xuống"
+                        >
+                          <ArrowDown className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </td>
                   <td className="p-4">
                     <img
                       src={item.galleryUrls && item.galleryUrls.length > 0 ? item.galleryUrls[0] : item.featuredImage}

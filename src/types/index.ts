@@ -222,6 +222,7 @@ export interface BlogPost {
   status: 'draft' | 'published' | 'unpublished' | 'scheduled';
   scheduledDate?: string;
   isFeatured: boolean;
+  orderIndex?: number;
   publishedAt: string;
   createdAt: string;
 }

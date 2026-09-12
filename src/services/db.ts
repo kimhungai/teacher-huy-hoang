@@ -1058,8 +1058,8 @@ const syncToSupabase = async (key: string, val: any) => {
     } else if (key === 'db_blog' || key === 'db_posts') {
       const list = val as BlogPost[];
       if (list && Array.isArray(list)) {
-        const rows = list.map(b => ({
-          ...(isValidUUID(b.id) ? { id: b.id } : {}),
+        const rows = list.map((b, i) => ({
+          ...(isValidUUID(b.id) ? { id: b.id } : { id: generateUUID() }),
           slug: b.slug,
           title_en: b.titleEn || '',
           title_vi: b.titleVi || '',
@@ -1075,9 +1075,14 @@ const syncToSupabase = async (key: string, val: any) => {
           reading_time_vi: b.readingTimeVi || '5 phút đọc',
           status: b.status || 'published',
           is_featured: b.isFeatured !== false,
+          order_index: b.orderIndex ?? (i + 1),
           updated_at: new Date().toISOString()
         }));
-        await supabase.from('blog_posts').upsert(rows, { onConflict: 'slug' });
+        const { error } = await supabase.from('blog_posts').upsert(rows);
+        if (error && (error.message?.includes('order_index') || error.code === 'PGRST204')) {
+          const cleanRows = rows.map(({ order_index, ...rest }) => rest);
+          await supabase.from('blog_posts').upsert(cleanRows);
+        }
       }
     } else if (key === 'db_achievements') {
       const list = val as Achievement[];
@@ -2603,48 +2608,50 @@ export const DB = {
   async getBlogPosts(): Promise<BlogPost[]> {
     if (isSupabaseConfigured && supabase) {
       try {
-        const { data, error } = await supabase.from('blog_posts').select('*').order('created_at', { ascending: false });
+        const { data, error } = await supabase.from('blog_posts').select('*');
         if (data && !error && data.length > 0) {
           const cachedBlog: BlogPost[] = (() => {
             try {
-              const b = localStorage.getItem('db_blog');
+              const b = localStorage.getItem('db_blog') || localStorage.getItem('db_posts');
               return b ? JSON.parse(b) : [];
             } catch { return []; }
           })();
 
-          const list: BlogPost[] = data.map((b) => {
+          const list: BlogPost[] = data.map((b, idx) => {
             const cachedMatch = cachedBlog.find(x => x.id === b.id || x.slug === b.slug);
             return {
               id: b.id,
-              slug: cachedMatch?.slug || b.slug,
-              titleEn: cachedMatch?.titleEn || b.title_en || '',
-              titleVi: cachedMatch?.titleVi || b.title_vi || '',
-              excerptEn: cachedMatch?.excerptEn || b.excerpt_en || '',
-              excerptVi: cachedMatch?.excerptVi || b.excerpt_vi || '',
-              contentEn: cachedMatch?.contentEn || b.content_en || '',
-              contentVi: cachedMatch?.contentVi || b.content_vi || '',
-              featuredImage: cachedMatch?.featuredImage || b.featured_image || '',
-              galleryUrls: (cachedMatch?.galleryUrls && cachedMatch.galleryUrls.length > 0) ? cachedMatch.galleryUrls : ((b.gallery_urls && b.gallery_urls.length > 0) ? b.gallery_urls : []),
-              videoUrl: cachedMatch?.videoUrl || b.video_url || '',
-              categoryName: cachedMatch?.categoryName || b.category_name || '',
-              categoryEn: cachedMatch?.categoryEn || b.category_en || b.category_name || '',
-              tags: (cachedMatch?.tags && cachedMatch.tags.length > 0) ? cachedMatch.tags : ((b.tags && b.tags.length > 0) ? b.tags : []),
-              author: cachedMatch?.author || b.author || 'Nguyễn Trọng Huy Hoàng',
-              readingTimeEn: cachedMatch?.readingTimeEn || b.reading_time_en || '5 min read',
-              readingTimeVi: cachedMatch?.readingTimeVi || b.reading_time_vi || '5 phút đọc',
-              status: cachedMatch?.status || b.status || 'published',
-              isFeatured: cachedMatch?.isFeatured ?? (b.is_featured !== false),
+              slug: b.slug || cachedMatch?.slug || '',
+              titleEn: b.title_en || cachedMatch?.titleEn || '',
+              titleVi: b.title_vi || cachedMatch?.titleVi || '',
+              excerptEn: b.excerpt_en || cachedMatch?.excerptEn || '',
+              excerptVi: b.excerpt_vi || cachedMatch?.excerptVi || '',
+              contentEn: b.content_en || cachedMatch?.contentEn || '',
+              contentVi: b.content_vi || cachedMatch?.contentVi || '',
+              featuredImage: b.featured_image || cachedMatch?.featuredImage || '',
+              galleryUrls: (b.gallery_urls && b.gallery_urls.length > 0) ? b.gallery_urls : (cachedMatch?.galleryUrls || []),
+              videoUrl: b.video_url || cachedMatch?.videoUrl || '',
+              categoryName: b.category_name || cachedMatch?.categoryName || '',
+              categoryEn: b.category_en || cachedMatch?.categoryEn || b.category_name || '',
+              tags: (b.tags && b.tags.length > 0) ? b.tags : (cachedMatch?.tags || []),
+              author: b.author || cachedMatch?.author || 'Nguyễn Trọng Huy Hoàng',
+              readingTimeEn: b.reading_time_en || cachedMatch?.readingTimeEn || '5 min read',
+              readingTimeVi: b.reading_time_vi || cachedMatch?.readingTimeVi || '5 phút đọc',
+              status: b.status || cachedMatch?.status || 'published',
+              isFeatured: b.is_featured ?? (cachedMatch?.isFeatured ?? false),
+              orderIndex: b.order_index ?? (cachedMatch?.orderIndex ?? (idx + 1)),
               publishedAt: cachedMatch?.publishedAt || (b.published_at ? b.published_at.split('T')[0] : new Date().toISOString().split('T')[0]),
               createdAt: cachedMatch?.createdAt || (b.created_at ? b.created_at.split('T')[0] : new Date().toISOString().split('T')[0])
             };
           });
 
           cachedBlog.forEach(cached => {
-            if (!list.some(x => x.id === cached.id || x.slug === cached.slug)) {
+            if (!isValidUUID(cached.id) && !list.some(x => x.id === cached.id || x.slug === cached.slug)) {
               list.push(cached);
             }
           });
 
+          list.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
           localStorage.setItem('db_blog', JSON.stringify(list));
           return list;
         }
@@ -2652,7 +2659,11 @@ export const DB = {
         console.error('Failed to load blog posts from Supabase:', err);
       }
     }
-    return getStorageItem('db_blog', INITIAL_BLOG_POSTS);
+    const list = getStorageItem('db_blog', INITIAL_BLOG_POSTS);
+    list.forEach((item, idx) => {
+      if (item.orderIndex === undefined) item.orderIndex = idx + 1;
+    });
+    return list.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
   },
 
   async getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
@@ -2663,20 +2674,55 @@ export const DB = {
   async saveBlogPost(post: BlogPost): Promise<BlogPost[]> {
     const list = getStorageItem('db_blog', INITIAL_BLOG_POSTS);
     const index = list.findIndex(x => x.id === post.id);
+    let itemToSave: BlogPost;
+
     if (index >= 0) {
-      list[index] = post;
+      list[index] = { ...post };
+      itemToSave = list[index];
     } else {
-      const slug = post.slug || post.titleEn.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now();
-      list.unshift({
+      const newId = isValidUUID(post.id) ? post.id : generateUUID();
+      const slug = post.slug || (post.titleEn || post.titleVi || 'post').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now();
+      itemToSave = {
         ...post,
-        id: 'blog_' + Date.now(),
+        id: newId,
         slug,
+        orderIndex: post.orderIndex ?? (list.length + 1),
         createdAt: new Date().toISOString().split('T')[0],
         publishedAt: new Date().toISOString().split('T')[0]
-      });
+      };
+      list.push(itemToSave);
     }
     setStorageItem('db_blog', list);
-    return list;
+
+    if (isSupabaseConfigured && supabase) {
+      const row = {
+        id: itemToSave.id,
+        slug: itemToSave.slug,
+        title_en: itemToSave.titleEn || '',
+        title_vi: itemToSave.titleVi || '',
+        excerpt_en: itemToSave.excerptEn || '',
+        excerpt_vi: itemToSave.excerptVi || '',
+        content_en: itemToSave.contentEn || '',
+        content_vi: itemToSave.contentVi || '',
+        featured_image: itemToSave.featuredImage || '',
+        category_name: itemToSave.categoryName || '',
+        tags: itemToSave.tags || [],
+        author: itemToSave.author || 'Nguyễn Trọng Huy Hoàng',
+        reading_time_en: itemToSave.readingTimeEn || '5 min read',
+        reading_time_vi: itemToSave.readingTimeVi || '5 phút đọc',
+        status: itemToSave.status || 'published',
+        is_featured: itemToSave.isFeatured !== false,
+        order_index: itemToSave.orderIndex ?? list.length,
+        updated_at: new Date().toISOString()
+      };
+      const { error } = await supabase.from('blog_posts').upsert(row);
+      if (error && (error.message?.includes('order_index') || error.code === 'PGRST204')) {
+        const { order_index, ...cleanRow } = row;
+        await supabase.from('blog_posts').upsert(cleanRow);
+      }
+    }
+
+    return this.getBlogPosts();
   },
 
   async deleteBlogPost(id: string): Promise<BlogPost[]> {
@@ -2694,24 +2740,109 @@ export const DB = {
         await supabase.from('blog_posts').delete().eq('slug', id);
       }
     }
-    return list;
+    return this.getBlogPosts();
   },
 
   async duplicateBlogPost(id: string): Promise<BlogPost[]> {
-    const list = getStorageItem('db_blog', INITIAL_BLOG_POSTS);
+    const list = await this.getBlogPosts();
     const target = list.find(x => x.id === id);
     if (target) {
+      const newUuid = generateUUID();
       const dup: BlogPost = {
         ...target,
-        id: 'blog_' + Date.now(),
+        id: newUuid,
         slug: target.slug + '-copy-' + Date.now(),
         titleEn: target.titleEn + ' (Copy)',
         titleVi: target.titleVi + ' (Bản sao)',
+        orderIndex: list.length + 1,
         status: 'draft'
       };
-      list.unshift(dup);
+      list.push(dup);
       setStorageItem('db_blog', list);
+
+      if (isSupabaseConfigured && supabase) {
+        const row = {
+          id: newUuid,
+          slug: dup.slug,
+          title_en: dup.titleEn || '',
+          title_vi: dup.titleVi || '',
+          excerpt_en: dup.excerptEn || '',
+          excerpt_vi: dup.excerptVi || '',
+          content_en: dup.contentEn || '',
+          content_vi: dup.contentVi || '',
+          featured_image: dup.featuredImage || '',
+          category_name: dup.categoryName || '',
+          tags: dup.tags || [],
+          author: dup.author || 'Nguyễn Trọng Huy Hoàng',
+          reading_time_en: dup.readingTimeEn || '5 min read',
+          reading_time_vi: dup.readingTimeVi || '5 phút đọc',
+          status: dup.status || 'draft',
+          is_featured: dup.isFeatured !== false,
+          order_index: dup.orderIndex,
+          updated_at: new Date().toISOString()
+        };
+        const { error } = await supabase.from('blog_posts').upsert(row);
+        if (error && (error.message?.includes('order_index') || error.code === 'PGRST204')) {
+          const { order_index, ...cleanRow } = row;
+          await supabase.from('blog_posts').upsert(cleanRow);
+        }
+      }
     }
+    return this.getBlogPosts();
+  },
+
+  async reorderBlogPosts(id: string, direction: 'up' | 'down'): Promise<BlogPost[]> {
+    const list = await this.getBlogPosts();
+    const index = list.findIndex(x => x.id === id);
+    if (index < 0) return list;
+
+    if (direction === 'up' && index > 0) {
+      const temp = list[index];
+      list[index] = list[index - 1];
+      list[index - 1] = temp;
+    } else if (direction === 'down' && index < list.length - 1) {
+      const temp = list[index];
+      list[index] = list[index + 1];
+      list[index + 1] = temp;
+    }
+
+    list.forEach((item, idx) => {
+      item.orderIndex = idx + 1;
+      if (!isValidUUID(item.id)) {
+        item.id = generateUUID();
+      }
+    });
+
+    setStorageItem('db_blog', list);
+
+    if (isSupabaseConfigured && supabase) {
+      const rows = list.map((b) => ({
+        id: b.id,
+        slug: b.slug,
+        title_en: b.titleEn || '',
+        title_vi: b.titleVi || '',
+        excerpt_en: b.excerptEn || '',
+        excerpt_vi: b.excerptVi || '',
+        content_en: b.contentEn || '',
+        content_vi: b.contentVi || '',
+        featured_image: b.featuredImage || '',
+        category_name: b.categoryName || '',
+        tags: b.tags || [],
+        author: b.author || 'Nguyễn Trọng Huy Hoàng',
+        reading_time_en: b.readingTimeEn || '5 min read',
+        reading_time_vi: b.readingTimeVi || '5 phút đọc',
+        status: b.status || 'published',
+        is_featured: b.isFeatured !== false,
+        order_index: b.orderIndex,
+        updated_at: new Date().toISOString()
+      }));
+      const { error } = await supabase.from('blog_posts').upsert(rows);
+      if (error && (error.message?.includes('order_index') || error.code === 'PGRST204')) {
+        const cleanRows = rows.map(({ order_index, ...rest }) => rest);
+        await supabase.from('blog_posts').upsert(cleanRows);
+      }
+    }
+
     return list;
   },
 
