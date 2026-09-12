@@ -491,7 +491,7 @@ Please access the Resource Orders management page in CMS to process and arrange 
   const customerEmail: EmailNotification = {
     to: ord.email || ord.phone,
     subject: lang === 'vi'
-      ? `[${logoText}] 🎉 Xác nhận đăng ký / đặt mua học liệu thành công: ${ord.resourceTitle}`
+      ? `[${logoText}] 🎉 Xác nhận đăng ký Học liệu thành công: ${ord.resourceTitle}`
       : `[${logoText}] 🎉 Resource Order Confirmed: ${ord.resourceTitle}`,
     body: customerBody,
     sentAt: now
