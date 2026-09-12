@@ -527,6 +527,7 @@ const INITIAL_RESOURCES: TeachingResource[] = [
     tags: ['Phonics', 'Storybook', 'Books'],
     isFeatured: true,
     isPublished: true,
+    orderIndex: 1,
     createdAt: '2026-01-10'
   },
   {
@@ -558,6 +559,7 @@ const INITIAL_RESOURCES: TeachingResource[] = [
     tags: ['Software', 'EdTech', 'Gamification'],
     isFeatured: true,
     isPublished: true,
+    orderIndex: 2,
     createdAt: '2026-01-15'
   },
   {
@@ -585,6 +587,7 @@ const INITIAL_RESOURCES: TeachingResource[] = [
     tags: ['Phonics', 'Flashcards', 'Grade 3'],
     isFeatured: true,
     isPublished: true,
+    orderIndex: 3,
     createdAt: '2026-01-05'
   },
   {
@@ -611,6 +614,7 @@ const INITIAL_RESOURCES: TeachingResource[] = [
     tags: ['Puppets', 'Storytelling', 'Teaching Tools'],
     isFeatured: false,
     isPublished: true,
+    orderIndex: 4,
     createdAt: '2025-12-20'
   },
   {
@@ -638,6 +642,7 @@ const INITIAL_RESOURCES: TeachingResource[] = [
     tags: ['Audio', 'Devices', 'Phonics'],
     isFeatured: true,
     isPublished: true,
+    orderIndex: 5,
     createdAt: '2025-12-05'
   }
 ];
@@ -2530,7 +2535,7 @@ export const DB = {
             } catch { return []; }
           })();
 
-          const list: TeachingResource[] = data.map((r) => {
+          const list: TeachingResource[] = data.map((r, idx) => {
             const cachedMatch = cachedResources.find(x => x.id === r.id || x.slug === r.slug);
             const priceType = cachedMatch?.priceType || (r.price_type || 'free');
             const priceVi = cachedMatch?.priceVi || r.price_vi || (priceType === 'paid' ? 'Có phí' : 'Miễn phí');
@@ -2569,6 +2574,7 @@ export const DB = {
               tags: (cachedMatch?.tags && cachedMatch.tags.length > 0) ? cachedMatch.tags : ((r.tags && r.tags.length > 0) ? r.tags : []),
               isFeatured: cachedMatch?.isFeatured ?? (r.is_featured !== false),
               isPublished: cachedMatch?.isPublished ?? (r.is_published !== false),
+              orderIndex: r.order_index ?? (cachedMatch?.orderIndex ?? (idx + 1)),
               createdAt: cachedMatch?.createdAt || (r.created_at ? r.created_at.split('T')[0] : new Date().toISOString().split('T')[0])
             };
           });
@@ -2579,6 +2585,11 @@ export const DB = {
               list.push(cached);
             }
           });
+
+          list.forEach((item, i) => {
+            if (item.orderIndex === undefined) item.orderIndex = i + 1;
+          });
+          list.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
 
           localStorage.setItem('db_resources_v3', JSON.stringify(list));
           localStorage.setItem('db_resources', JSON.stringify(list));
@@ -2594,8 +2605,9 @@ export const DB = {
       : rawList;
 
     const oldCounts = [185, 420, 612, 614, 94, 156];
-    list = list.map(r => ({
+    list = list.map((r, i) => ({
       ...r,
+      orderIndex: r.orderIndex ?? (i + 1),
       downloadCount: (r.downloadCount && !oldCounts.includes(r.downloadCount)) ? r.downloadCount : 0
     }));
 
@@ -2619,7 +2631,7 @@ export const DB = {
       'File PDF / Word / PowerPoint': 'PDF / Word / PPT File'
     };
 
-    return list.map((r) => {
+    const formattedList = list.map((r) => {
       const catEn = r.categoryEn && r.categoryEn.trim()
         ? r.categoryEn
         : (categoryMap[r.categoryName] || r.categoryName);
@@ -2645,6 +2657,8 @@ export const DB = {
         priceEn: priceEn
       };
     });
+
+    return formattedList.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
   },
 
   async getResourceBySlug(slug: string): Promise<TeachingResource | null> {
@@ -2655,42 +2669,200 @@ export const DB = {
   async saveResource(res: TeachingResource): Promise<TeachingResource[]> {
     const list = await this.getResources();
     const index = list.findIndex(x => x.id === res.id);
+    const newUuid = isValidUUID(res.id) ? res.id : generateUUID();
+    const itemToSave: TeachingResource = {
+      ...res,
+      id: newUuid,
+      slug: res.slug || res.titleVi.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now(),
+      downloadCount: res.downloadCount || 0,
+      orderIndex: res.orderIndex ?? (index >= 0 ? (list[index].orderIndex ?? (index + 1)) : list.length + 1)
+    };
+
     if (index >= 0) {
-      list[index] = { ...res };
+      list[index] = itemToSave;
     } else {
-      const newId = 'res_' + Date.now();
-      const slug = res.slug || res.titleVi.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now();
-      list.unshift({ ...res, id: newId, slug, downloadCount: 0, createdAt: new Date().toISOString().split('T')[0] });
+      list.push(itemToSave);
     }
     setStorageItem('db_resources_v3', list);
-    return list;
+    setStorageItem('db_resources', list);
+
+    if (isSupabaseConfigured && supabase) {
+      const row = {
+        id: itemToSave.id,
+        slug: itemToSave.slug,
+        title_en: itemToSave.titleEn || '',
+        title_vi: itemToSave.titleVi || '',
+        description_en: itemToSave.descriptionEn || '',
+        description_vi: itemToSave.descriptionVi || '',
+        category_name: itemToSave.categoryName || '',
+        category_en: itemToSave.categoryEn || itemToSave.categoryName || '',
+        resource_type: itemToSave.resourceType || 'digital_file',
+        price_type: itemToSave.priceType || 'free',
+        price_en: itemToSave.priceEn || '',
+        price_vi: itemToSave.priceVi || '',
+        discount_price_en: itemToSave.discountPriceEn || '',
+        discount_price_vi: itemToSave.discountPriceVi || '',
+        grade: itemToSave.grade || '',
+        grade_en: itemToSave.gradeEn || itemToSave.grade || '',
+        file_type: itemToSave.fileType || '',
+        file_type_en: itemToSave.fileTypeEn || itemToSave.fileType || '',
+        file_url: itemToSave.fileUrl || '',
+        preview_url: itemToSave.previewUrl || '',
+        gallery_urls: itemToSave.galleryUrls || [],
+        video_url: itemToSave.videoUrl || '',
+        download_count: itemToSave.downloadCount || 0,
+        specifications_en: itemToSave.specificationsEn || [],
+        specifications_vi: itemToSave.specificationsVi || [],
+        tags: itemToSave.tags || [],
+        is_featured: itemToSave.isFeatured !== false,
+        is_published: itemToSave.isPublished !== false,
+        order_index: itemToSave.orderIndex ?? list.length
+      };
+      const { error } = await supabase.from('resources').upsert(row);
+      if (error && (error.message?.includes('order_index') || error.code === 'PGRST204')) {
+        const { order_index, ...cleanRow } = row;
+        await supabase.from('resources').upsert(cleanRow);
+      }
+    }
+
+    return this.getResources();
   },
 
   async deleteResource(id: string): Promise<TeachingResource[]> {
     let list = await this.getResources();
     list = list.filter(x => x.id !== id);
     setStorageItem('db_resources_v3', list);
+    setStorageItem('db_resources', list);
     if (isSupabaseConfigured && supabase && isValidUUID(id)) {
       await supabase.from('resources').delete().eq('id', id);
     }
-    return list;
+    return this.getResources();
   },
 
   async duplicateResource(id: string): Promise<TeachingResource[]> {
     const list = await this.getResources();
     const target = list.find(x => x.id === id);
     if (target) {
+      const newUuid = generateUUID();
       const dup: TeachingResource = {
         ...target,
-        id: 'res_' + Date.now(),
+        id: newUuid,
         slug: target.slug + '-copy-' + Date.now(),
         titleEn: target.titleEn + ' (Copy)',
         titleVi: target.titleVi + ' (Bản sao)',
+        orderIndex: list.length + 1,
         isPublished: false
       };
-      list.unshift(dup);
+      list.push(dup);
       setStorageItem('db_resources_v3', list);
+      setStorageItem('db_resources', list);
+
+      if (isSupabaseConfigured && supabase) {
+        const row = {
+          id: newUuid,
+          slug: dup.slug,
+          title_en: dup.titleEn || '',
+          title_vi: dup.titleVi || '',
+          description_en: dup.descriptionEn || '',
+          description_vi: dup.descriptionVi || '',
+          category_name: dup.categoryName || '',
+          category_en: dup.categoryEn || dup.categoryName || '',
+          resource_type: dup.resourceType || 'digital_file',
+          price_type: dup.priceType || 'free',
+          price_en: dup.priceEn || '',
+          price_vi: dup.priceVi || '',
+          discount_price_en: dup.discountPriceEn || '',
+          discount_price_vi: dup.discountPriceVi || '',
+          grade: dup.grade || '',
+          grade_en: dup.gradeEn || dup.grade || '',
+          file_type: dup.fileType || '',
+          file_type_en: dup.fileTypeEn || dup.fileType || '',
+          file_url: dup.fileUrl || '',
+          preview_url: dup.previewUrl || '',
+          gallery_urls: dup.galleryUrls || [],
+          video_url: dup.videoUrl || '',
+          download_count: dup.downloadCount || 0,
+          specifications_en: dup.specificationsEn || [],
+          specifications_vi: dup.specificationsVi || [],
+          tags: dup.tags || [],
+          is_featured: dup.isFeatured !== false,
+          is_published: dup.isPublished !== false,
+          order_index: dup.orderIndex
+        };
+        const { error } = await supabase.from('resources').upsert(row);
+        if (error && (error.message?.includes('order_index') || error.code === 'PGRST204')) {
+          const { order_index, ...cleanRow } = row;
+          await supabase.from('resources').upsert(cleanRow);
+        }
+      }
     }
+    return this.getResources();
+  },
+
+  async reorderResources(id: string, direction: 'up' | 'down'): Promise<TeachingResource[]> {
+    const list = await this.getResources();
+    const index = list.findIndex(x => x.id === id);
+    if (index < 0) return list;
+
+    if (direction === 'up' && index > 0) {
+      const temp = list[index];
+      list[index] = list[index - 1];
+      list[index - 1] = temp;
+    } else if (direction === 'down' && index < list.length - 1) {
+      const temp = list[index];
+      list[index] = list[index + 1];
+      list[index + 1] = temp;
+    }
+
+    list.forEach((item, idx) => {
+      item.orderIndex = idx + 1;
+      if (!isValidUUID(item.id)) {
+        item.id = generateUUID();
+      }
+    });
+
+    setStorageItem('db_resources_v3', list);
+    setStorageItem('db_resources', list);
+
+    if (isSupabaseConfigured && supabase) {
+      const rows = list.map((r) => ({
+        id: r.id,
+        slug: r.slug,
+        title_en: r.titleEn || '',
+        title_vi: r.titleVi || '',
+        description_en: r.descriptionEn || '',
+        description_vi: r.descriptionVi || '',
+        category_name: r.categoryName || '',
+        category_en: r.categoryEn || r.categoryName || '',
+        resource_type: r.resourceType || 'digital_file',
+        price_type: r.priceType || 'free',
+        price_en: r.priceEn || '',
+        price_vi: r.priceVi || '',
+        discount_price_en: r.discountPriceEn || '',
+        discount_price_vi: r.discountPriceVi || '',
+        grade: r.grade || '',
+        grade_en: r.gradeEn || r.grade || '',
+        file_type: r.fileType || '',
+        file_type_en: r.fileTypeEn || r.fileType || '',
+        file_url: r.fileUrl || '',
+        preview_url: r.previewUrl || '',
+        gallery_urls: r.galleryUrls || [],
+        video_url: r.videoUrl || '',
+        download_count: r.downloadCount || 0,
+        specifications_en: r.specificationsEn || [],
+        specifications_vi: r.specificationsVi || [],
+        tags: r.tags || [],
+        is_featured: r.isFeatured !== false,
+        is_published: r.isPublished !== false,
+        order_index: r.orderIndex
+      }));
+      const { error } = await supabase.from('resources').upsert(rows);
+      if (error && (error.message?.includes('order_index') || error.code === 'PGRST204')) {
+        const cleanRows = rows.map(({ order_index, ...rest }) => rest);
+        await supabase.from('resources').upsert(cleanRows);
+      }
+    }
+
     return list;
   },
 
