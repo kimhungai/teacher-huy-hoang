@@ -91,7 +91,19 @@ export const ContactPage: React.FC = () => {
   };
 
   const phoneNum = settings?.contactPhone || profile?.phone || '0987654321';
-  const zaloLink = settings?.zaloUrl || `https://zalo.me/${phoneNum.replace(/[^0-9]/g, '')}`;
+  const getZaloLink = () => {
+    const rawZalo = settings?.zaloUrl?.trim();
+    if (rawZalo) {
+      if (rawZalo.startsWith('http://') || rawZalo.startsWith('https://')) {
+        return rawZalo;
+      }
+      const digitsOnly = rawZalo.replace(/[^0-9]/g, '');
+      if (digitsOnly) return `https://zalo.me/${digitsOnly}`;
+    }
+    const cleanPhone = phoneNum.replace(/[^0-9]/g, '');
+    return `https://zalo.me/${cleanPhone}`;
+  };
+  const zaloLink = getZaloLink();
 
   return (
     <div className="py-12 md:py-20 bg-slate-50 dark:bg-slate-950">

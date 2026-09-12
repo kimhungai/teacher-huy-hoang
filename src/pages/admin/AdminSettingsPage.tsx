@@ -480,6 +480,16 @@ export const AdminSettingsPage: React.FC = () => {
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
+              <label className="text-[11px] font-semibold text-slate-600 dark:text-slate-400">Zalo Chat URL / Số Điện Thoại Zalo</label>
+              <input
+                type="text"
+                value={settings.zaloUrl || ''}
+                onChange={(e) => setSettings({ ...settings, zaloUrl: e.target.value })}
+                placeholder="Ví dụ: https://zalo.me/0929053750 hoặc 0929053750"
+                className="w-full px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-sky-600 dark:text-sky-400"
+              />
+            </div>
+            <div className="space-y-1">
               <label className="text-[11px] font-semibold text-slate-600 dark:text-slate-400">Facebook Page URL</label>
               <input
                 type="text"
