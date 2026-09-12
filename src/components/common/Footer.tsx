@@ -9,7 +9,7 @@ export const Footer: React.FC = () => {
   const { t, language } = useLanguage();
   const [settings, setSettings] = useState<SiteSettings | null>(() => {
     try {
-      const cached = localStorage.getItem('db_site_settings');
+      const cached = localStorage.getItem('db_settings');
       if (cached) return JSON.parse(cached);
     } catch {}
     return null;

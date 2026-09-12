@@ -1169,13 +1169,24 @@ const syncToSupabase = async (key: string, val: any) => {
       }
 
       const rawAccounts = Array.isArray(s.clientAdminAccounts) ? [...s.clientAdminAccounts] : [];
-      const cleanAccounts = rawAccounts.filter((a: any) => a && a._type !== 'bank_info_meta');
+      const cleanAccounts = rawAccounts.filter((a: any) => a && a._type !== 'bank_info_meta' && a._type !== 'site_extra_meta');
       cleanAccounts.push({
-        _type: 'bank_info_meta',
+        _type: 'site_extra_meta',
         bankName: s.bankName || '',
         bankAccountNo: s.bankAccountNo || '',
         bankAccountHolder: s.bankAccountHolder || '',
-        bankCode: s.bankCode || ''
+        bankCode: s.bankCode || '',
+        customFooterHtml: s.customFooterHtml || '',
+        xUrl: s.xUrl || '',
+        zaloUrl: s.zaloUrl || '',
+        footerCopyrightEn: s.footerCopyrightEn || '',
+        footerCopyrightVi: s.footerCopyrightVi || '',
+        footerTaglineEn: s.footerTaglineEn || '',
+        footerTaglineVi: s.footerTaglineVi || '',
+        showBlogMenu: s.showBlogMenu !== false,
+        showGalleryMenu: s.showGalleryMenu !== false,
+        showProjectsMenu: s.showProjectsMenu !== false,
+        showAchievementsMenu: s.showAchievementsMenu !== false
       } as any);
 
       const payload = {
@@ -3709,13 +3720,13 @@ export const DB = {
             ? data.client_admin_accounts
             : null;
 
-          let bankMeta: any = null;
+          let extraMeta: any = null;
           if (rawAccounts) {
-            bankMeta = rawAccounts.find((a: any) => a && a._type === 'bank_info_meta');
+            extraMeta = rawAccounts.find((a: any) => a && (a._type === 'site_extra_meta' || a._type === 'bank_info_meta'));
           }
 
           const cloudAccounts = rawAccounts
-            ? rawAccounts.filter((a: any) => a && a._type !== 'bank_info_meta')
+            ? rawAccounts.filter((a: any) => a && a._type !== 'bank_info_meta' && a._type !== 'site_extra_meta')
             : null;
 
           const s: SiteSettings = {
@@ -3737,8 +3748,19 @@ export const DB = {
             tiktokUrl: data.tiktok_url || INITIAL_SITE_SETTINGS.tiktokUrl,
             instagramUrl: data.instagram_url || INITIAL_SITE_SETTINGS.instagramUrl,
             linkedinUrl: data.linkedin_url || INITIAL_SITE_SETTINGS.linkedinUrl,
+            xUrl: extraMeta?.xUrl || data.x_url || '',
+            zaloUrl: extraMeta?.zaloUrl || data.zalo_url || '',
             footerTextEn: data.footer_text_en || INITIAL_SITE_SETTINGS.footerTextEn,
             footerTextVi: data.footer_text_vi || INITIAL_SITE_SETTINGS.footerTextVi,
+            footerCopyrightEn: extraMeta?.footerCopyrightEn || data.footer_copyright_en || '',
+            footerCopyrightVi: extraMeta?.footerCopyrightVi || data.footer_copyright_vi || '',
+            footerTaglineEn: extraMeta?.footerTaglineEn || data.footer_tagline_en || '',
+            footerTaglineVi: extraMeta?.footerTaglineVi || data.footer_tagline_vi || '',
+            customFooterHtml: extraMeta?.customFooterHtml || data.custom_footer_html || '',
+            showBlogMenu: extraMeta?.showBlogMenu !== undefined ? extraMeta.showBlogMenu : (data.show_blog_menu !== false),
+            showGalleryMenu: extraMeta?.showGalleryMenu !== undefined ? extraMeta.showGalleryMenu : (data.show_gallery_menu !== false),
+            showProjectsMenu: extraMeta?.showProjectsMenu !== undefined ? extraMeta.showProjectsMenu : (data.show_projects_menu !== false),
+            showAchievementsMenu: extraMeta?.showAchievementsMenu !== undefined ? extraMeta.showAchievementsMenu : (data.show_achievements_menu !== false),
             clientAdminAccounts: (cloudAccounts && cloudAccounts.length > 0) ? cloudAccounts : INITIAL_SITE_SETTINGS.clientAdminAccounts,
             enableEmailNotification: data.enable_email_notification !== undefined ? (data.enable_email_notification !== false) : true,
             emailProvider: data.email_provider || INITIAL_SITE_SETTINGS.emailProvider,
@@ -3746,10 +3768,10 @@ export const DB = {
             emailjsTemplateIdCustomer: data.emailjs_template_id_customer || '',
             emailjsTemplateIdAdmin: data.emailjs_template_id_admin || '',
             emailjsPublicKey: data.emailjs_public_key || '',
-            bankName: bankMeta?.bankName || data.bank_name || INITIAL_SITE_SETTINGS.bankName,
-            bankAccountNo: bankMeta?.bankAccountNo || data.bank_account_no || INITIAL_SITE_SETTINGS.bankAccountNo,
-            bankAccountHolder: bankMeta?.bankAccountHolder || data.bank_account_holder || INITIAL_SITE_SETTINGS.bankAccountHolder,
-            bankCode: bankMeta?.bankCode || data.bank_code || INITIAL_SITE_SETTINGS.bankCode,
+            bankName: extraMeta?.bankName || data.bank_name || INITIAL_SITE_SETTINGS.bankName,
+            bankAccountNo: extraMeta?.bankAccountNo || data.bank_account_no || INITIAL_SITE_SETTINGS.bankAccountNo,
+            bankAccountHolder: extraMeta?.bankAccountHolder || data.bank_account_holder || INITIAL_SITE_SETTINGS.bankAccountHolder,
+            bankCode: extraMeta?.bankCode || data.bank_code || INITIAL_SITE_SETTINGS.bankCode,
             adminPassword: INITIAL_SITE_SETTINGS.adminPassword,
             superAdminPassword: INITIAL_SITE_SETTINGS.superAdminPassword
           };
