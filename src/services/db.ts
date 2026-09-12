@@ -941,8 +941,8 @@ const syncToSupabase = async (key: string, val: any) => {
     } else if (key === 'db_projects') {
       const list = val as Project[];
       if (list && Array.isArray(list)) {
-        const rows = list.map(p => ({
-          ...(isValidUUID(p.id) ? { id: p.id } : {}),
+        const rows = list.map((p, i) => ({
+          ...(isValidUUID(p.id) ? { id: p.id } : { id: generateUUID() }),
           slug: p.slug,
           title_en: p.titleEn || '',
           title_vi: p.titleVi || '',
@@ -966,9 +966,14 @@ const syncToSupabase = async (key: string, val: any) => {
           tags: p.tags || [],
           is_featured: p.isFeatured !== false,
           is_published: p.isPublished !== false,
+          order_index: p.orderIndex ?? (i + 1),
           updated_at: new Date().toISOString()
         }));
-        await supabase.from('projects').upsert(rows, { onConflict: 'slug' });
+        const { error } = await supabase.from('projects').upsert(rows);
+        if (error && (error.message?.includes('order_index') || error.code === 'PGRST204')) {
+          const cleanRows = rows.map(({ order_index, ...rest }) => rest);
+          await supabase.from('projects').upsert(cleanRows);
+        }
       }
     } else if (key === 'db_courses') {
       const list = val as Course[];
@@ -1757,7 +1762,7 @@ export const DB = {
   async getProjects(): Promise<Project[]> {
     if (isSupabaseConfigured && supabase) {
       try {
-        const { data, error } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
+        const { data, error } = await supabase.from('projects').select('*');
         if (data && !error && data.length > 0) {
           const cachedProjects: Project[] = (() => {
             try {
@@ -1766,45 +1771,47 @@ export const DB = {
             } catch { return []; }
           })();
 
-          const list: Project[] = data.map((p) => {
+          const list: Project[] = data.map((p, idx) => {
             const cachedMatch = cachedProjects.find(x => x.id === p.id || x.slug === p.slug);
             return {
               id: p.id,
-              slug: cachedMatch?.slug || p.slug,
-              titleEn: cachedMatch?.titleEn || p.title_en || '',
-              titleVi: cachedMatch?.titleVi || p.title_vi || '',
-              categoryName: cachedMatch?.categoryName || p.category_name || '',
-              categoryEn: cachedMatch?.categoryEn || p.category_en || p.category_name || '',
-              grade: cachedMatch?.grade || p.grade || '',
-              gradeEn: cachedMatch?.gradeEn || p.grade_en || p.grade || '',
-              year: cachedMatch?.year || p.year || '',
-              descriptionEn: cachedMatch?.descriptionEn || p.description_en || '',
-              descriptionVi: cachedMatch?.descriptionVi || p.description_vi || '',
-              objectivesEn: (cachedMatch?.objectivesEn && cachedMatch.objectivesEn.length > 0) ? cachedMatch.objectivesEn : ((p.objectives_en && p.objectives_en.length > 0) ? p.objectives_en : []),
-              objectivesVi: (cachedMatch?.objectivesVi && cachedMatch.objectivesVi.length > 0) ? cachedMatch.objectivesVi : ((p.objectives_vi && p.objectives_vi.length > 0) ? p.objectives_vi : []),
-              activitiesEn: (cachedMatch?.activitiesEn && cachedMatch.activitiesEn.length > 0) ? cachedMatch.activitiesEn : ((p.activities_en && p.activities_en.length > 0) ? p.activities_en : []),
-              activitiesVi: (cachedMatch?.activitiesVi && cachedMatch.activitiesVi.length > 0) ? cachedMatch.activitiesVi : ((p.activities_vi && p.activities_vi.length > 0) ? p.activities_vi : []),
-              methodsEn: (cachedMatch?.methodsEn && cachedMatch.methodsEn.length > 0) ? cachedMatch.methodsEn : ((p.methods_en && p.methods_en.length > 0) ? p.methods_en : []),
-              methodsVi: (cachedMatch?.methodsVi && cachedMatch.methodsVi.length > 0) ? cachedMatch.methodsVi : ((p.methods_vi && p.methods_vi.length > 0) ? p.methods_vi : []),
-              outcomesEn: (cachedMatch?.outcomesEn && cachedMatch.outcomesEn.length > 0) ? cachedMatch.outcomesEn : ((p.outcomes_en && p.outcomes_en.length > 0) ? p.outcomes_en : []),
-              outcomesVi: (cachedMatch?.outcomesVi && cachedMatch.outcomesVi.length > 0) ? cachedMatch.outcomesVi : ((p.outcomes_vi && p.outcomes_vi.length > 0) ? p.outcomes_vi : []),
-              thumbnailUrl: cachedMatch?.thumbnailUrl || p.thumbnail_url || '',
-              galleryUrls: (cachedMatch?.galleryUrls && cachedMatch.galleryUrls.length > 0) ? cachedMatch.galleryUrls : ((p.gallery_urls && p.gallery_urls.length > 0) ? p.gallery_urls : []),
-              videoUrl: cachedMatch?.videoUrl || p.video_url || '',
-              attachments: (cachedMatch?.attachments && cachedMatch.attachments.length > 0) ? cachedMatch.attachments : ((p.attachments && p.attachments.length > 0) ? p.attachments : []),
-              tags: (cachedMatch?.tags && cachedMatch.tags.length > 0) ? cachedMatch.tags : ((p.tags && p.tags.length > 0) ? p.tags : []),
-              isFeatured: cachedMatch?.isFeatured ?? (p.is_featured !== false),
-              isPublished: cachedMatch?.isPublished ?? (p.is_published !== false),
+              slug: p.slug || cachedMatch?.slug || '',
+              titleEn: p.title_en || cachedMatch?.titleEn || '',
+              titleVi: p.title_vi || cachedMatch?.titleVi || '',
+              categoryName: p.category_name || cachedMatch?.categoryName || '',
+              categoryEn: p.category_en || cachedMatch?.categoryEn || p.category_name || '',
+              grade: p.grade || cachedMatch?.grade || '',
+              gradeEn: p.grade_en || cachedMatch?.gradeEn || p.grade || '',
+              year: p.year || cachedMatch?.year || '',
+              descriptionEn: p.description_en || cachedMatch?.descriptionEn || '',
+              descriptionVi: p.description_vi || cachedMatch?.descriptionVi || '',
+              objectivesEn: (p.objectives_en && p.objectives_en.length > 0) ? p.objectives_en : (cachedMatch?.objectivesEn || []),
+              objectivesVi: (p.objectives_vi && p.objectives_vi.length > 0) ? p.objectives_vi : (cachedMatch?.objectivesVi || []),
+              activitiesEn: (p.activities_en && p.activities_en.length > 0) ? p.activities_en : (cachedMatch?.activitiesEn || []),
+              activitiesVi: (p.activities_vi && p.activities_vi.length > 0) ? p.activities_vi : (cachedMatch?.activitiesVi || []),
+              methodsEn: (p.methods_en && p.methods_en.length > 0) ? p.methods_en : (cachedMatch?.methodsEn || []),
+              methodsVi: (p.methods_vi && p.methods_vi.length > 0) ? p.methods_vi : (cachedMatch?.methodsVi || []),
+              outcomesEn: (p.outcomes_en && p.outcomes_en.length > 0) ? p.outcomes_en : (cachedMatch?.outcomesEn || []),
+              outcomesVi: (p.outcomes_vi && p.outcomes_vi.length > 0) ? p.outcomes_vi : (cachedMatch?.outcomesVi || []),
+              thumbnailUrl: p.thumbnail_url || cachedMatch?.thumbnailUrl || '',
+              galleryUrls: (p.gallery_urls && p.gallery_urls.length > 0) ? p.gallery_urls : (cachedMatch?.galleryUrls || []),
+              videoUrl: p.video_url || cachedMatch?.videoUrl || '',
+              attachments: (p.attachments && p.attachments.length > 0) ? p.attachments : (cachedMatch?.attachments || []),
+              tags: (p.tags && p.tags.length > 0) ? p.tags : (cachedMatch?.tags || []),
+              isFeatured: p.is_featured ?? (cachedMatch?.isFeatured ?? false),
+              isPublished: p.is_published ?? (cachedMatch?.isPublished ?? true),
+              orderIndex: p.order_index ?? (cachedMatch?.orderIndex ?? (idx + 1)),
               createdAt: cachedMatch?.createdAt || (p.created_at ? p.created_at.split('T')[0] : new Date().toISOString().split('T')[0])
             };
           });
 
           cachedProjects.forEach(cached => {
-            if (!list.some(x => x.id === cached.id || x.slug === cached.slug)) {
+            if (!isValidUUID(cached.id) && !list.some(x => x.slug === cached.slug || x.titleVi === cached.titleVi)) {
               list.push(cached);
             }
           });
 
+          list.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
           localStorage.setItem('db_projects', JSON.stringify(list));
           return list;
         }
@@ -1824,24 +1831,30 @@ export const DB = {
       'Khác': 'Other'
     };
 
-    return list.map((p) => {
-      const catEn = p.categoryEn && p.categoryEn.trim()
-        ? p.categoryEn
-        : (categoryMap[p.categoryName] || p.categoryName);
-
-      const gradeEn = p.gradeEn && p.gradeEn.trim()
-        ? p.gradeEn
-        : p.grade
-            .replace(/\(([0-9]+)\s*-\s*([0-9]+)\s*tuổi\)/gi, '(Ages $1-$2)')
-            .replace(/([0-9]+)\s*tuổi/gi, '$1 years old')
-            .replace(/tuổi/gi, 'years old');
-
-      return {
-        ...p,
-        categoryEn: catEn,
-        gradeEn: gradeEn
-      };
+    list.forEach((item, idx) => {
+      if (item.orderIndex === undefined) item.orderIndex = idx + 1;
     });
+
+    return list
+      .map((p) => {
+        const catEn = p.categoryEn && p.categoryEn.trim()
+          ? p.categoryEn
+          : (categoryMap[p.categoryName] || p.categoryName);
+
+        const gradeEn = p.gradeEn && p.gradeEn.trim()
+          ? p.gradeEn
+          : p.grade
+              .replace(/\(([0-9]+)\s*-\s*([0-9]+)\s*tuổi\)/gi, '(Ages $1-$2)')
+              .replace(/([0-9]+)\s*tuổi/gi, '$1 years old')
+              .replace(/tuổi/gi, 'years old');
+
+        return {
+          ...p,
+          categoryEn: catEn,
+          gradeEn: gradeEn
+        };
+      })
+      .sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
   },
 
   async getProjectBySlug(slug: string): Promise<Project | null> {
@@ -1852,15 +1865,55 @@ export const DB = {
   async saveProject(proj: Project): Promise<Project[]> {
     const list = getStorageItem('db_projects', INITIAL_PROJECTS);
     const index = list.findIndex(x => x.id === proj.id);
+    let itemToSave: Project;
+
     if (index >= 0) {
       list[index] = { ...proj };
+      itemToSave = list[index];
     } else {
-      const newId = 'proj_' + Date.now();
-      const slug = proj.slug || proj.titleEn.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now();
-      list.unshift({ ...proj, id: newId, slug, createdAt: new Date().toISOString().split('T')[0] });
+      const newId = isValidUUID(proj.id) ? proj.id : generateUUID();
+      const slug = proj.slug || (proj.titleEn || proj.titleVi || 'project').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now();
+      itemToSave = { ...proj, id: newId, slug, orderIndex: proj.orderIndex ?? (list.length + 1), createdAt: new Date().toISOString().split('T')[0] };
+      list.push(itemToSave);
     }
     setStorageItem('db_projects', list);
-    return list;
+
+    if (isSupabaseConfigured && supabase) {
+      const row = {
+        id: itemToSave.id,
+        slug: itemToSave.slug,
+        title_en: itemToSave.titleEn || '',
+        title_vi: itemToSave.titleVi || '',
+        category_name: itemToSave.categoryName || '',
+        grade: itemToSave.grade || '',
+        year: itemToSave.year || '',
+        description_en: itemToSave.descriptionEn || '',
+        description_vi: itemToSave.descriptionVi || '',
+        objectives_en: itemToSave.objectivesEn || [],
+        objectives_vi: itemToSave.objectivesVi || [],
+        activities_en: itemToSave.activitiesEn || [],
+        activities_vi: itemToSave.activitiesVi || [],
+        methods_en: itemToSave.methodsEn || [],
+        methods_vi: itemToSave.methodsVi || [],
+        outcomes_en: itemToSave.outcomesEn || [],
+        outcomes_vi: itemToSave.outcomesVi || [],
+        thumbnail_url: itemToSave.thumbnailUrl || '',
+        gallery_urls: itemToSave.galleryUrls || [],
+        video_url: itemToSave.videoUrl || '',
+        attachments: itemToSave.attachments || [],
+        tags: itemToSave.tags || [],
+        is_featured: itemToSave.isFeatured,
+        is_published: itemToSave.isPublished,
+        order_index: itemToSave.orderIndex ?? list.length
+      };
+      const { error } = await supabase.from('projects').upsert(row);
+      if (error && (error.message?.includes('order_index') || error.code === 'PGRST204')) {
+        const { order_index, ...cleanRow } = row;
+        await supabase.from('projects').upsert(cleanRow);
+      }
+    }
+
+    return this.getProjects();
   },
 
   async deleteProject(id: string): Promise<Project[]> {
@@ -1878,24 +1931,123 @@ export const DB = {
         await supabase.from('projects').delete().eq('slug', id);
       }
     }
-    return list;
+    return this.getProjects();
   },
 
   async duplicateProject(id: string): Promise<Project[]> {
-    const list = getStorageItem('db_projects', INITIAL_PROJECTS);
+    const list = await this.getProjects();
     const target = list.find(x => x.id === id);
     if (target) {
+      const newUuid = generateUUID();
       const dup: Project = {
         ...target,
-        id: 'proj_' + Date.now(),
+        id: newUuid,
         slug: target.slug + '-copy-' + Date.now(),
         titleEn: target.titleEn + ' (Copy)',
         titleVi: target.titleVi + ' (Bản sao)',
+        orderIndex: list.length + 1,
         isPublished: false
       };
-      list.unshift(dup);
+      list.push(dup);
       setStorageItem('db_projects', list);
+
+      if (isSupabaseConfigured && supabase) {
+        const row = {
+          id: newUuid,
+          slug: dup.slug,
+          title_en: dup.titleEn || '',
+          title_vi: dup.titleVi || '',
+          category_name: dup.categoryName || '',
+          grade: dup.grade || '',
+          year: dup.year || '',
+          description_en: dup.descriptionEn || '',
+          description_vi: dup.descriptionVi || '',
+          objectives_en: dup.objectivesEn || [],
+          objectives_vi: dup.objectivesVi || [],
+          activities_en: dup.activitiesEn || [],
+          activities_vi: dup.activitiesVi || [],
+          methods_en: dup.methodsEn || [],
+          methods_vi: dup.methodsVi || [],
+          outcomes_en: dup.outcomesEn || [],
+          outcomes_vi: dup.outcomesVi || [],
+          thumbnail_url: dup.thumbnailUrl || '',
+          gallery_urls: dup.galleryUrls || [],
+          video_url: dup.videoUrl || '',
+          attachments: dup.attachments || [],
+          tags: dup.tags || [],
+          is_featured: dup.isFeatured,
+          is_published: dup.isPublished,
+          order_index: dup.orderIndex
+        };
+        const { error } = await supabase.from('projects').upsert(row);
+        if (error && (error.message?.includes('order_index') || error.code === 'PGRST204')) {
+          const { order_index, ...cleanRow } = row;
+          await supabase.from('projects').upsert(cleanRow);
+        }
+      }
     }
+    return this.getProjects();
+  },
+
+  async reorderProjects(id: string, direction: 'up' | 'down'): Promise<Project[]> {
+    const list = await this.getProjects();
+    const index = list.findIndex(x => x.id === id);
+    if (index < 0) return list;
+
+    if (direction === 'up' && index > 0) {
+      const temp = list[index];
+      list[index] = list[index - 1];
+      list[index - 1] = temp;
+    } else if (direction === 'down' && index < list.length - 1) {
+      const temp = list[index];
+      list[index] = list[index + 1];
+      list[index + 1] = temp;
+    }
+
+    list.forEach((item, idx) => {
+      item.orderIndex = idx + 1;
+      if (!isValidUUID(item.id)) {
+        item.id = generateUUID();
+      }
+    });
+
+    setStorageItem('db_projects', list);
+
+    if (isSupabaseConfigured && supabase) {
+      const rows = list.map((p) => ({
+        id: p.id,
+        slug: p.slug,
+        title_en: p.titleEn || '',
+        title_vi: p.titleVi || '',
+        category_name: p.categoryName || '',
+        grade: p.grade || '',
+        year: p.year || '',
+        description_en: p.descriptionEn || '',
+        description_vi: p.descriptionVi || '',
+        objectives_en: p.objectivesEn || [],
+        objectives_vi: p.objectivesVi || [],
+        activities_en: p.activitiesEn || [],
+        activities_vi: p.activitiesVi || [],
+        methods_en: p.methodsEn || [],
+        methods_vi: p.methodsVi || [],
+        outcomes_en: p.outcomesEn || [],
+        outcomes_vi: p.outcomesVi || [],
+        thumbnail_url: p.thumbnailUrl || '',
+        gallery_urls: p.galleryUrls || [],
+        video_url: p.videoUrl || '',
+        attachments: p.attachments || [],
+        tags: p.tags || [],
+        is_featured: p.isFeatured,
+        is_published: p.isPublished,
+        order_index: p.orderIndex
+      }));
+      const { error } = await supabase.from('projects').upsert(rows);
+      if (error && (error.message?.includes('order_index') || error.code === 'PGRST204')) {
+        const cleanRows = rows.map(({ order_index, ...rest }) => rest);
+        await supabase.from('projects').upsert(cleanRows);
+      }
+    }
+
     return list;
   },
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { DB } from '../../services/db';
 import type { Project } from '../../types';
-import { Plus, Edit2, Trash2, Copy, Star } from 'lucide-react';
+import { Plus, Edit2, Trash2, Copy, Star, ArrowUp, ArrowDown } from 'lucide-react';
 import { Modal } from '../../components/common/Modal';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import { Toast } from '../../components/common/Toast';
@@ -23,6 +23,15 @@ export const AdminProjectsPage: React.FC = () => {
 
   const loadData = () => {
     DB.getProjects().then(setProjects);
+  };
+
+  const handleReorder = async (id: string, direction: 'up' | 'down') => {
+    const updated = await DB.reorderProjects(id, direction);
+    setProjects(updated);
+    setToast({
+      msg: language === 'vi' ? 'Đã cập nhật thứ tự ưu tiên hiển thị!' : 'Display order updated!',
+      type: 'success'
+    });
   };
 
   const handleOpenAdd = () => {
@@ -144,6 +153,7 @@ export const AdminProjectsPage: React.FC = () => {
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 dark:bg-slate-950 text-slate-500 border-b border-slate-200 dark:border-slate-800 uppercase font-semibold">
               <tr>
+                <th className="p-4">{language === 'vi' ? 'STT & Thứ tự' : 'No. & Order'}</th>
                 <th className="p-4">{language === 'vi' ? 'Ảnh' : 'Image'}</th>
                 <th className="p-4">{language === 'vi' ? 'Tên dự án' : 'Project Title'}</th>
                 <th className="p-4">{language === 'vi' ? 'Chuyên mục' : 'Category'}</th>
@@ -153,8 +163,31 @@ export const AdminProjectsPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-              {projects.map((item) => (
+              {projects.map((item, idx) => (
                 <tr key={item.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
+                  <td className="p-4 font-bold text-slate-400">
+                    <div className="flex items-center gap-2">
+                      <span>{idx + 1}</span>
+                      <div className="flex flex-col">
+                        <button
+                          onClick={() => handleReorder(item.id, 'up')}
+                          disabled={idx === 0}
+                          className="text-slate-400 hover:text-sky-500 disabled:opacity-30 cursor-pointer"
+                          title={language === 'vi' ? 'Di chuyển lên' : 'Move up'}
+                        >
+                          <ArrowUp className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleReorder(item.id, 'down')}
+                          disabled={idx === projects.length - 1}
+                          className="text-slate-400 hover:text-sky-500 disabled:opacity-30 cursor-pointer"
+                          title={language === 'vi' ? 'Di chuyển xuống' : 'Move down'}
+                        >
+                          <ArrowDown className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </td>
                   <td className="p-4">
                     <img src={item.thumbnailUrl} alt="" className="w-14 h-10 rounded-lg object-cover" />
                   </td>

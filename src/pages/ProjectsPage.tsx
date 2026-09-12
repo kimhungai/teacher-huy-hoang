@@ -33,7 +33,7 @@ export const ProjectsPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedGrade, setSelectedGrade] = useState('all');
   const [selectedYear, setSelectedYear] = useState('all');
-  const [sortBy, setSortBy] = useState<'newest' | 'oldest'>('newest');
+  const [sortBy, setSortBy] = useState<'default' | 'newest' | 'oldest'>('default');
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -99,6 +99,7 @@ export const ProjectsPage: React.FC = () => {
         return matchesSearch && matchesCat && matchesGrade && matchesYear;
       })
       .sort((a, b) => {
+        if (sortBy === 'default') return (a.orderIndex || 0) - (b.orderIndex || 0);
         if (sortBy === 'newest') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       });
@@ -239,9 +240,10 @@ export const ProjectsPage: React.FC = () => {
             <div className="md:col-span-2">
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as 'newest' | 'oldest')}
+                onChange={(e) => setSortBy(e.target.value as 'default' | 'newest' | 'oldest')}
                 className="w-full px-3 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none"
               >
+                <option value="default">{language === 'vi' ? 'Thứ tự ưu tiên' : 'Priority Order'}</option>
                 <option value="newest">{language === 'vi' ? 'Mới nhất' : 'Newest'}</option>
                 <option value="oldest">{language === 'vi' ? 'Cũ nhất' : 'Oldest'}</option>
               </select>
