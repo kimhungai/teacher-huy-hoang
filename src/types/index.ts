@@ -117,6 +117,7 @@ export interface Course {
   registrationFormUrl?: string;
   isFeatured: boolean;
   isPublished: boolean;
+  orderIndex?: number;
   createdAt: string;
 }
 

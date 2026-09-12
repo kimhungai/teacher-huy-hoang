@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { DB } from '../../services/db';
 import type { Course } from '../../types';
-import { Plus, Edit2, Trash2, Copy, Gift, CreditCard, Film, Image as ImageIcon, FileSpreadsheet } from 'lucide-react';
+import { Plus, Edit2, Trash2, Copy, Gift, CreditCard, Film, Image as ImageIcon, FileSpreadsheet, ArrowUp, ArrowDown } from 'lucide-react';
 import { Modal } from '../../components/common/Modal';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import { Toast } from '../../components/common/Toast';
 import { Badge } from '../../components/common/Badge';
+import { useLanguage } from '../../context/LanguageContext';
 
 export const AdminCoursesPage: React.FC = () => {
+  const { language } = useLanguage();
   const [courses, setCourses] = useState<Course[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Partial<Course> | null>(null);
@@ -61,6 +63,12 @@ export const AdminCoursesPage: React.FC = () => {
     const updated = await DB.duplicateCourse(id);
     setCourses(updated);
     setToastMessage('Đã nhân bản khóa học thành công.');
+  };
+
+  const handleReorder = async (id: string, direction: 'up' | 'down') => {
+    const updated = await DB.reorderCourses(id, direction);
+    setCourses(updated);
+    setToastMessage(language === 'vi' ? 'Đã cập nhật thứ tự khóa học.' : 'Course order updated.');
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -218,6 +226,7 @@ export const AdminCoursesPage: React.FC = () => {
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 uppercase font-semibold">
               <tr>
+                <th className="px-4 py-3 text-center w-28">{language === 'vi' ? 'STT & Thứ tự' : 'No. & Order'}</th>
                 <th className="px-4 py-3">Khóa Học</th>
                 <th className="px-4 py-3">Mức Giá / Khóa Học</th>
                 <th className="px-4 py-3 text-amber-600 dark:text-amber-400">Mức Giá KM / Khóa Học</th>
@@ -227,8 +236,31 @@ export const AdminCoursesPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-              {courses.map((c) => (
+              {courses.map((c, index) => (
                 <tr key={c.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+                  <td className="px-4 py-3 text-center font-medium">
+                    <div className="flex items-center justify-center space-x-1">
+                      <span className="w-6 text-xs font-bold text-gray-500">{index + 1}</span>
+                      <div className="flex flex-col space-y-0.5">
+                        <button
+                          onClick={() => handleReorder(c.id, 'up')}
+                          disabled={index === 0}
+                          title={language === 'vi' ? "Di chuyển lên" : "Move Up"}
+                          className="p-1 rounded hover:bg-gray-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent text-gray-600 dark:text-gray-400 transition"
+                        >
+                          <ArrowUp className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleReorder(c.id, 'down')}
+                          disabled={index === courses.length - 1}
+                          title={language === 'vi' ? "Di chuyển xuống" : "Move Down"}
+                          className="p-1 rounded hover:bg-gray-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent text-gray-600 dark:text-gray-400 transition"
+                        >
+                          <ArrowDown className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <img src={c.thumbnailUrl} alt="" className="w-12 h-10 object-cover rounded-lg" />

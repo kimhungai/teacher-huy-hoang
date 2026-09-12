@@ -2069,7 +2069,7 @@ export const DB = {
             } catch { return []; }
           })();
 
-          const list: Course[] = data.map((c) => {
+          const list: Course[] = data.map((c, idx) => {
             const cachedMatch = cachedCourses.find(x => x.id === c.id || x.slug === c.slug);
 
             const priceType = cachedMatch?.priceType || (c.price_type || 'free');
@@ -2110,6 +2110,7 @@ export const DB = {
               registrationFormUrl: cachedMatch?.registrationFormUrl || c.registration_form_url || '',
               isFeatured: cachedMatch?.isFeatured ?? (c.is_featured !== false),
               isPublished: cachedMatch?.isPublished ?? (c.is_published !== false),
+              orderIndex: c.order_index ?? (cachedMatch?.orderIndex ?? (idx + 1)),
               createdAt: cachedMatch?.createdAt || (c.created_at ? c.created_at.split('T')[0] : new Date().toISOString().split('T')[0])
             };
           });
@@ -2120,6 +2121,11 @@ export const DB = {
               list.push(cached);
             }
           });
+
+          list.forEach((item, i) => {
+            if (item.orderIndex === undefined) item.orderIndex = i + 1;
+          });
+          list.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
 
           localStorage.setItem('db_courses', JSON.stringify(list));
           return list;
@@ -2137,7 +2143,7 @@ export const DB = {
       'Khác': 'Other'
     };
 
-    return list.map((c) => {
+    const formattedList = list.map((c, i) => {
       const catEn = c.categoryEn && c.categoryEn.trim()
         ? c.categoryEn
         : (categoryMap[c.categoryName] || c.categoryName);
@@ -2155,9 +2161,12 @@ export const DB = {
         ...c,
         categoryEn: catEn,
         gradeLevelEn: gradeEn,
-        priceEn: priceEn
+        priceEn: priceEn,
+        orderIndex: c.orderIndex ?? (i + 1)
       };
     });
+
+    return formattedList.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
   },
 
   async getCourseBySlug(slug: string): Promise<Course | null> {
@@ -2168,15 +2177,62 @@ export const DB = {
   async saveCourse(course: Course): Promise<Course[]> {
     const list = getStorageItem('db_courses', INITIAL_COURSES);
     const index = list.findIndex(x => x.id === course.id);
+    const newUuid = isValidUUID(course.id) ? course.id : generateUUID();
+    const itemToSave: Course = {
+      ...course,
+      id: newUuid,
+      slug: course.slug || course.titleVi.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now(),
+      orderIndex: course.orderIndex ?? (index >= 0 ? (list[index].orderIndex ?? (index + 1)) : list.length + 1)
+    };
+
     if (index >= 0) {
-      list[index] = { ...course };
+      list[index] = itemToSave;
     } else {
-      const newId = 'c_' + Date.now();
-      const slug = course.slug || course.titleVi.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now();
-      list.unshift({ ...course, id: newId, slug, createdAt: new Date().toISOString().split('T')[0] });
+      list.push(itemToSave);
     }
     setStorageItem('db_courses', list);
-    return list;
+
+    if (isSupabaseConfigured && supabase) {
+      const row = {
+        id: itemToSave.id,
+        slug: itemToSave.slug,
+        title_en: itemToSave.titleEn || '',
+        title_vi: itemToSave.titleVi || '',
+        category_name: itemToSave.categoryName || '',
+        category_en: itemToSave.categoryEn || itemToSave.categoryName || '',
+        price_type: itemToSave.priceType || 'free',
+        price_en: itemToSave.priceEn || '',
+        price_vi: itemToSave.priceVi || '',
+        discount_price_en: itemToSave.discountPriceEn || '',
+        discount_price_vi: itemToSave.discountPriceVi || '',
+        grade_level: itemToSave.gradeLevel || '',
+        grade_level_en: itemToSave.gradeLevelEn || itemToSave.gradeLevel || '',
+        duration_en: itemToSave.durationEn || '',
+        duration_vi: itemToSave.durationVi || '',
+        schedule_en: itemToSave.scheduleEn || '',
+        schedule_vi: itemToSave.scheduleVi || '',
+        description_en: itemToSave.descriptionEn || '',
+        description_vi: itemToSave.descriptionVi || '',
+        objectives_en: itemToSave.objectivesEn || [],
+        objectives_vi: itemToSave.objectivesVi || [],
+        curriculum_en: itemToSave.curriculumEn || [],
+        curriculum_vi: itemToSave.curriculumVi || [],
+        thumbnail_url: itemToSave.thumbnailUrl || '',
+        gallery_urls: itemToSave.galleryUrls || [],
+        video_url: itemToSave.videoUrl || '',
+        registration_form_url: itemToSave.registrationFormUrl || '',
+        is_featured: itemToSave.isFeatured !== false,
+        is_published: itemToSave.isPublished !== false,
+        order_index: itemToSave.orderIndex ?? list.length
+      };
+      const { error } = await supabase.from('courses').upsert(row);
+      if (error && (error.message?.includes('order_index') || error.code === 'PGRST204')) {
+        const { order_index, ...cleanRow } = row;
+        await supabase.from('courses').upsert(cleanRow);
+      }
+    }
+
+    return this.getCourses();
   },
 
   async deleteCourse(id: string): Promise<Course[]> {
@@ -2194,24 +2250,133 @@ export const DB = {
         await supabase.from('courses').delete().eq('slug', id);
       }
     }
-    return list;
+    return this.getCourses();
   },
 
   async duplicateCourse(id: string): Promise<Course[]> {
-    const list = getStorageItem('db_courses', INITIAL_COURSES);
+    const list = await this.getCourses();
     const target = list.find(x => x.id === id);
     if (target) {
+      const newUuid = generateUUID();
       const dup: Course = {
         ...target,
-        id: 'c_' + Date.now(),
+        id: newUuid,
         slug: target.slug + '-copy-' + Date.now(),
         titleEn: target.titleEn + ' (Copy)',
         titleVi: target.titleVi + ' (Bản sao)',
+        orderIndex: list.length + 1,
         isPublished: false
       };
-      list.unshift(dup);
+      list.push(dup);
       setStorageItem('db_courses', list);
+
+      if (isSupabaseConfigured && supabase) {
+        const row = {
+          id: newUuid,
+          slug: dup.slug,
+          title_en: dup.titleEn || '',
+          title_vi: dup.titleVi || '',
+          category_name: dup.categoryName || '',
+          category_en: dup.categoryEn || dup.categoryName || '',
+          price_type: dup.priceType || 'free',
+          price_en: dup.priceEn || '',
+          price_vi: dup.priceVi || '',
+          discount_price_en: dup.discountPriceEn || '',
+          discount_price_vi: dup.discountPriceVi || '',
+          grade_level: dup.gradeLevel || '',
+          grade_level_en: dup.gradeLevelEn || dup.gradeLevel || '',
+          duration_en: dup.durationEn || '',
+          duration_vi: dup.durationVi || '',
+          schedule_en: dup.scheduleEn || '',
+          schedule_vi: dup.scheduleVi || '',
+          description_en: dup.descriptionEn || '',
+          description_vi: dup.descriptionVi || '',
+          objectives_en: dup.objectivesEn || [],
+          objectives_vi: dup.objectivesVi || [],
+          curriculum_en: dup.curriculumEn || [],
+          curriculum_vi: dup.curriculumVi || [],
+          thumbnail_url: dup.thumbnailUrl || '',
+          gallery_urls: dup.galleryUrls || [],
+          video_url: dup.videoUrl || '',
+          registration_form_url: dup.registrationFormUrl || '',
+          is_featured: dup.isFeatured !== false,
+          is_published: dup.isPublished !== false,
+          order_index: dup.orderIndex
+        };
+        const { error } = await supabase.from('courses').upsert(row);
+        if (error && (error.message?.includes('order_index') || error.code === 'PGRST204')) {
+          const { order_index, ...cleanRow } = row;
+          await supabase.from('courses').upsert(cleanRow);
+        }
+      }
     }
+    return this.getCourses();
+  },
+
+  async reorderCourses(id: string, direction: 'up' | 'down'): Promise<Course[]> {
+    const list = await this.getCourses();
+    const index = list.findIndex(x => x.id === id);
+    if (index < 0) return list;
+
+    if (direction === 'up' && index > 0) {
+      const temp = list[index];
+      list[index] = list[index - 1];
+      list[index - 1] = temp;
+    } else if (direction === 'down' && index < list.length - 1) {
+      const temp = list[index];
+      list[index] = list[index + 1];
+      list[index + 1] = temp;
+    }
+
+    list.forEach((item, idx) => {
+      item.orderIndex = idx + 1;
+      if (!isValidUUID(item.id)) {
+        item.id = generateUUID();
+      }
+    });
+
+    setStorageItem('db_courses', list);
+
+    if (isSupabaseConfigured && supabase) {
+      const rows = list.map((c) => ({
+        id: c.id,
+        slug: c.slug,
+        title_en: c.titleEn || '',
+        title_vi: c.titleVi || '',
+        category_name: c.categoryName || '',
+        category_en: c.categoryEn || c.categoryName || '',
+        price_type: c.priceType || 'free',
+        price_en: c.priceEn || '',
+        price_vi: c.priceVi || '',
+        discount_price_en: c.discountPriceEn || '',
+        discount_price_vi: c.discountPriceVi || '',
+        grade_level: c.gradeLevel || '',
+        grade_level_en: c.gradeLevelEn || c.gradeLevel || '',
+        duration_en: c.durationEn || '',
+        duration_vi: c.durationVi || '',
+        schedule_en: c.scheduleEn || '',
+        schedule_vi: c.scheduleVi || '',
+        description_en: c.descriptionEn || '',
+        description_vi: c.descriptionVi || '',
+        objectives_en: c.objectivesEn || [],
+        objectives_vi: c.objectivesVi || [],
+        curriculum_en: c.curriculumEn || [],
+        curriculum_vi: c.curriculumVi || [],
+        thumbnail_url: c.thumbnailUrl || '',
+        gallery_urls: c.galleryUrls || [],
+        video_url: c.videoUrl || '',
+        registration_form_url: c.registrationFormUrl || '',
+        is_featured: c.isFeatured !== false,
+        is_published: c.isPublished !== false,
+        order_index: c.orderIndex
+      }));
+      const { error } = await supabase.from('courses').upsert(rows);
+      if (error && (error.message?.includes('order_index') || error.code === 'PGRST204')) {
+        const cleanRows = rows.map(({ order_index, ...rest }) => rest);
+        await supabase.from('courses').upsert(cleanRows);
+      }
+    }
+
     return list;
   },
 
