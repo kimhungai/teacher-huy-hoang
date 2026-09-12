@@ -191,9 +191,6 @@ export async function sendRegistrationEmails(
   const logoText = settings.logoText || 'Huy Hoang English';
   const adminEmailTarget = (settings.contactEmail || profile.adminEmail || 'huynhkimhung2023@gmail.com').trim();
   const hotline = settings.contactPhone || '0987.654.321';
-  const schoolLocation = lang === 'vi'
-    ? `${profile.schoolVi || 'Trường TH Dương Minh Châu'}, ${profile.locationVi || 'Quận 10, TP.HCM'}`
-    : `${profile.schoolEn || profile.schoolVi || 'Duong Minh Chau Primary School'}, ${profile.locationEn || profile.locationVi || 'District 10, Ho Chi Minh City'}`;
 
   const hasDiscount = Boolean(reg.discountPrice && reg.discountPrice.trim() !== '');
   const effectivePrice = hasDiscount ? reg.discountPrice : (reg.coursePrice || (lang === 'vi' ? 'Miễn phí' : 'Free'));
@@ -229,7 +226,7 @@ Giáo viên sẽ liên hệ trực tiếp tới Quý Phụ huynh qua Số điệ
 Mọi thắc mắc cần hỗ trợ gấp, Quý Phụ huynh vui lòng liên hệ:
 - Hotline / Zalo tư vấn: ${hotline}
 - Email liên hệ: ${adminEmailTarget}
-${websiteUrl ? `- Website chính thức: ${websiteUrl}\n` : ''}- Địa chỉ: ${schoolLocation}
+${websiteUrl ? `- Website chính thức: ${websiteUrl}` : ''}
 
 Kính chúc em học sinh luôn hào hứng và gặt hái nhiều kết quả tốt đẹp cùng Tiếng Anh!
 
@@ -262,7 +259,7 @@ Teacher ${teacherName} will contact you directly via Phone Number ${reg.phone} a
 For urgent assistance, please contact:
 - Hotline / Zalo: ${hotline}
 - Contact Email: ${adminEmailTarget}
-${websiteUrl ? `- Official Website: ${websiteUrl}\n` : ''}- Address: ${schoolLocation}
+${websiteUrl ? `- Official Website: ${websiteUrl}` : ''}
 
 Wishing the student an inspiring learning journey with English!
 
@@ -294,7 +291,7 @@ ${reg.note ? `• Ghi chú của khách hàng: ${reg.note}` : ''}
 --------------------------------------------------
 
 ⚙️ THAO TÁC CẦN THỰC HIỆN:
-Vui lòng truy cập trang Quản lý Đăng ký Khóa học tại CMS (http://localhost:5173/admin/course-registrations) để cập nhật trạng thái tư vấn và nhập học cho học viên này.
+Vui lòng truy cập trang Quản lý Đăng ký Khóa học tại CMS để cập nhật trạng thái tư vấn và nhập học cho học viên này.
   `.trim() : `
 🔔 SYSTEM NOTIFICATION: NEW COURSE REGISTRATION
 
@@ -317,7 +314,7 @@ ${reg.note ? `• Customer Notes: ${reg.note}` : ''}
 --------------------------------------------------
 
 ⚙️ REQUIRED ACTION:
-Please access the Course Registrations management page in CMS (http://localhost:5173/admin/course-registrations) to update student status.
+Please access the Course Registrations management page in CMS to update student status.
   `.trim();
 
   const studentEmail: EmailNotification = {
@@ -369,9 +366,6 @@ export async function sendResourceOrderEmails(
   const logoText = settings.logoText || 'Huy Hoang English';
   const adminEmailTarget = (settings.contactEmail || profile.adminEmail || 'huynhkimhung2023@gmail.com').trim();
   const hotline = settings.contactPhone || '0987.654.321';
-  const schoolLocation = lang === 'vi'
-    ? `${profile.schoolVi || 'Trường TH Dương Minh Châu'}, ${profile.locationVi || 'Quận 10, TP.HCM'}`
-    : `${profile.schoolEn || profile.schoolVi || 'Duong Minh Chau Primary School'}, ${profile.locationEn || profile.locationVi || 'District 10, Ho Chi Minh City'}`;
 
   const hasDiscount = Boolean(ord.discountPrice && ord.discountPrice.trim() !== '');
   const effectivePrice = hasDiscount ? ord.discountPrice : (ord.resourcePrice || (lang === 'vi' ? 'Miễn phí' : 'Free'));
@@ -407,7 +401,7 @@ Giáo viên sẽ kiểm tra và liên hệ trực tiếp tới Quý Phụ huynh 
 Mọi thắc mắc cần hỗ trợ gấp, Quý Phụ huynh vui lòng liên hệ:
 - Hotline / Zalo hỗ trợ: ${hotline}
 - Email liên hệ: ${adminEmailTarget}
-${websiteUrl ? `- Website chính thức: ${websiteUrl}\n` : ''}- Địa chỉ: ${schoolLocation}
+${websiteUrl ? `- Website chính thức: ${websiteUrl}` : ''}
 
 Trân trọng,
 ${teacherName}
@@ -438,7 +432,7 @@ Teacher ${teacherName} will contact you directly via Phone Number ${ord.phone} a
 For urgent assistance, please contact:
 - Hotline / Zalo: ${hotline}
 - Contact Email: ${adminEmailTarget}
-${websiteUrl ? `- Official Website: ${websiteUrl}\n` : ''}- Address: ${schoolLocation}
+${websiteUrl ? `- Official Website: ${websiteUrl}` : ''}
 
 Best regards,
 ${teacherName}
@@ -468,7 +462,7 @@ ${ord.note ? `• Ghi chú của khách hàng: ${ord.note}` : ''}
 --------------------------------------------------
 
 ⚙️ THAO TÁC CẦN THỰC HIỆN:
-Vui lòng truy cập trang Quản lý Đăng ký Học liệu tại CMS (http://localhost:5173/admin/resource-orders) để cập nhật trạng thái xử lý và giao hàng cho khách hàng này.
+Vui lòng truy cập trang Quản lý Đăng ký Học liệu tại CMS để cập nhật trạng thái xử lý và giao hàng cho khách hàng này.
   `.trim() : `
 🔔 SYSTEM NOTIFICATION: NEW RESOURCE ORDER
 
@@ -491,7 +485,7 @@ ${ord.note ? `• Customer Notes: ${ord.note}` : ''}
 --------------------------------------------------
 
 ⚙️ REQUIRED ACTION:
-Please access the Resource Orders management page in CMS (http://localhost:5173/admin/resource-orders) to process and arrange delivery.
+Please access the Resource Orders management page in CMS to process and arrange delivery.
   `.trim();
 
   const customerEmail: EmailNotification = {
