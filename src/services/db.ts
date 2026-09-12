@@ -1572,32 +1572,29 @@ export const DB = {
         if (data && !error && data.length > 0) {
           const cachedApproaches: TeachingApproach[] = (() => {
             try {
-              const ta = localStorage.getItem('db_teaching');
+              const ta = localStorage.getItem('db_teaching') || localStorage.getItem('db_teaching_approaches');
               return ta ? JSON.parse(ta) : [];
             } catch { return []; }
           })();
 
           const list: TeachingApproach[] = data.map((item, idx) => {
-            const cachedMatch = cachedApproaches.find(x => x.id === item.id);
+            const cachedMatch = cachedApproaches.find(x => x.id === item.id || (x.titleVi && x.titleVi === item.title_vi));
             return {
               id: item.id,
-              titleEn: cachedMatch?.titleEn || item.title_en,
-              titleVi: cachedMatch?.titleVi || item.title_vi,
-              descriptionEn: cachedMatch?.descriptionEn || item.description_en,
-              descriptionVi: cachedMatch?.descriptionVi || item.description_vi,
-              icon: cachedMatch?.icon || item.icon || 'Sparkles',
-              imageUrl: cachedMatch?.imageUrl || item.image_url || '',
-              orderIndex: item.order_index ?? (cachedMatch?.orderIndex ?? (idx + 1))
+              titleEn: item.title_en || cachedMatch?.titleEn || item.title_vi || '',
+              titleVi: item.title_vi || cachedMatch?.titleVi || '',
+              descriptionEn: item.description_en || cachedMatch?.descriptionEn || item.description_vi || '',
+              descriptionVi: item.description_vi || cachedMatch?.descriptionVi || '',
+              icon: item.icon || cachedMatch?.icon || 'Sparkles',
+              imageUrl: item.image_url || cachedMatch?.imageUrl || '',
+              orderIndex: item.order_index ?? (idx + 1)
             };
           });
 
-          cachedApproaches.forEach(cached => {
-            if (!list.some(x => x.id === cached.id)) {
-              list.push(cached);
-            }
-          });
+          // Sort strictly by orderIndex ascending
+          list.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
 
-          localStorage.setItem('db_teaching', JSON.stringify(list));
+          setStorageItem('db_teaching', list);
           return list;
         }
       } catch (err) {
@@ -1621,25 +1618,67 @@ export const DB = {
     if (index >= 0) {
       list[index] = item;
     } else {
-      list.push({ ...item, id: 'ta_' + Date.now(), orderIndex: list.length + 1 });
+      const newId = (isSupabaseConfigured && supabase && isValidUUID(item.id)) ? item.id : 'ta_' + Date.now();
+      list.push({ ...item, id: newId, orderIndex: item.orderIndex ?? (list.length + 1) });
     }
     setStorageItem('db_teaching', list);
+
+    if (isSupabaseConfigured && supabase) {
+      const targetItem = index >= 0 ? list[index] : list[list.length - 1];
+      const row = {
+        ...(isValidUUID(targetItem.id) ? { id: targetItem.id } : {}),
+        title_en: targetItem.titleEn || '',
+        title_vi: targetItem.titleVi || '',
+        description_en: targetItem.descriptionEn || '',
+        description_vi: targetItem.descriptionVi || '',
+        icon: targetItem.icon || 'Sparkles',
+        image_url: targetItem.imageUrl || '',
+        order_index: targetItem.orderIndex ?? list.length,
+        updated_at: new Date().toISOString()
+      };
+      const { data, error } = await supabase.from('teaching_approaches').upsert(row).select('*').single();
+      if (data && !error) {
+        targetItem.id = data.id;
+        targetItem.orderIndex = data.order_index ?? targetItem.orderIndex;
+        setStorageItem('db_teaching', list);
+      }
+    }
+
     return this.getTeachingApproaches();
   },
 
   async duplicateTeachingApproach(id: string): Promise<TeachingApproach[]> {
-    const list = getStorageItem('db_teaching', INITIAL_TEACHING_APPROACHES);
+    const list = await this.getTeachingApproaches();
     const target = list.find(x => x.id === id);
     if (target) {
       const copy: TeachingApproach = {
         ...target,
         id: 'ta_' + Date.now(),
         titleVi: target.titleVi + ' (Bản sao)',
-        titleEn: target.titleEn + ' (Copy)',
+        titleEn: (target.titleEn || target.titleVi) + ' (Copy)',
         orderIndex: list.length + 1
       };
       list.push(copy);
       setStorageItem('db_teaching', list);
+
+      if (isSupabaseConfigured && supabase) {
+        const row = {
+          title_en: copy.titleEn || '',
+          title_vi: copy.titleVi || '',
+          description_en: copy.descriptionEn || '',
+          description_vi: copy.descriptionVi || '',
+          icon: copy.icon || 'Sparkles',
+          image_url: copy.imageUrl || '',
+          order_index: copy.orderIndex,
+          updated_at: new Date().toISOString()
+        };
+        const { data, error } = await supabase.from('teaching_approaches').upsert(row).select('*').single();
+        if (data && !error) {
+          copy.id = data.id;
+          copy.orderIndex = data.order_index ?? copy.orderIndex;
+          setStorageItem('db_teaching', list);
+        }
+      }
     }
     return this.getTeachingApproaches();
   },
@@ -1664,6 +1703,32 @@ export const DB = {
     });
 
     setStorageItem('db_teaching', list);
+
+    if (isSupabaseConfigured && supabase) {
+      const rows = list.map((ap, i) => ({
+        ...(isValidUUID(ap.id) ? { id: ap.id } : {}),
+        title_en: ap.titleEn || '',
+        title_vi: ap.titleVi || '',
+        description_en: ap.descriptionEn || '',
+        description_vi: ap.descriptionVi || '',
+        icon: ap.icon || 'Sparkles',
+        image_url: ap.imageUrl || '',
+        order_index: ap.orderIndex ?? (i + 1),
+        updated_at: new Date().toISOString()
+      }));
+      const { data, error } = await supabase.from('teaching_approaches').upsert(rows).select('*');
+      if (data && !error && data.length > 0) {
+        data.forEach(dbRow => {
+          const match = list.find(x => x.id === dbRow.id || (x.titleVi === dbRow.title_vi));
+          if (match) {
+            match.id = dbRow.id;
+            match.orderIndex = dbRow.order_index;
+          }
+        });
+        setStorageItem('db_teaching', list);
+      }
+    }
+
     return list;
   },
 
