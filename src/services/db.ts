@@ -1515,6 +1515,7 @@ export const DB = {
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new Event('profile-updated'));
     }
+    await syncToSupabase('db_profile', profile);
     return profile;
   },
 
@@ -1562,6 +1563,7 @@ export const DB = {
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new Event('profile-updated'));
     }
+    await syncToSupabase('db_hero', hero);
     return hero;
   },
 
@@ -3699,37 +3701,37 @@ export const DB = {
             : null;
 
           const s: SiteSettings = {
-            siteTitleEn: localSettings.siteTitleEn || data.site_title_en || INITIAL_SITE_SETTINGS.siteTitleEn,
-            siteTitleVi: localSettings.siteTitleVi || data.site_title_vi || INITIAL_SITE_SETTINGS.siteTitleVi,
-            logoText: localSettings.logoText || data.logo_text || INITIAL_SITE_SETTINGS.logoText,
-            logoUrl: localSettings.logoUrl || data.logo_url || INITIAL_SITE_SETTINGS.logoUrl,
-            faviconUrl: localSettings.faviconUrl || data.favicon_url || INITIAL_SITE_SETTINGS.faviconUrl,
-            primaryColor: localSettings.primaryColor || data.primary_color || INITIAL_SITE_SETTINGS.primaryColor,
-            secondaryColor: localSettings.secondaryColor || data.secondary_color || INITIAL_SITE_SETTINGS.secondaryColor,
-            contactEmail: localSettings.contactEmail || data.contact_email || INITIAL_SITE_SETTINGS.contactEmail,
-            contactPhone: localSettings.contactPhone || data.contact_phone || INITIAL_SITE_SETTINGS.contactPhone,
-            websiteUrl: localSettings.websiteUrl || data.website_url || INITIAL_SITE_SETTINGS.websiteUrl,
-            notificationEmail: localSettings.notificationEmail || data.notification_email || INITIAL_SITE_SETTINGS.notificationEmail,
-            defaultLanguage: localSettings.defaultLanguage || data.default_language || INITIAL_SITE_SETTINGS.defaultLanguage,
-            defaultTheme: localSettings.defaultTheme || data.default_theme || INITIAL_SITE_SETTINGS.defaultTheme,
-            facebookUrl: localSettings.facebookUrl || data.facebook_url || INITIAL_SITE_SETTINGS.facebookUrl,
-            youtubeUrl: localSettings.youtubeUrl || data.youtube_url || INITIAL_SITE_SETTINGS.youtubeUrl,
-            tiktokUrl: localSettings.tiktokUrl || data.tiktok_url || INITIAL_SITE_SETTINGS.tiktokUrl,
-            instagramUrl: localSettings.instagramUrl || data.instagram_url || INITIAL_SITE_SETTINGS.instagramUrl,
-            linkedinUrl: localSettings.linkedinUrl || data.linkedin_url || INITIAL_SITE_SETTINGS.linkedinUrl,
-            footerTextEn: localSettings.footerTextEn || data.footer_text_en || INITIAL_SITE_SETTINGS.footerTextEn,
-            footerTextVi: localSettings.footerTextVi || data.footer_text_vi || INITIAL_SITE_SETTINGS.footerTextVi,
-            clientAdminAccounts: localAccounts || cloudAccounts || INITIAL_SITE_SETTINGS.clientAdminAccounts,
-            enableEmailNotification: localSettings.enableEmailNotification !== undefined ? localSettings.enableEmailNotification : (data.enable_email_notification !== false),
-            emailProvider: localSettings.emailProvider || data.email_provider || INITIAL_SITE_SETTINGS.emailProvider,
-            emailjsServiceId: localSettings.emailjsServiceId || data.emailjs_service_id || '',
-            emailjsTemplateIdCustomer: localSettings.emailjsTemplateIdCustomer || data.emailjs_template_id_customer || '',
-            emailjsTemplateIdAdmin: localSettings.emailjsTemplateIdAdmin || data.emailjs_template_id_admin || '',
-            emailjsPublicKey: localSettings.emailjsPublicKey || data.emailjs_public_key || '',
-            bankName: localSettings.bankName || data.bank_name || INITIAL_SITE_SETTINGS.bankName,
-            bankAccountNo: localSettings.bankAccountNo || data.bank_account_no || INITIAL_SITE_SETTINGS.bankAccountNo,
-            bankAccountHolder: localSettings.bankAccountHolder || data.bank_account_holder || INITIAL_SITE_SETTINGS.bankAccountHolder,
-            bankCode: localSettings.bankCode || data.bank_code || INITIAL_SITE_SETTINGS.bankCode,
+            siteTitleEn: data.site_title_en || localSettings.siteTitleEn || INITIAL_SITE_SETTINGS.siteTitleEn,
+            siteTitleVi: data.site_title_vi || localSettings.siteTitleVi || INITIAL_SITE_SETTINGS.siteTitleVi,
+            logoText: data.logo_text || localSettings.logoText || INITIAL_SITE_SETTINGS.logoText,
+            logoUrl: data.logo_url || localSettings.logoUrl || INITIAL_SITE_SETTINGS.logoUrl,
+            faviconUrl: data.favicon_url || localSettings.faviconUrl || INITIAL_SITE_SETTINGS.faviconUrl,
+            primaryColor: data.primary_color || localSettings.primaryColor || INITIAL_SITE_SETTINGS.primaryColor,
+            secondaryColor: data.secondary_color || localSettings.secondaryColor || INITIAL_SITE_SETTINGS.secondaryColor,
+            contactEmail: data.contact_email || localSettings.contactEmail || INITIAL_SITE_SETTINGS.contactEmail,
+            contactPhone: data.contact_phone || localSettings.contactPhone || INITIAL_SITE_SETTINGS.contactPhone,
+            websiteUrl: data.website_url || localSettings.websiteUrl || INITIAL_SITE_SETTINGS.websiteUrl,
+            notificationEmail: data.notification_email || localSettings.notificationEmail || INITIAL_SITE_SETTINGS.notificationEmail,
+            defaultLanguage: data.default_language || localSettings.defaultLanguage || INITIAL_SITE_SETTINGS.defaultLanguage,
+            defaultTheme: data.default_theme || localSettings.defaultTheme || INITIAL_SITE_SETTINGS.defaultTheme,
+            facebookUrl: data.facebook_url || localSettings.facebookUrl || INITIAL_SITE_SETTINGS.facebookUrl,
+            youtubeUrl: data.youtube_url || localSettings.youtubeUrl || INITIAL_SITE_SETTINGS.youtubeUrl,
+            tiktokUrl: data.tiktok_url || localSettings.tiktokUrl || INITIAL_SITE_SETTINGS.tiktokUrl,
+            instagramUrl: data.instagram_url || localSettings.instagramUrl || INITIAL_SITE_SETTINGS.instagramUrl,
+            linkedinUrl: data.linkedin_url || localSettings.linkedinUrl || INITIAL_SITE_SETTINGS.linkedinUrl,
+            footerTextEn: data.footer_text_en || localSettings.footerTextEn || INITIAL_SITE_SETTINGS.footerTextEn,
+            footerTextVi: data.footer_text_vi || localSettings.footerTextVi || INITIAL_SITE_SETTINGS.footerTextVi,
+            clientAdminAccounts: cloudAccounts || localAccounts || INITIAL_SITE_SETTINGS.clientAdminAccounts,
+            enableEmailNotification: data.enable_email_notification !== undefined ? (data.enable_email_notification !== false) : (localSettings.enableEmailNotification !== undefined ? localSettings.enableEmailNotification : true),
+            emailProvider: data.email_provider || localSettings.emailProvider || INITIAL_SITE_SETTINGS.emailProvider,
+            emailjsServiceId: data.emailjs_service_id || localSettings.emailjsServiceId || '',
+            emailjsTemplateIdCustomer: data.emailjs_template_id_customer || localSettings.emailjsTemplateIdCustomer || '',
+            emailjsTemplateIdAdmin: data.emailjs_template_id_admin || localSettings.emailjsTemplateIdAdmin || '',
+            emailjsPublicKey: data.emailjs_public_key || localSettings.emailjsPublicKey || '',
+            bankName: data.bank_name || localSettings.bankName || INITIAL_SITE_SETTINGS.bankName,
+            bankAccountNo: data.bank_account_no || localSettings.bankAccountNo || INITIAL_SITE_SETTINGS.bankAccountNo,
+            bankAccountHolder: data.bank_account_holder || localSettings.bankAccountHolder || INITIAL_SITE_SETTINGS.bankAccountHolder,
+            bankCode: data.bank_code || localSettings.bankCode || INITIAL_SITE_SETTINGS.bankCode,
             adminPassword: localSettings.adminPassword || INITIAL_SITE_SETTINGS.adminPassword,
             superAdminPassword: localSettings.superAdminPassword || INITIAL_SITE_SETTINGS.superAdminPassword
           };
@@ -3751,7 +3753,7 @@ export const DB = {
       window.dispatchEvent(new Event('site-settings-updated'));
     }
     syncToDisk();
-    syncToSupabase('db_settings', settings);
+    await syncToSupabase('db_settings', settings);
     return settings;
   },
 
