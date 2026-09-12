@@ -9,7 +9,7 @@ interface HeroSectionProps {
   profile: Profile | null;
 }
 
-const DEFAULT_TEACHER_AVATAR = 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&h=630&q=80&fm=jpg';
+const DEFAULT_TEACHER_AVATAR = 'https://ik.imagekit.io/hkh/OK_2.jpg?updatedAt=1787823395938';
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ hero, profile }) => {
   const { t, language } = useLanguage();
