@@ -927,15 +927,14 @@ const syncToSupabase = async (key: string, val: any) => {
       const list = val as TeachingApproach[];
       if (list && Array.isArray(list)) {
         const rows = list.map((ap, i) => ({
-          ...(isValidUUID(ap.id) ? { id: ap.id } : {}),
+          ...(isValidUUID(ap.id) ? { id: ap.id } : { id: generateUUID() }),
           title_en: ap.titleEn || '',
           title_vi: ap.titleVi || '',
           description_en: ap.descriptionEn || '',
           description_vi: ap.descriptionVi || '',
           icon: ap.icon || 'Sparkles',
           image_url: ap.imageUrl || '',
-          order_index: ap.orderIndex ?? (i + 1),
-          updated_at: new Date().toISOString()
+          order_index: ap.orderIndex ?? (i + 1)
         }));
         await supabase.from('teaching_approaches').upsert(rows);
       }
@@ -1654,8 +1653,7 @@ export const DB = {
         description_vi: itemToSave.descriptionVi || '',
         icon: itemToSave.icon || 'Sparkles',
         image_url: itemToSave.imageUrl || '',
-        order_index: itemToSave.orderIndex ?? list.length,
-        updated_at: new Date().toISOString()
+        order_index: itemToSave.orderIndex ?? list.length
       };
       const { error } = await supabase.from('teaching_approaches').upsert(row);
       if (error) {
@@ -1690,8 +1688,7 @@ export const DB = {
           description_vi: copy.descriptionVi || '',
           icon: copy.icon || 'Sparkles',
           image_url: copy.imageUrl || '',
-          order_index: copy.orderIndex,
-          updated_at: new Date().toISOString()
+          order_index: copy.orderIndex
         };
         const { error } = await supabase.from('teaching_approaches').upsert(row);
         if (error) {
@@ -1735,8 +1732,7 @@ export const DB = {
         description_vi: ap.descriptionVi || '',
         icon: ap.icon || 'Sparkles',
         image_url: ap.imageUrl || '',
-        order_index: ap.orderIndex,
-        updated_at: new Date().toISOString()
+        order_index: ap.orderIndex
       }));
       const { error } = await supabase.from('teaching_approaches').upsert(rows);
       if (error) {
