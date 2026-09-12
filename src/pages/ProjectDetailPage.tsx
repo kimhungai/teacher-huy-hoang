@@ -88,6 +88,18 @@ export const ProjectDetailPage: React.FC = () => {
   const galleryList = (project.galleryUrls && project.galleryUrls.length > 0) ? project.galleryUrls : [];
   const allImages = [project.thumbnailUrl, ...galleryList].filter(Boolean);
 
+  const projectSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CreativeWork',
+    'name': projTitle,
+    'description': projDesc,
+    'image': topCoverImage,
+    'author': {
+      '@type': 'Person',
+      'name': 'Nguyễn Trọng Huy Hoàng'
+    }
+  };
+
   return (
     <div className="py-12 md:py-20 bg-slate-50 dark:bg-slate-950">
       <SEO
@@ -102,6 +114,7 @@ export const ProjectDetailPage: React.FC = () => {
           { name: projTitle, item: `/projects/${project.slug}` }
         ]}
         keywords={`${projTitle}, ${project.categoryName}, Thầy Nguyễn Trọng Huy Hoàng, Dự án tiếng Anh`}
+        schema={projectSchema}
       />
       {/* Lightbox Modal */}
       <ImageLightbox

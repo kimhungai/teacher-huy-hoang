@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /admin/*
 
-Sitemap: https://teacherhuyhoang.com/sitemap.xml
+Sitemap: https://teacherhuyhoang.vercel.app/sitemap.xml

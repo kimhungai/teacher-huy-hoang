@@ -98,7 +98,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ hero, profile }) => {
                 <div className="aspect-[4/5] rounded-2xl overflow-hidden relative group">
                   <img
                     src={hero?.avatarUrl || profile?.avatarUrl || DEFAULT_TEACHER_AVATAR}
-                    alt="Teacher Nguyen Trong Huy Hoang"
+                    alt={language === 'vi' ? 'Thầy Nguyễn Trọng Huy Hoàng - Giáo viên Tiếng Anh Tiểu học' : 'Teacher Nguyen Trong Huy Hoang - Primary English Teacher'}
+                    loading="eager"
+                    decoding="async"
                     className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex flex-col justify-end p-6 text-white text-left">

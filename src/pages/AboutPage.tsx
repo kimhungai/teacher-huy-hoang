@@ -83,7 +83,7 @@ export const AboutPage: React.FC = () => {
                 <div className="aspect-square rounded-2xl overflow-hidden relative group">
                   <img
                     src={profile?.avatarUrl || hero?.avatarUrl || DEFAULT_TEACHER_AVATAR}
-                    alt="Teacher Nguyen Trong Huy Hoang"
+                    alt={language === 'vi' ? 'Thầy Nguyễn Trọng Huy Hoàng - Giáo viên Tiếng Anh Tiểu học' : 'Teacher Nguyen Trong Huy Hoang - Primary English Teacher'}
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-500"
