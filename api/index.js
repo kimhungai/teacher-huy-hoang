@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
 const SUPABASE_URL = 'https://rfzvtgmhqlbaxlyemwxt.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJmenZ0Z21ocWxiYXhseWVtd3h0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzMTM0MDYsImV4cCI6MjEwMzg4OTQwNn0.Tr8emeA9DpU6JDgKJNdRHnEhi5V1iWu_g5Is_2WmI7o';
@@ -20,7 +20,7 @@ function getFirstSentence(text) {
   return clean;
 }
 
-export default async function handler(req, res) {
+module.exports = async (req, res) => {
   let html = '';
   try {
     const indexPath = path.join(process.cwd(), 'dist', 'index.html');
@@ -62,7 +62,7 @@ export default async function handler(req, res) {
         const seoTitle = `${teacherName} — ${titleEn}`;
         const seoDesc = `Website chính thức của ${teacherName} - ${cleanTitleVi} - ${firstBioSentence}`;
 
-        const escapeHtml = (str) => str.replace(/"/g, '&quot;');
+        const escapeHtml = (str) => String(str).replace(/"/g, '&quot;');
 
         html = html
           .replace(/<title>.*?<\/title>/, `<title>${escapeHtml(seoTitle)}</title>`)
@@ -84,4 +84,4 @@ export default async function handler(req, res) {
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=120');
   return res.status(200).send(html);
-}
+};
